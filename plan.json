@@ -1,0 +1,180 @@
+{
+  "version": 1,
+  "updated": "2026-09-28",
+  "athlete": {
+    "name": "Emile",
+    "ftp_w": 250,
+    "cp_w": 245,
+    "best_5min_w": 300,
+    "max_hr": 188,
+    "weight_kg": 75
+  },
+  "zones": [
+    { "id": "Z1", "name": "Recovery", "power_w": [0, 137], "hr_bpm": [0, 120], "feel": "Truly easy, could chat all day" },
+    { "id": "Z2", "name": "Endurance", "power_w": [138, 187], "hr_bpm": [121, 145], "feel": "Comfortable, full sentences" },
+    { "id": "Z3", "name": "Tempo", "power_w": [188, 225], "hr_bpm": [146, 160], "feel": "Steady pressure, short sentences" },
+    { "id": "Z4", "name": "Threshold and above", "power_w": [226, 450], "hr_bpm": [161, 188], "feel": "Hard, a few words at a time" }
+  ],
+  "goals": [
+    { "id": "g1", "title": "Gran Fondo 150 km", "date": "2027-05-01", "metric": "Finish 150 km strong, under 5 h 30 min", "status": "active" },
+    { "id": "g2", "title": "FTP test", "date": "2026-12-19", "metric": "FTP 265 W (from 250 W)", "status": "active" }
+  ],
+  "block": {
+    "name": "Build 1",
+    "start": "2026-09-28",
+    "weeks": 4,
+    "focus": "Long rides + VO2max",
+    "light_week": 4
+  },
+  "workouts": [
+    {
+      "date": "2026-09-28",
+      "type": "rest",
+      "title": "Rest day",
+      "purpose": "Absorb last week's training. A short walk is fine.",
+      "cue": "Put your feet up. Sleep is training too."
+    },
+    {
+      "date": "2026-09-29",
+      "type": "vo2_intervals",
+      "title": "30/15s, 3 sets",
+      "duration_min": 70,
+      "zone": "Z4",
+      "purpose": "Maximum time near VO2max",
+      "steps": [
+        { "min": 20, "zone": "Z2", "target": "Warm-up, build gradually" },
+        { "repeat": 3, "rest_between_min": 3, "steps": [
+          { "repeat": 13, "on_s": 30, "off_s": 15, "on_target": "Best 5-min power (~300 W)", "off_target": "Half of on-power (~150 W)" }
+        ] },
+        { "min": 15, "zone": "Z1", "target": "Cool-down" }
+      ],
+      "cue": "Rep 1 on target, middle on feel, last set strong and empty",
+      "fuel": { "before": "Carb meal 2-3 h before", "during_carbs_g_per_h": 40, "after": "20-40 g protein + carbs" }
+    },
+    {
+      "date": "2026-09-30",
+      "type": "easy",
+      "title": "Easy spin",
+      "duration_min": 60,
+      "zone": "Z2",
+      "purpose": "Aerobic base without extra fatigue",
+      "steps": [
+        { "min": 60, "zone": "Z2", "target": "Low Z2, relaxed cadence 85-95 rpm" }
+      ],
+      "cue": "If it feels like training, you're going too hard.",
+      "fuel": { "before": "Normal meal", "during_carbs_g_per_h": 0, "after": "Normal meal" }
+    },
+    {
+      "date": "2026-09-30",
+      "type": "strength",
+      "title": "Strength: legs + core",
+      "duration_min": 35,
+      "purpose": "Keep strength for climbing and injury prevention",
+      "steps": [
+        { "min": 5, "target": "Warm-up: mobility, bodyweight squats" },
+        { "repeat": 3, "rest_between_min": 1.5, "steps": [
+          { "min": 1, "target": "Goblet squat × 10" },
+          { "min": 1, "target": "Romanian deadlift × 10" },
+          { "min": 1, "target": "Split squat × 8 each leg" }
+        ] },
+        { "repeat": 2, "rest_between_min": 1, "steps": [
+          { "min": 1, "target": "Plank 45 s" },
+          { "min": 1, "target": "Side plank 30 s each side" }
+        ] }
+      ],
+      "cue": "Controlled and clean. Stop 2 reps before failure.",
+      "fuel": { "after": "20-30 g protein within an hour" }
+    },
+    {
+      "date": "2026-10-01",
+      "type": "tempo",
+      "title": "Tempo 3 × 12 min",
+      "duration_min": 75,
+      "zone": "Z3",
+      "purpose": "Muscular endurance at a steady, sustainable effort",
+      "steps": [
+        { "min": 15, "zone": "Z2", "target": "Warm-up" },
+        { "repeat": 3, "rest_between_min": 5, "steps": [
+          { "min": 12, "zone": "Z3", "target": "200-220 W, steady" }
+        ] },
+        { "min": 14, "zone": "Z1", "target": "Cool-down" }
+      ],
+      "cue": "Smooth and even. Don't let the power creep up.",
+      "fuel": { "before": "Carb meal 2-3 h before", "during_carbs_g_per_h": 40, "after": "20-40 g protein + carbs" }
+    },
+    {
+      "date": "2026-10-02",
+      "type": "easy",
+      "title": "Easy ride",
+      "duration_min": 60,
+      "zone": "Z2",
+      "purpose": "Easy volume, freshen up for the weekend",
+      "steps": [
+        { "min": 60, "zone": "Z2", "target": "Easy, conversational" }
+      ],
+      "cue": "Keep it easy. Tomorrow is the big one.",
+      "fuel": { "before": "Normal meal", "during_carbs_g_per_h": 0, "after": "Carb-rich dinner for tomorrow" }
+    },
+    {
+      "date": "2026-10-03",
+      "type": "long_ride_intervals",
+      "title": "3 h with sweet spot in the last hour",
+      "duration_min": 180,
+      "zone": "Z2",
+      "purpose": "Endurance plus working hard on tired legs",
+      "steps": [
+        { "min": 120, "zone": "Z2", "target": "Steady endurance" },
+        { "repeat": 4, "rest_between_min": 4, "steps": [
+          { "min": 8, "zone": "Z3", "target": "220-235 W (high Z3 / low Z4)" }
+        ] },
+        { "min": 16, "zone": "Z1", "target": "Easy ride home" }
+      ],
+      "cue": "Eat early. The intervals only work if you arrive fuelled.",
+      "fuel": { "before": "Big carb breakfast 2-3 h before", "during_carbs_g_per_h": 70, "during": "Start eating after 20 min, then every 20 min. 500-750 ml fluid per hour.", "after": "Recovery shake + proper meal within 1 h" }
+    },
+    {
+      "date": "2026-10-04",
+      "type": "long_ride",
+      "title": "Long endurance ride",
+      "duration_min": 210,
+      "zone": "Z2",
+      "purpose": "Build aerobic engine and practise fuelling",
+      "steps": [
+        { "min": 210, "zone": "Z2", "target": "Steady Z2, keep climbs in Z3 or lower" }
+      ],
+      "cue": "Ride with discipline. Finish feeling you could do another hour.",
+      "fuel": { "before": "Big carb breakfast 2-3 h before", "during_carbs_g_per_h": 70, "during": "Practise race fuelling: gels + bars + drink mix", "after": "Recovery shake + proper meal within 1 h" }
+    }
+  ],
+  "nutrition": {
+    "day_types": {
+      "rest": { "carbs_g": 250, "protein_g": 140, "kcal": 2200 },
+      "easy": { "carbs_g": 330, "protein_g": 140, "kcal": 2600 },
+      "tempo": { "carbs_g": 380, "protein_g": 140, "kcal": 2800 },
+      "interval": { "carbs_g": 400, "protein_g": 140, "kcal": 2900 },
+      "long": { "carbs_g": 550, "protein_g": 150, "kcal": 3500 }
+    },
+    "meals": [
+      { "date": "2026-09-28", "day_type": "rest", "items": ["Breakfast: Greek yoghurt, berries, granola", "Lunch: Chicken salad wrap", "Snack: Apple + handful of nuts", "Dinner: Salmon, potatoes, green beans"] },
+      { "date": "2026-09-29", "day_type": "interval", "items": ["Breakfast: Oats with banana and honey", "Lunch (3 h before): Pasta with tuna and tomato sauce", "Recovery: Milk + banana", "Dinner: Chicken, rice, vegetables"] },
+      { "date": "2026-09-30", "day_type": "easy", "items": ["Breakfast: Eggs on toast", "Lunch: Rice bowl with chicken and vegetables", "After strength: Skyr + fruit", "Dinner: Lean beef chili with rice"] },
+      { "date": "2026-10-01", "day_type": "tempo", "items": ["Breakfast: Oats with banana and honey", "Lunch: Bagel with turkey and cheese", "Recovery: Milk + banana", "Dinner: Salmon, pasta, spinach"] },
+      { "date": "2026-10-02", "day_type": "easy", "items": ["Breakfast: Greek yoghurt, berries, granola", "Lunch: Chicken salad wrap", "Dinner (carb-rich for tomorrow): Big pasta bolognese"] },
+      { "date": "2026-10-03", "day_type": "long", "items": ["Breakfast: Oats, banana, honey + toast with jam", "On the bike: 70 g carbs/hour (drink mix + bars)", "Recovery: Shake + banana", "Dinner: Rice, chicken, vegetables"] },
+      { "date": "2026-10-04", "day_type": "long", "items": ["Breakfast: Pancakes with syrup + yoghurt", "On the bike: 70 g carbs/hour (gels + bars + drink mix)", "Recovery: Shake + banana", "Dinner: Homemade pizza + salad"] }
+    ],
+    "shopping_list": [
+      "Oats (1 kg)",
+      "Bananas (10)",
+      "Greek yoghurt (2 × 500 g)",
+      "Berries (frozen, 500 g)",
+      "Pasta (1 kg)",
+      "Rice (1 kg)",
+      "Chicken breast (1 kg)",
+      "Salmon fillets (4)",
+      "Eggs (12)",
+      "Drink mix / energy bars for the weekend"
+    ]
+  },
+  "notes": "First week of Build 1. Tuesday's 30/15s are the key session: hit the targets on rep 1, then ride on feel. Keep Wednesday and Friday truly easy. At the weekend, practise eating 70 g of carbs per hour. Fill in your check-in every day, even rest days."
+}
