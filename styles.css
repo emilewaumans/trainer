@@ -65,6 +65,7 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
   backdrop-filter: saturate(160%) blur(16px);
   border-bottom: 1px solid var(--border);
 }
+.topbar > * { grid-row: 1; }
 .topbar h1 {
   grid-column: 2; margin: 0; text-align: center;
   font-size: 17px; font-weight: 650;
@@ -77,6 +78,7 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
   cursor: pointer;
 }
 .topbar-btn.back { grid-column: 1; justify-self: start; }
+.topbar-btn.overview { grid-column: 1; grid-row: 1; justify-self: start; justify-content: center; }
 .topbar-btn.gear { grid-column: 3; justify-self: end; color: var(--muted); justify-content: center; }
 .topbar-btn.gear.active { color: var(--accent); }
 

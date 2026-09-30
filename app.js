@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.1.0';
+  const APP_VERSION = '1.2.0';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -764,6 +764,54 @@
     return html;
   }
 
+  /* ---------------- screen: Day overview (the classic Today page) ---------------- */
+
+  function viewOverview() {
+    const t = today();
+    const bs = blockStatus(t);
+    let html = `<div class="page-head">
+      <div class="eyebrow">Day overview</div>
+      <h2>${esc(fmtLong(t))}</h2>
+      ${bs && bs.inBlock ? `<div class="chips"><span class="chip accent">${esc(txt(bs.b.name) || 'Block')} · week ${bs.week}${bs.weeks ? ' of ' + bs.weeks : ''}</span>${bs.light ? '<span class="chip light-badge">Light week</span>' : ''}</div>` : ''}
+    </div>`;
+    if (!state.plan) return html + noPlanHTML();
+
+    html += safe(() => {
+      const ws = workoutsOn(t);
+      if (!ws.length) {
+        const next = allWorkouts().filter((x) => x.date > t).sort((a, b) => (a.date < b.date ? -1 : 1))[0];
+        return `<div class="card"><b>No workout planned today.</b><div class="muted small">Enjoy the day.</div></div>` +
+          (next ? `<div class="section"><h3>Next up · ${esc(fmtDate(next.date))}</h3>${workoutCard(next)}</div>` : '');
+      }
+      return `<div class="section" style="margin-top:0"><h3>Workout${ws.length > 1 ? 's' : ''}</h3>${ws.map(workoutCard).join('')}</div>` +
+        ws.map((x) => {
+          const f = fuelHTML(x.w.fuel, x.w);
+          if (!f) return '';
+          return `<div class="section"><h3>Fuelling${ws.length > 1 ? ' · ' + esc(txt(x.w.title) || typeInfo(x.w.type).label) : ''}</h3>${f}</div>`;
+        }).join('');
+    }, "today's workout");
+
+    html += safe(() => {
+      const ms = mealsOn(t);
+      if (!ms.length) return '';
+      return `<div class="section"><h3>Meals today</h3>${ms.map((m) => mealCard(m, true)).join('')}</div>`;
+    }, "today's meals");
+
+    html += safe(() => {
+      const n = noteHTML();
+      return n ? `<div class="section"><h3>Coach's note</h3>${n}</div>` : '';
+    }, "the coach's note");
+
+    html += safe(() => {
+      const tm = iso(addDays(parseDate(t), 1));
+      const ws = workoutsOn(tm);
+      if (!ws.length) return '';
+      return `<div class="section"><h3>Tomorrow</h3>${ws.map(workoutCard).join('')}</div>`;
+    }, 'tomorrow');
+
+    return html;
+  }
+
   /* ---------------- screen: Agenda ---------------- */
 
   function calendarHTML() {
@@ -1467,7 +1515,7 @@
 
   /* ---------------- navigation ---------------- */
 
-  const TITLES = { today: 'Today', agenda: 'Agenda', goals: 'Goals', food: 'Food', checkin: 'Check-in', settings: 'Settings', day: 'Day', workout: 'Workout' };
+  const TITLES = { today: 'Today', agenda: 'Agenda', goals: 'Goals', food: 'Food', checkin: 'Check-in', settings: 'Settings', day: 'Day', workout: 'Workout', overview: 'Day overview' };
   const TOP_LEVEL = ['today', 'agenda', 'goals', 'food', 'checkin'];
 
   function parseRoute() {
@@ -1489,6 +1537,7 @@
         case 'settings': html = viewSettings(); break;
         case 'day': html = viewDay(r.arg); break;
         case 'workout': html = viewWorkout(r.arg); break;
+        case 'overview': html = viewOverview(); break;
         default: html = viewToday();
       }
     } catch (e) {
@@ -1509,8 +1558,9 @@
 
     const isTop = TOP_LEVEL.includes(r.name);
     $('#backBtn').hidden = isTop;
+    $('#overviewBtn').hidden = r.name !== 'today';
     $('#gearBtn').classList.toggle('active', r.name === 'settings');
-    const activeTab = { day: 'agenda', workout: 'agenda' }[r.name] || r.name;
+    const activeTab = { day: 'agenda', workout: 'agenda', overview: 'today' }[r.name] || r.name;
     document.querySelectorAll('.tabbar a').forEach((a) => a.classList.toggle('active', a.dataset.tab === activeTab));
     if (!keepScroll) window.scrollTo(0, 0);
   }
