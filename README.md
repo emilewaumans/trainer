@@ -30,6 +30,15 @@ A web app (PWA) hosted on GitHub Pages. Plain HTML/CSS/JavaScript, no build step
 
 Always ask the coach to change the `"updated"` date on every new plan.
 
+## Optional plan fields (v1.1)
+
+- Workout `"time": "07:30"`: puts the workout at the right moment on the Today route.
+  Without it, long rides go in the morning and other workouts in the late afternoon.
+- Goal `"start": "2026-09-01"`: start point of the goal's progress bar (default: block start).
+- Shopping items can be objects with weekly and per-day amounts:
+  `{ "item": "Oats", "qty": "1 kg", "category": "Breakfast", "days": { "2026-10-06": "80 g" } }`
+  Plain text items still work (weekly view only).
+
 ## Check-ins
 
 Check-ins are saved on the phone only. Use **Check-in → Copy all for my coach** and paste the text into the coach chat.

@@ -7,13 +7,14 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.1.0';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
     imported: 'trainer.importedPlan',
     checkins: 'trainer.checkins',
     shop: 'trainer.shopping',
+    goalSeen: 'trainer.goalSeen',
   };
 
   const state = {
@@ -28,6 +29,10 @@
     importMsg: '',       // message shown on the Settings screen
     importText: '',
     pendingDelete: '',   // check-in date waiting for a 2nd tap to delete
+    focus: '',           // Today: the step shown in the big card
+    focusDate: '',
+    shopMode: 'week',    // Food: 'week' or 'day'
+    shopDay: '',
   };
 
   /* ---------------- small helpers ---------------- */
@@ -406,7 +411,323 @@
     </div>`;
   }
 
-  /* ---------------- screen: Today ---------------- */
+  /* ---------------- screen: Today (the daily quest) ---------------- */
+
+  // Where each kind of meal goes in the day (hour of the day)
+  const MEAL_SLOTS = [
+    [/breakfast|ontbijt/i, 7],
+    [/morning snack|mid-?morning/i, 10],
+    [/lunch/i, 12.5],
+    [/pre-?ride|pre-?workout|before (the )?(ride|workout|training|session)/i, 'pre'],
+    [/on the bike|during/i, 'during'],
+    [/recovery|after (the )?(ride|workout|training|session|strength)|post/i, 'post'],
+    [/snack|afternoon/i, 15.5],
+    [/dinner|supper|diner/i, 19],
+    [/evening|before bed|bedtime/i, 21],
+  ];
+
+  function mealIcon(label) {
+    const l = txt(label).toLowerCase();
+    if (/breakfast/.test(l)) return '🥣';
+    if (/lunch/.test(l)) return '🥪';
+    if (/dinner|supper/.test(l)) return '🍽️';
+    if (/recovery|after|post/.test(l)) return '🥤';
+    if (/bike|during/.test(l)) return '🍌';
+    if (/snack/.test(l)) return '🍎';
+    return '🍴';
+  }
+
+  function parseTime(v) {
+    const m = /^(\d{1,2})[:.h](\d{2})/.exec(txt(v));
+    return m ? +m[1] + +m[2] / 60 : null;
+  }
+
+  function mealParts(it) {
+    let s = txt(it), time = null;
+    if (!s && it && typeof it === 'object') {
+      const o = obj(it);
+      time = parseTime(o.time);
+      const label = txt(o.meal) || txt(o.name) || txt(o.label);
+      const body = txt(o.text) || txt(o.description) || txt(o.items) || (Array.isArray(o.items) ? o.items.map(txt).filter(Boolean).join(', ') : '');
+      return { label, body, time };
+    }
+    const i = s.indexOf(':');
+    if (i > 0 && i < 40) return { label: s.slice(0, i).trim(), body: s.slice(i + 1).trim(), time };
+    return { label: '', body: s, time };
+  }
+
+  // Build today's steps in time order
+  function dayFlow(ds) {
+    const c = obj(getCheckins()[ds]);
+    const steps = [{ id: 'morning', kind: 'morning', slot: 0, icon: '☀️', title: 'Good morning', sub: 'Sleep, legs and stress' }];
+
+    const ws = workoutsOn(ds);
+    const wSlots = [];
+    let k = 0;
+    ws.forEach((x) => {
+      const t = txt(x.w.type);
+      const info = typeInfo(t);
+      let slot = parseTime(x.w.time);
+      if (slot == null) slot = t === 'rest' ? 7.5 : /^long_ride/.test(t) ? 9 + k * 0.5 : 17 + k * 0.5;
+      if (t !== 'rest') { wSlots.push(slot); k++; }
+      steps.push({ id: 'workout-' + x.i, kind: t === 'rest' ? 'rest' : 'workout', slot, x, icon: info.icon, title: txt(x.w.title) || info.label, sub: info.label });
+    });
+    const firstW = wSlots.length ? Math.min(...wSlots) : null;
+    const lastW = wSlots.length ? Math.max(...wSlots) : null;
+    if (wSlots.length) steps.push({ id: 'session', kind: 'session', slot: lastW + 0.2, icon: '📝', title: 'Session check-in', sub: 'How did it feel?' });
+
+    let prev = 6.9;
+    mealsOn(ds).forEach((m, mi) => {
+      arr(m.items).forEach((it, ii) => {
+        const p = mealParts(it);
+        if (!p.label && !p.body) return;
+        let slot = p.time;
+        if (slot == null) {
+          const hit = MEAL_SLOTS.find(([re]) => re.test(p.label || p.body));
+          let v = hit ? hit[1] : null;
+          if (v === 'pre') v = firstW != null ? firstW - 0.2 : null;
+          else if (v === 'during') v = firstW != null ? firstW - 0.1 : null;
+          else if (v === 'post') v = lastW != null ? lastW + 0.3 : null;
+          slot = v != null ? v : prev + 0.01;
+        }
+        prev = slot;
+        steps.push({ id: `meal-${mi}-${ii}`, kind: 'meal', slot, meal: p, dayType: txt(m.day_type), icon: mealIcon(p.label), title: p.label || 'Meal', sub: p.body });
+      });
+    });
+
+    steps.push({ id: 'wrap', kind: 'wrap', slot: 23, icon: '🌙', title: 'Wrap up the day', sub: 'Anything for your coach?' });
+
+    steps.forEach((s, i) => { s.order = i; });
+    steps.sort((a, b) => a.slot - b.slot || a.order - b.order);
+    steps.forEach((s) => { s.status = stepStatus(s, c); });
+
+    // If every workout was skipped, the session check-in isn't needed
+    const wk = steps.filter((s) => s.kind === 'workout');
+    const sess = steps.find((s) => s.kind === 'session');
+    if (sess && !sess.status && wk.length && wk.every((s) => s.status === 'no')) sess.status = 'no';
+    return steps;
+  }
+
+  function stepStatus(s, c) {
+    const st = obj(c.steps);
+    if (st[s.id]) return st[s.id];
+    switch (s.kind) {
+      case 'morning': return c.sleep_h || c.legs || c.stress ? 'done' : '';
+      case 'session': return c.rpe || c.duration_min || c.power_w || c.hr_bpm || c.fuelled ? 'done' : '';
+      case 'wrap': return c.notes ? 'done' : '';
+      case 'workout':
+        // Only use the Check-in page answer if no workout was answered here
+        if (Object.keys(st).some((key) => key.startsWith('workout-'))) return '';
+        return { yes: 'done', partly: 'half', no: 'no' }[c.done] || '';
+      default: return '';
+    }
+  }
+
+  // Save part of a day's check-in (keeps everything else)
+  function updateCheckin(ds, patch) {
+    const all = getCheckins();
+    const c = Object.assign(obj(all[ds]), patch);
+    Object.keys(c).forEach((key) => { if (c[key] === '' || c[key] == null) delete c[key]; });
+    c.saved_at = new Date().toISOString();
+    all[ds] = c;
+    return lsSet(LS.checkins, all);
+  }
+
+  function answerStep(ds, step, status) {
+    const c = obj(getCheckins()[ds]);
+    const patch = { steps: Object.assign({}, obj(c.steps), { [step.id]: status }) };
+    if (step.kind === 'meal') patch.meal_log = Object.assign({}, obj(c.meal_log), { [step.title]: status });
+    updateCheckin(ds, patch);
+    if (step.kind === 'workout') syncSessionDone(ds);
+  }
+
+  // Keep the check-in's "Session done?" in line with the workout answers
+  function syncSessionDone(ds) {
+    const c = obj(getCheckins()[ds]);
+    const st = obj(c.steps);
+    const wk = dayFlow(ds).filter((s) => s.kind === 'workout');
+    const vals = wk.map((s) => st[s.id]).filter(Boolean);
+    if (!vals.length) return;
+    const patch = { done: vals.every((v) => v === 'done') ? 'yes' : vals.every((v) => v === 'no') ? 'no' : 'partly' };
+    // Fill in "what" automatically, unless you typed something yourself
+    if (!c.what || c.what === c.what_auto) {
+      const names = wk.filter((s) => st[s.id] && st[s.id] !== 'no').map((s) => s.title).join(' + ');
+      patch.what = names;
+      patch.what_auto = names;
+    }
+    updateCheckin(ds, patch);
+  }
+
+  const SCORE = { done: 10, half: 5, no: 0 };
+  function xpOf(c) {
+    c = obj(c);
+    const st = obj(c.steps);
+    let xp = Object.values(st).reduce((t, v) => t + (SCORE[v] || 0), 0);
+    if (!st.morning && (c.sleep_h || c.legs || c.stress)) xp += 10;
+    if (!st.session && (c.rpe || c.duration_min)) xp += 10;
+    if (!st.wrap && c.notes) xp += 10;
+    return xp;
+  }
+  function levelOf(total) {
+    const per = 250;
+    return { level: Math.floor(total / per) + 1, into: total % per, per, toNext: per - (total % per) };
+  }
+  function streakDays() {
+    const all = getCheckins();
+    let d = new Date();
+    if (!all[iso(d)]) d = addDays(d, -1);
+    let n = 0;
+    while (all[iso(d)] && n < 3650) { n++; d = addDays(d, -1); }
+    return n;
+  }
+
+  function answerButtons(step, options) {
+    return `<div class="answers answers-${options.length}">${options.map(([v, label]) =>
+      `<button class="ans ans-${v}${step.status === v ? ' sel' : ''}" data-action="flow" data-step="${esc(step.id)}" data-value="${v}">${label}</button>`).join('')}</div>`;
+  }
+
+  function stepper(name, value, step, placeholder, unit) {
+    return `<div class="stepper">
+      <button type="button" class="btn icon" data-action="step-num" data-target="${name}" data-delta="-${step}" data-start="${placeholder}">−</button>
+      <label class="stepper-val"><input type="number" inputmode="decimal" name="${name}" step="${step}" min="0" value="${esc(value || '')}" placeholder="${placeholder}"><span>${unit}</span></label>
+      <button type="button" class="btn icon" data-action="step-num" data-target="${name}" data-delta="${step}" data-start="${placeholder}">+</button>
+    </div>`;
+  }
+
+  function questCardBody(s, ds, c) {
+    if (s.kind === 'meal') {
+      const t = obj(dayTypes()[s.dayType]);
+      const chip = s.dayType ? `<div class="chips"><span class="chip accent day-type">${esc(prettify(s.dayType))} day${isNum(t.carbs_g) && t.carbs_g > 0 ? ' · ' + esc(num(t.carbs_g)) + ' g carbs' : ''}</span></div>` : '';
+      return `${s.sub && s.meal.label ? `<div class="q-text">${esc(s.sub)}</div>` : ''}${chip}
+        ${answerButtons(s, [['done', '✓ Done'], ['half', '½ Half'], ['no', "✕ Didn't"]])}`;
+    }
+    if (s.kind === 'rest') {
+      const w = s.x.w;
+      return `${txt(w.purpose) ? `<div class="q-text">${esc(txt(w.purpose))}</div>` : ''}
+        ${txt(w.cue) ? `<div class="cue" style="margin-top:12px">“${esc(txt(w.cue))}”</div>` : ''}
+        ${answerButtons(s, [['done', '👍 Got it, resting']])}`;
+    }
+    if (s.kind === 'workout') {
+      const w = s.x.w;
+      const dur = durationLabel(w);
+      const f = obj(w.fuel);
+      const summary = arr(w.steps).map(obj).map((st) => {
+        const t = stepTitle(st);
+        return t ? `<li>${esc(t)} ${zoneChip(st.zone)}${restSec(st) && repCount(st) > 1 ? ` <span class="muted small">· ${esc(fmtDur(restSec(st)))} easy between</span>` : ''}</li>` : '';
+      }).join('');
+      const fuel = [
+        txt(f.before) ? 'Before: ' + esc(txt(f.before)) : '',
+        isNum(f.during_carbs_g_per_h) && f.during_carbs_g_per_h > 0 ? `During: <b>${esc(num(f.during_carbs_g_per_h))} g carbs/h</b>` : '',
+      ].filter(Boolean).join('<br>');
+      return `<div class="chips">${dur ? `<span class="chip">⏱ ${esc(dur)}</span>` : ''}${zoneChip(w.zone)}</div>
+        ${txt(w.purpose) ? `<div class="q-text">${esc(txt(w.purpose))}</div>` : ''}
+        ${summary ? `<ul class="q-steps">${summary}</ul>` : ''}
+        ${fuel ? `<div class="q-fuel">⛽ ${fuel}</div>` : ''}
+        <a class="btn" href="#workout/${s.x.i}" style="margin-top:14px">See full workout ›</a>
+        ${answerButtons(s, [['done', '✓ Done'], ['half', '½ Partly'], ['no', "✕ Didn't"]])}`;
+    }
+    if (s.kind === 'morning') {
+      return `<form data-flow-form="morning" autocomplete="off">
+        <div class="field"><span class="lbl">How long did you sleep?</span>${stepper('sleep_h', c.sleep_h, 0.5, 7.5, 'hours')}</div>
+        <div class="field"><span class="lbl">How do your legs feel?</span>${seg('legs', ['1', '2', '3', '4', '5'], c.legs)}
+          <div class="seg-hint"><span>1 = dead</span><span>5 = fresh</span></div></div>
+        <div class="field"><span class="lbl">Stress level?</span>${seg('stress', ['1', '2', '3', '4', '5'], c.stress)}
+          <div class="seg-hint"><span>1 = relaxed</span><span>5 = very stressed</span></div></div>
+        <button class="btn primary" type="submit">Save &amp; next ›</button>
+      </form>`;
+    }
+    if (s.kind === 'session') {
+      const planned = workoutsOn(ds).reduce((t, x) => t + (isNum(x.w.duration_min) ? x.w.duration_min : 0), 0);
+      return `<form data-flow-form="session" autocomplete="off">
+        <div class="field"><span class="lbl">Duration and averages <small>(optional)</small></span>
+          <div class="row-3">
+            <label><span class="mini">Minutes</span><input type="number" inputmode="numeric" name="duration_min" min="0" value="${esc(c.duration_min || '')}" placeholder="${planned || ''}"></label>
+            <label><span class="mini">Avg power W</span><input type="number" inputmode="numeric" name="power_w" min="0" value="${esc(c.power_w || '')}"></label>
+            <label><span class="mini">Avg HR bpm</span><input type="number" inputmode="numeric" name="hr_bpm" min="0" value="${esc(c.hr_bpm || '')}"></label>
+          </div></div>
+        <div class="field"><span class="lbl">How hard was it? <small>(RPE 1–10)</small></span>${seg('rpe', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'], c.rpe)}
+          <div class="seg-hint"><span>1 = very easy</span><span>10 = max</span></div></div>
+        <div class="field"><span class="lbl">Fuelled as planned?</span>${seg('fuelled', [['yes', 'Yes'], ['no', 'No']], c.fuelled)}</div>
+        <button class="btn primary" type="submit">Save &amp; next ›</button>
+      </form>`;
+    }
+    if (s.kind === 'wrap') {
+      return `<form data-flow-form="wrap" autocomplete="off">
+        <div class="field"><textarea name="notes" placeholder="Pain, illness, motivation, weather… or leave empty.">${esc(c.notes || '')}</textarea></div>
+        <button class="btn primary" type="submit">🏁 Finish the day</button>
+      </form>`;
+    }
+    return '';
+  }
+
+  function questHTML(ds) {
+    const steps = dayFlow(ds);
+    const c = obj(getCheckins()[ds]);
+    if (state.focusDate !== ds) { state.focus = ''; state.focusDate = ds; }
+    const cur = steps.find((s) => s.id === state.focus) || steps.find((s) => !s.status) || null;
+    const answered = steps.filter((s) => s.status).length;
+    const pct = Math.round((answered / steps.length) * 100);
+    const xp = xpOf(c);
+    const total = Object.values(getCheckins()).reduce((t, x) => t + xpOf(x), 0);
+    const lvl = levelOf(total);
+    const streak = streakDays();
+
+    let html = `<div class="gamebar">
+      <div class="gb"><div class="gb-v">🔥 ${streak}</div><div class="gb-l">day streak</div></div>
+      <div class="gb"><div class="gb-v">⚡ ${xp}</div><div class="gb-l">XP today</div></div>
+      <div class="gb"><div class="gb-v">🏆 ${lvl.level}</div><div class="gb-l">level</div></div>
+      <div class="gb-bar"><div class="progress"><span style="width:${pct}%"></span></div>
+        <div class="gb-foot"><span>${answered} of ${steps.length} steps</span><span>${lvl.toNext} XP to level ${lvl.level + 1}</span></div></div>
+    </div>`;
+
+    if (cur) {
+      const n = steps.indexOf(cur) + 1;
+      const openLeft = steps.filter((s) => !s.status && s !== cur).length;
+      html += `<div class="quest-card" id="questCard">
+        <div class="q-count">Step ${n} of ${steps.length}${cur.status ? ` · <span class="st-label st-${cur.status}">${{ done: 'done', half: 'half done', no: 'skipped' }[cur.status]}</span>` : ''}</div>
+        <div class="q-head"><span class="q-icon">${cur.icon}</span><h3>${esc(cur.title)}</h3></div>
+        ${cur.kind !== 'meal' || !cur.meal.label ? `<div class="q-sub">${esc(cur.sub)}</div>` : ''}
+        ${questCardBody(cur, ds, c)}
+        ${openLeft ? `<button class="btn later" data-action="flow-later" data-step="${esc(cur.id)}">Later ›</button>` : ''}
+      </div>`;
+    } else {
+      html += `<div class="quest-card done-card" id="questCard">
+        <div class="confetti" aria-hidden="true">${['🎉', '✨', '🏅', '⭐', '🎊', '🎉', '✨', '⭐'].map((e, i) => `<span style="--i:${i}">${e}</span>`).join('')}</div>
+        <div class="q-icon big">🏅</div>
+        <h3>Day complete!</h3>
+        <div class="q-text">You earned <b>${xp} XP</b> today${streak > 1 ? ` and you're on a <b>${streak}-day streak</b>` : ''}. Nice work.</div>
+        <button class="btn primary" data-action="copy-today" style="margin-top:16px">📋 Copy today for my coach</button>
+      </div>`;
+    }
+
+    const marks = { done: '✓', half: '½', no: '✕' };
+    html += `<div class="section"><h3>Today's route</h3><div class="route">${steps.map((s, i) => `
+      <button class="route-item st-${s.status || 'open'}${cur && s.id === cur.id ? ' current' : ''}" data-action="flow-focus" data-step="${esc(s.id)}">
+        <span class="ri-mark">${marks[s.status] || i + 1}</span>
+        <span class="ri-icon">${s.icon}</span>
+        <span class="ri-text"><b>${esc(s.title)}</b>${s.sub ? `<small>${esc(s.sub)}</small>` : ''}</span>
+      </button>`).join('')}</div></div>`;
+    return html;
+  }
+
+  function nextOpenStep(ds, fromId) {
+    const steps = dayFlow(ds);
+    const i = steps.findIndex((s) => s.id === fromId);
+    return steps.slice(i + 1).find((s) => !s.status) || steps.find((s) => !s.status && s.id !== fromId) || null;
+  }
+
+  function goToStep(id) {
+    state.focus = id || '';
+    render(true);
+    const el = document.getElementById('questCard');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function afterAnswer(ds, fromId) {
+    const next = nextOpenStep(ds, fromId);
+    goToStep(next ? next.id : '');
+    if (!next) toast('Day complete! 🎉');
+  }
 
   function viewToday() {
     const t = today();
@@ -418,26 +739,7 @@
     </div>`;
     if (!state.plan) return html + noPlanHTML();
 
-    html += safe(() => {
-      const ws = workoutsOn(t);
-      if (!ws.length) {
-        const next = allWorkouts().filter((x) => x.date > t).sort((a, b) => (a.date < b.date ? -1 : 1))[0];
-        return `<div class="card"><b>No workout planned today.</b><div class="muted small">Enjoy the day.</div></div>` +
-          (next ? `<div class="section"><h3>Next up · ${esc(fmtDate(next.date))}</h3>${workoutCard(next)}</div>` : '');
-      }
-      return `<div class="section" style="margin-top:0"><h3>Workout${ws.length > 1 ? 's' : ''}</h3>${ws.map(workoutCard).join('')}</div>` +
-        ws.map((x) => {
-          const f = fuelHTML(x.w.fuel, x.w);
-          if (!f) return '';
-          return `<div class="section"><h3>Fuelling${ws.length > 1 ? ' · ' + esc(txt(x.w.title) || typeInfo(x.w.type).label) : ''}</h3>${f}</div>`;
-        }).join('');
-    }, "today's workout");
-
-    html += safe(() => {
-      const ms = mealsOn(t);
-      if (!ms.length) return '';
-      return `<div class="section"><h3>Meals today</h3>${ms.map((m) => mealCard(m, true)).join('')}</div>`;
-    }, "today's meals");
+    html += safe(() => questHTML(t), "today's steps");
 
     html += safe(() => {
       const n = noteHTML();
@@ -659,6 +961,19 @@
     }).sort((a, b) => (a.date || '9999') < (b.date || '9999') ? -1 : 1);
   }
 
+  // When did we start working towards this goal? "start" in the plan,
+  // otherwise the block start, otherwise the first day the app saw the goal.
+  function goalStart(g) {
+    const own = parseDate(g.start) || parseDate(g.start_date);
+    if (own) return own;
+    const bs = parseDate(obj(P().block).start);
+    if (bs) return bs;
+    const key = txt(g.id) || txt(g.title) || 'goal';
+    const seen = obj(lsGet(LS.goalSeen, {}));
+    if (!seen[key]) { seen[key] = today(); lsSet(LS.goalSeen, seen); }
+    return parseDate(seen[key]);
+  }
+
   function viewGoals() {
     let html = `<div class="page-head"><div class="eyebrow">Goals</div><h2>What you're training for</h2></div>`;
     if (!state.plan) return html + noPlanHTML();
@@ -675,6 +990,15 @@
           else cd = `<div class="countdown"><div class="n">${days}</div><div class="u">${days === 1 ? 'day' : 'days'} to go</div></div>`;
         }
         const weeks = days > 13 ? ` · ${Math.floor(days / 7)} weeks ${days % 7 ? days % 7 + ' d' : ''}` : '';
+        let bar = '';
+        const start = date ? goalStart(g) : null;
+        if (start) {
+          const total = daysBetween(start, parseDate(date));
+          const gone = daysBetween(start, new Date());
+          const pct = total > 0 ? Math.max(0, Math.min(100, Math.round((gone / total) * 100))) : 100;
+          bar = `<div class="progress goal-bar"><span style="width:${Math.max(pct, 2)}%"></span></div>
+            <div class="goal-prog"><span>${pct}% of the way</span><span>started ${esc(fmtDate(start, { day: 'numeric', month: 'short' }))}</span></div>`;
+        }
         return `<div class="card goal">
           <div>
             <div class="title">${esc(txt(g.title) || 'Goal')}</div>
@@ -683,6 +1007,7 @@
             ${status && status !== 'active' ? `<div class="chips"><span class="chip">${esc(prettify(status))}</span></div>` : ''}
           </div>
           ${cd}
+          ${bar}
         </div>`;
       }).join('');
     }, 'the goals');
@@ -698,13 +1023,68 @@
   }
 
   function shopItemParts(it) {
-    if (txt(it)) return { name: txt(it), qty: '', cat: '' };
+    if (txt(it)) return { name: txt(it), qty: '', cat: '', days: {} };
     const o = obj(it);
+    const days = {};
+    Object.entries(obj(o.days || o.per_day)).forEach(([d, v]) => { if (normDate(d) && txt(v)) days[normDate(d)] = txt(v); });
     return {
       name: txt(o.item) || txt(o.name) || txt(o.text),
-      qty: txt(o.qty) || txt(o.quantity) || txt(o.amount),
+      qty: txt(o.qty) || txt(o.quantity) || txt(o.amount) || txt(o.week),
       cat: txt(o.category) || txt(o.aisle),
+      days,
     };
+  }
+
+  // Days that can be picked in the "Per day" shopping view
+  function shopDays() {
+    const set = new Set();
+    arr(nutrition().meals).forEach((m) => { const d = normDate(obj(m).date); if (d) set.add(d); });
+    arr(nutrition().shopping_list).map(shopItemParts).forEach((x) => Object.keys(x.days).forEach((d) => set.add(d)));
+    if (!set.size) { const mon = mondayOf(new Date()); for (let i = 0; i < 7; i++) set.add(iso(addDays(mon, i))); }
+    return [...set].sort();
+  }
+
+  function shoppingHTML() {
+    const all = arr(nutrition().shopping_list).map(shopItemParts).filter((x) => x.name);
+    if (!all.length) return '';
+    const byDay = state.shopMode === 'day';
+    const days = shopDays();
+    if (!days.includes(state.shopDay)) state.shopDay = days.includes(today()) ? today() : days[0];
+    const day = state.shopDay;
+    const hasDaily = all.some((x) => Object.keys(x.days).length);
+
+    const list = byDay
+      ? all.filter((x) => x.days[day]).map((x) => Object.assign({}, x, { qty: x.days[day], key: day + '|' + x.name }))
+      : all.map((x) => Object.assign({}, x, { key: x.name }));
+    const ticks = shopTicks();
+    const done = list.filter((x) => ticks[x.key]).length;
+    const check = '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+    const toggle = `<div class="toggle">
+      <button class="${byDay ? '' : 'on'}" data-action="shop-mode" data-mode="week">This week</button>
+      <button class="${byDay ? 'on' : ''}" data-action="shop-mode" data-mode="day">Per day</button>
+    </div>`;
+    const dayChips = byDay ? `<div class="day-chips">${days.map((d) => `<button class="${d === day ? 'on' : ''}${d === today() ? ' is-today' : ''}" data-action="shop-day" data-date="${d}">
+        <small>${esc(fmtDate(d, { weekday: 'short' }))}</small>${parseDate(d).getDate()}</button>`).join('')}</div>` : '';
+
+    let body;
+    if (!list.length) {
+      body = `<div class="muted small center" style="padding:14px 4px">${hasDaily
+        ? 'Nothing to buy for this day.'
+        : 'Your coach hasn\'t added daily amounts yet. Ask them to add "days" to the shopping list items.'}</div>`;
+    } else {
+      const groups = {};
+      list.forEach((x) => { (groups[x.cat] = groups[x.cat] || []).push(x); });
+      body = Object.keys(groups).map((cat) => `
+        ${cat ? `<div class="shop-cat">${esc(cat)}</div>` : ''}
+        <ul class="shop">${groups[cat].map((x) => `<li><label>
+          <input type="checkbox" data-shop="${esc(x.key)}"${ticks[x.key] ? ' checked' : ''}>
+          <span class="box">${check}</span><span class="txt">${esc(x.name)}</span>${x.qty ? `<span class="qty">${esc(x.qty)}</span>` : ''}
+        </label></li>`).join('')}</ul>`).join('');
+    }
+    return `<div class="section"><h3><span>Shopping list · ${done}/${list.length}</span>${done ? '<button class="btn small" data-action="shop-clear">Untick all</button>' : ''}</h3>
+      ${toggle}${dayChips}
+      <div class="card">${byDay && list.length ? `<div class="muted small" style="margin-bottom:4px">Amounts for ${esc(fmtLong(day))}</div>` : ''}${body}</div></div>`;
   }
 
   function viewFood() {
@@ -714,23 +1094,10 @@
     const todayType = txt(obj(mealsOn(t)[0]).day_type);
 
     html += safe(() => {
-      const dts = Object.keys(dayTypes()).filter((k) => Object.keys(obj(dayTypes()[k])).length);
-      if (!dts.length) return '';
-      const cell = (v) => `<div class="n">${isNum(v) && v > 0 ? esc(num(v)) : '–'}</div>`;
-      return `<div class="section" style="margin-top:0"><h3>Daily targets</h3><div class="targets-grid">
-        <div class="target-row head"><div>Day type</div><div class="n">Carbs g</div><div class="n">Protein g</div><div class="n">kcal</div></div>
-        ${dts.map((k) => {
-          const d = obj(dayTypes()[k]);
-          return `<div class="target-row${k === todayType ? ' hl' : ''}"><div class="dt">${esc(prettify(k))}</div>${cell(d.carbs_g)}${cell(d.protein_g)}${cell(d.kcal)}</div>`;
-        }).join('')}
-      </div>${todayType ? `<div class="muted small" style="margin:8px 2px 0">Today's day type: <b>${esc(prettify(todayType))}</b> (highlighted).</div>` : ''}</div>`;
-    }, 'the daily targets');
-
-    html += safe(() => {
       const meals = arr(nutrition().meals).map(obj).filter((m) => Object.keys(m).length)
         .sort((a, b) => (normDate(a.date) < normDate(b.date) ? -1 : 1));
       if (!meals.length) return '';
-      return `<div class="section"><h3>Meal plan</h3>${meals.map((m) => {
+      return `<div class="section" style="margin-top:0"><h3>Meal plan</h3>${meals.map((m) => {
         const ds = normDate(m.date);
         const dt = txt(m.day_type);
         const items = arr(m.items).map(mealItemHTML).filter(Boolean).join('');
@@ -742,24 +1109,19 @@
     }, 'the meal plan');
 
     html += safe(() => {
-      const list = arr(nutrition().shopping_list).map(shopItemParts).filter((x) => x.name);
-      if (!list.length) return '';
-      const ticks = shopTicks();
-      const done = list.filter((x) => ticks[x.name]).length;
-      const check = '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
-      // group by category if the coach used categories
-      const groups = {};
-      list.forEach((x) => { (groups[x.cat] = groups[x.cat] || []).push(x); });
-      const body = Object.keys(groups).map((cat) => `
-        ${cat ? `<div class="muted small" style="font-weight:650;margin:12px 2px 2px">${esc(cat)}</div>` : ''}
-        <ul class="shop">${groups[cat].map((x) => `<li><label>
-          <input type="checkbox" data-shop="${esc(x.name)}"${ticks[x.name] ? ' checked' : ''}>
-          <span class="box">${check}</span><span class="txt">${esc(x.name)}</span>${x.qty ? `<span class="qty">${esc(x.qty)}</span>` : ''}
-        </label></li>`).join('')}</ul>`).join('');
-      return `<div class="section"><h3><span>Shopping list · ${done}/${list.length}</span>${done ? '<button class="btn small" data-action="shop-clear">Untick all</button>' : ''}</h3>
-        <div class="card">${body}</div></div>`;
-    }, 'the shopping list');
+      const dts = Object.keys(dayTypes()).filter((k) => Object.keys(obj(dayTypes()[k])).length);
+      if (!dts.length) return '';
+      const cell = (v) => `<div class="n">${isNum(v) && v > 0 ? esc(num(v)) : '–'}</div>`;
+      return `<div class="section"><h3>Daily targets</h3><div class="targets-grid">
+        <div class="target-row head"><div>Day type</div><div class="n">Carbs g</div><div class="n">Protein g</div><div class="n">kcal</div></div>
+        ${dts.map((k) => {
+          const d = obj(dayTypes()[k]);
+          return `<div class="target-row${k === todayType ? ' hl' : ''}"><div class="dt">${esc(prettify(k))}</div>${cell(d.carbs_g)}${cell(d.protein_g)}${cell(d.kcal)}</div>`;
+        }).join('')}
+      </div>${todayType ? `<div class="muted small" style="margin:8px 2px 0">Today's day type: <b>${esc(prettify(todayType))}</b> (highlighted).</div>` : ''}</div>`;
+    }, 'the daily targets');
 
+    html += safe(shoppingHTML, 'the shopping list');
     return html;
   }
 
@@ -790,13 +1152,18 @@
     if (c.stress) feel.push(`stress ${c.stress}/5`);
     if (feel.length) lines.push(feel.join(', '));
     if (c.fuelled) lines.push(`Fuelled as planned: ${c.fuelled}`);
+    const meals = Object.entries(obj(c.meal_log));
+    if (meals.length) {
+      const words = { done: 'done', half: 'half', no: 'skipped' };
+      lines.push('Meals: ' + meals.map(([k, v]) => `${k} ${words[v] || v}`).join(', '));
+    }
     if (c.notes) lines.push(`Notes: ${c.notes}`);
     return lines;
   }
 
-  function checkinsText() {
+  function checkinsText(onlyDate) {
     const all = getCheckins();
-    const dates = Object.keys(all).sort();
+    const dates = onlyDate ? [onlyDate].filter((d) => all[d]) : Object.keys(all).sort();
     const name = txt(obj(P().athlete).name);
     const out = [`Check-ins${name ? ' – ' + name : ''} (${dates.length}, copied ${today()})`, ''];
     dates.forEach((d) => {
@@ -892,6 +1259,11 @@
     if (!Object.keys(c).length) { toast('Nothing filled in yet'); return; }
     c.saved_at = new Date().toISOString();
     const all = getCheckins();
+    // keep the answers given on the Today screen (meals, workout steps)
+    const old = obj(all[ds]);
+    if (old.steps) c.steps = old.steps;
+    if (old.meal_log) c.meal_log = old.meal_log;
+    if (old.what_auto && c.what === old.what_auto) c.what_auto = old.what_auto;
     all[ds] = c;
     if (!lsSet(LS.checkins, all)) { toast('Could not save on this phone'); return; }
     toast('Check-in saved ✓');
@@ -1160,12 +1532,43 @@
     if (action === 'back') {
       if (state.navDepth > 0) history.back();
       else location.hash = '#today';
+    } else if (action === 'flow') {
+      const ds = today();
+      const step = dayFlow(ds).find((s) => s.id === el.dataset.step);
+      if (!step) return;
+      answerStep(ds, step, el.dataset.value);
+      afterAnswer(ds, step.id);
+    } else if (action === 'flow-focus') {
+      goToStep(el.dataset.step);
+    } else if (action === 'flow-later') {
+      const next = nextOpenStep(today(), el.dataset.step);
+      goToStep(next ? next.id : '');
+    } else if (action === 'step-num') {
+      const input = el.closest('form').querySelector(`input[name="${el.dataset.target}"]`);
+      const cur = parseFloat(input.value);
+      const v = isNaN(cur) ? parseFloat(el.dataset.start) : cur + parseFloat(el.dataset.delta);
+      input.value = String(Math.max(0, Math.min(24, v)));
+    } else if (action === 'copy-today') {
+      const ok = await copyText(checkinsText(today()));
+      toast(ok ? 'Copied! Paste it into your coach chat.' : "Couldn't copy. Try again.");
+    } else if (action === 'shop-mode') {
+      state.shopMode = el.dataset.mode;
+      render(true);
+    } else if (action === 'shop-day') {
+      state.shopDay = el.dataset.date;
+      render(true);
     } else if (action === 'week') {
       const dir = +el.dataset.dir;
       state.weekOffset = dir === 0 ? 0 : state.weekOffset + dir;
       render(true);
     } else if (action === 'shop-clear') {
-      lsSet(LS.shop, { plan: shopKey(), ticked: {} });
+      // only untick the list you are looking at (the week, or the chosen day)
+      const ticks = shopTicks();
+      Object.keys(ticks).forEach((k) => {
+        const isDay = k.indexOf('|') === 10;
+        if (state.shopMode === 'day' ? k.startsWith(state.shopDay + '|') : !isDay) delete ticks[k];
+      });
+      lsSet(LS.shop, { plan: shopKey(), ticked: ticks });
       render(true);
     } else if (action === 'copy-checkins') {
       const ok = await copyText(checkinsText());
@@ -1230,6 +1633,20 @@
     if (e.target.id === 'ciForm') {
       e.preventDefault();
       saveCheckin(e.target);
+    } else if (e.target.dataset.flowForm) {
+      // a form step on the Today screen (morning / session / wrap-up)
+      e.preventDefault();
+      const kind = e.target.dataset.flowForm;
+      const fd = new FormData(e.target);
+      const fields = { morning: ['sleep_h', 'legs', 'stress'], session: ['duration_min', 'power_w', 'hr_bpm', 'rpe', 'fuelled'], wrap: ['notes'] }[kind] || [];
+      const patch = {};
+      fields.forEach((f) => { patch[f] = String(fd.get(f) || '').trim(); });
+      const ds = today();
+      updateCheckin(ds, patch);
+      const step = dayFlow(ds).find((s) => s.id === kind);
+      if (step) answerStep(ds, step, 'done');
+      if (document.activeElement) document.activeElement.blur();
+      afterAnswer(ds, kind);
     }
   });
 
