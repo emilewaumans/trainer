@@ -38,10 +38,12 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; height: 100%; }
 
 body {
   margin: 0;
+  min-height: 100%;
+  min-height: 100dvh;
   background: var(--bg);
   color: var(--text);
   font: 16px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
@@ -85,6 +87,10 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 /* ---------- main view ---------- */
 .view {
   max-width: 640px; margin: 0 auto;
+  /* every page is at least as tall as the screen, so the iPhone keeps
+     the bottom tab bar in place on short pages (like Goals) too */
+  min-height: 100vh;
+  min-height: 100dvh;
   padding: calc(var(--topbar-h) + var(--safe-top) + 16px) 16px calc(var(--tabbar-h) + var(--safe-bottom) + 28px);
 }
 .loading, .empty { color: var(--muted); text-align: center; padding: 48px 16px; }
@@ -111,6 +117,10 @@ svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width:
 .page-head .eyebrow { color: var(--accent); font-size: 13px; font-weight: 650; text-transform: uppercase; letter-spacing: 0.06em; }
 .page-head h2 { margin: 2px 0 0; font-size: 28px; line-height: 1.15; font-weight: 750; letter-spacing: -0.01em; }
 .page-head .sub { color: var(--muted); margin-top: 6px; }
+.head-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.week-total { text-align: right; flex: none; }
+.week-total .v { font-size: 20px; font-weight: 800; color: var(--accent); white-space: nowrap; }
+.week-total .l { font-size: 12px; color: var(--muted); font-weight: 600; }
 
 .section { margin: 26px 0 0; }
 .section > h3 {

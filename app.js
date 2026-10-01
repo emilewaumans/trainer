@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.2.0';
+  const APP_VERSION = '1.3.0';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -855,7 +855,20 @@
     if (!state.plan) return `<div class="page-head"><div class="eyebrow">Agenda</div><h2>Your week</h2></div>` + noPlanHTML();
     const bs = blockStatus(today());
     const b = obj(P().block);
-    let html = `<div class="page-head"><div class="eyebrow">Agenda</div><h2>Your week</h2></div>`;
+    let html = safe(() => {
+      // Total planned training time for the week shown (rest days don't count)
+      const mon = addDays(mondayOf(new Date()), state.weekOffset * 7);
+      let sec = 0, sessions = 0;
+      for (let i = 0; i < 7; i++) {
+        workoutsOn(iso(addDays(mon, i))).forEach((x) => {
+          if (txt(x.w.type) === 'rest') return;
+          const s = isNum(x.w.duration_min) && x.w.duration_min > 0 ? x.w.duration_min * 60 : workoutTotalSec(x.w);
+          if (s > 0) { sec += s; sessions++; }
+        });
+      }
+      const total = sec ? `<div class="week-total"><div class="v">⏱ ${esc(fmtDur(sec))}</div><div class="l">${sessions} session${sessions === 1 ? '' : 's'} planned</div></div>` : '';
+      return `<div class="page-head"><div class="eyebrow">Agenda</div><div class="head-row"><h2>Your week</h2>${total}</div></div>`;
+    }, 'the week total');
 
     html += safe(() => {
       const mon = addDays(mondayOf(new Date()), state.weekOffset * 7);
