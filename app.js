@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.3.0';
+  const APP_VERSION = '1.4.0';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -159,6 +159,8 @@
     long_ride_intervals: { label: 'Long ride + intervals', icon: '🛣️', cls: 't-long' },
     strength: { label: 'Strength', icon: '🏋️', cls: 't-strength' },
     benchmark_test: { label: 'Benchmark test', icon: '📊', cls: 't-hard' },
+    run: { label: 'Run', icon: '🏃', cls: 't-run' },
+    swim: { label: 'Swim', icon: '🏊', cls: 't-swim' },
   };
   function typeInfo(t) {
     return TYPES[t] || { label: prettify(t) || 'Workout', icon: '•', cls: 't-other' };

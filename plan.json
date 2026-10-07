@@ -1,12 +1,12 @@
 {
   "version": 1,
-  "updated": "2026-09-30",
+  "updated": "2026-10-07",
   "athlete": {
     "name": "Emile",
-    "ftp_w": 250,
-    "cp_w": 245,
-    "best_5min_w": 300,
-    "max_hr": 188,
+    "ftp_w": 275,
+    "cp_w": null,
+    "best_5min_w": null,
+    "max_hr": null,
     "weight_kg": 75
   },
   "zones": [
@@ -15,536 +15,1514 @@
       "name": "Recovery",
       "power_w": [
         0,
-        137
+        150
       ],
-      "hr_bpm": [
-        0,
-        120
-      ],
-      "feel": "Truly easy, could chat all day"
+      "hr_bpm": null,
+      "feel": "Truly easy. If you have to think about the effort, it's too hard."
     },
     {
       "id": "Z2",
       "name": "Endurance",
       "power_w": [
-        138,
-        187
+        150,
+        205
       ],
-      "hr_bpm": [
-        121,
-        145
-      ],
-      "feel": "Comfortable, full sentences"
+      "hr_bpm": null,
+      "feel": "Bulk of your riding. Conversation pace, RPE 3-4. Long-ride target 150-190 W. After 2 h the ceiling drops about 10%, so go by feel."
     },
     {
       "id": "Z3",
       "name": "Tempo",
       "power_w": [
-        188,
-        225
+        210,
+        245
       ],
-      "hr_bpm": [
-        146,
-        160
-      ],
-      "feel": "Steady pressure, short sentences"
+      "hr_bpm": null,
+      "feel": "Sustained, controlled breathing, RPE 5-6 (about 80-90% of 275 W)."
     },
     {
       "id": "Z4",
       "name": "Threshold and above",
       "power_w": [
-        226,
-        450
+        250,
+        900
       ],
-      "hr_bpm": [
-        161,
-        188
-      ],
-      "feel": "Hard, a few words at a time"
+      "hr_bpm": null,
+      "feel": "From about 250 W up. Threshold and VO2max efforts, coached by cue rather than fixed watts."
     }
   ],
   "goals": [
     {
       "id": "g1",
-      "title": "Gran Fondo 150 km",
-      "date": "2027-05-01",
-      "metric": "Finish 150 km strong, under 5 h 30 min",
-      "status": "active",
-      "start": "2026-09-01"
+      "title": "FTP test #1 (baseline)",
+      "date": "2026-10-13",
+      "metric": "Real starting FTP and best 5-min power; resets zones and interval targets",
+      "status": "active"
     },
     {
       "id": "g2",
-      "title": "FTP test",
-      "date": "2026-12-19",
-      "metric": "FTP 265 W (from 250 W)",
-      "status": "active",
-      "start": "2026-09-28"
+      "title": "Friday swim starts (4th training day)",
+      "date": "2026-10-16",
+      "metric": "First Friday-evening swim in Bornem",
+      "status": "active"
+    },
+    {
+      "id": "g3",
+      "title": "FTP test #2",
+      "date": "2026-11-05",
+      "metric": "Compare FTP and 5-min power with the 13 Oct baseline",
+      "status": "active"
+    },
+    {
+      "id": "g4",
+      "title": "Olympic triathlon (date to be confirmed)",
+      "date": "2027-07-04",
+      "metric": "Placeholder date: the real date will replace it",
+      "status": "active"
+    },
+    {
+      "id": "g5",
+      "title": "Ironman 70.3 Vichy",
+      "date": "2027-08-22",
+      "metric": "Main goal of the year: race it. 1.9 km swim, 90 km bike, 21.1 km run",
+      "status": "active"
+    },
+    {
+      "id": "g6",
+      "title": "Bike ultra (date to be confirmed)",
+      "date": "2027-09-18",
+      "metric": "Goal: win. Placeholder date: the real date will replace it",
+      "status": "active"
     }
   ],
   "block": {
-    "name": "Build 1",
-    "start": "2026-09-28",
+    "name": "Base 1",
+    "start": "2026-10-12",
     "weeks": 4,
-    "focus": "Long rides + VO2max",
+    "focus": "restart and routine, baseline FTP, running and swim technique, kettlebell habit",
     "light_week": 4
   },
   "workouts": [
     {
-      "date": "2026-09-28",
-      "type": "rest",
-      "title": "Rest day",
-      "purpose": "Absorb last week's training. A short walk is fine.",
-      "cue": "Put your feet up. Sleep is training too."
-    },
-    {
-      "date": "2026-09-29",
-      "type": "vo2_intervals",
-      "title": "30/15s, 3 sets",
-      "duration_min": 70,
-      "zone": "Z4",
-      "purpose": "Maximum time near VO2max",
+      "date": "2026-10-08",
+      "type": "easy",
+      "title": "Restart ride, 75 min easy",
+      "duration_min": 75,
+      "zone": "Z2",
+      "purpose": "Restart the routine gently after bad sleep and with a sore left calf. Today is about checking how the calf and legs feel.",
       "steps": [
         {
-          "min": 20,
+          "min": 10,
+          "zone": "Z1",
+          "target": "Ease in, under 150 W, RPE 2, chat pace"
+        },
+        {
+          "min": 55,
           "zone": "Z2",
-          "target": "Warm-up, build gradually"
+          "target": "150-190 W, RPE 3-4, steady, cadence 85-95"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Cool-down, easy spinning"
+        }
+      ],
+      "cue": "Slept badly again? Cut it to 45 minutes. Nothing today needs to be hard. Rate your left calf 0-10 afterwards: above 4, or a changed pedal stroke, means stop and ease off.",
+      "fuel": {
+        "before": "As soon as you wake (30-45 min before the ride): 1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach.",
+        "during_carbs_g_per_h": 30,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Banana milk is a good first drink."
+      }
+    },
+    {
+      "date": "2026-10-08",
+      "type": "strength",
+      "title": "Kettlebell, 20 min (technique)",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "Build kettlebell technique first. Strength for durability, with the habit before the load.",
+      "steps": [
+        {
+          "min": 4,
+          "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles, cat-cow"
+        },
+        {
+          "min": 10,
+          "target": "Two-hand swing with the 16 kg bell: 5 sets of 10, rest 60 s. The hips do the work, arms just hang on"
+        },
+        {
+          "min": 5,
+          "target": "Goblet squat: 3 sets of 8, slow on the way down"
+        },
+        {
+          "min": 1,
+          "target": "Plank: 2 x 30 s"
+        }
+      ],
+      "cue": "Swings are a hip hinge, not a squat. Back flat. If your lower back complains, stop and tell me.",
+      "fuel": {
+        "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
+        "during_carbs_g_per_h": 0,
+        "after": "25-40 g protein within 2 hours, banana milk or yoghurt works."
+      }
+    },
+    {
+      "date": "2026-10-09",
+      "type": "rest",
+      "title": "Rest day (travel home)",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "Rest before the first weekend of the plan. No ride home yet: the base, the calf and the sleep need a few weeks first.",
+      "steps": [],
+      "cue": "Train home. Eat normally. Aim to be in bed before midnight.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-10-10",
+      "type": "rest",
+      "title": "Rest day (away)",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "You are away all day. A full rest day is part of the plan.",
+      "steps": [],
+      "cue": "Nothing to do. Sleep and eat well.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-10-11",
+      "type": "run",
+      "title": "Easy run, 30 min",
+      "duration_min": 40,
+      "zone": "Z2",
+      "purpose": "Rebuild running durability slowly: tendons and calves adapt slower than your fitness does. First run of the plan: keep it short.",
+      "steps": [
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Brisk walk to warm up"
+        },
+        {
+          "min": 30,
+          "zone": "Z2",
+          "target": "Easy run, RPE 3-4, you can talk in sentences. About 6:00-6:30 per km is fine. Walk breaks allowed"
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Walk and stretch calves and hips"
+        }
+      ],
+      "cue": "Easy means you could run it again tomorrow. Same effort as your run on 4 October or easier. Calf pinching? Walk it out and stop.",
+      "fuel": {
+        "before": "Breakfast 1-2 hours before: bread or oats with a banana.",
+        "during_carbs_g_per_h": 0,
+        "after": "Family lunch: a palm-sized portion of protein, a big portion of pasta, potatoes or rice, plus vegetables."
+      }
+    },
+    {
+      "date": "2026-10-12",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "Recovery after the first run and before the FTP test tomorrow. Sleep matters most today.",
+      "steps": [],
+      "cue": "Lights out before 23:30 tonight: the FTP test is at 7-8 in the morning.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-10-13",
+      "type": "benchmark_test",
+      "title": "FTP test #1: baseline",
+      "duration_min": 75,
+      "zone": "Z4",
+      "purpose": "Get your real starting numbers. The best 5-min power sets the 30/15 targets and FTP resets your zones.",
+      "steps": [
+        {
+          "min": 15,
+          "zone": "Z2",
+          "target": "Easy warm-up, 150-190 W"
         },
         {
           "repeat": 3,
+          "rest_between_min": 1,
+          "steps": [
+            {
+              "min": 1,
+              "zone": "Z4",
+              "target": "Build to about 300 W"
+            }
+          ]
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Easy spin"
+        },
+        {
+          "min": 5,
+          "zone": "Z4",
+          "target": "5-minute max: start controlled, hold an even pace, empty in the last 30 seconds. Write down the average power"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Easy spin, recover fully"
+        },
+        {
+          "min": 20,
+          "zone": "Z4",
+          "target": "20-minute max, even pace. Average power x 0.95 = your FTP. Write it down"
+        },
+        {
+          "min": 15,
+          "zone": "Z1",
+          "target": "Cool-down, easy spinning"
+        }
+      ],
+      "cue": "Same Kickr setup as your last two tests, so the number compares. Slept badly or ill? Move it to Thursday 15 Oct. Even pacing wins: a fast first minute ruins the rest.",
+      "fuel": {
+        "before": "Carb breakfast 2-3 h before (oats + banana + bread with Nutella). Banana or a gel 30 min before. Fresh legs matter: no kettlebell the day before.",
+        "during_carbs_g_per_h": 40,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Banana milk is a good first drink."
+      }
+    },
+    {
+      "date": "2026-10-14",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "Absorb the test. Send me your 5-min and 20-min averages.",
+      "steps": [],
+      "cue": "Nothing to do. Sleep and eat well.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-10-15",
+      "type": "easy",
+      "title": "Z2 base ride, 90 min",
+      "duration_min": 90,
+      "zone": "Z2",
+      "purpose": "Steady aerobic base after the test. Thursday is the long-ride day and it grows week by week.",
+      "steps": [
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Ease in, under 150 W, RPE 2, chat pace"
+        },
+        {
+          "min": 70,
+          "zone": "Z2",
+          "target": "150-190 W, RPE 3-4, steady, cadence 85-95"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Cool-down, easy spinning"
+        }
+      ],
+      "cue": "Boring is right. If power creeps above 190 W, ease off. Rate your left calf 0-10 afterwards: above 4, or a changed pedal stroke, means stop and ease off.",
+      "fuel": {
+        "before": "As soon as you wake (30-45 min before the ride): 1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach.",
+        "during_carbs_g_per_h": 30,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Banana milk is a good first drink."
+      }
+    },
+    {
+      "date": "2026-10-15",
+      "type": "strength",
+      "title": "Kettlebell, 20 min (technique)",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "Build kettlebell technique first. Strength for durability, with the habit before the load.",
+      "steps": [
+        {
+          "min": 4,
+          "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles, cat-cow"
+        },
+        {
+          "min": 10,
+          "target": "Two-hand swing with the 16 kg bell: 5 sets of 10, rest 60 s. The hips do the work, arms just hang on"
+        },
+        {
+          "min": 5,
+          "target": "Goblet squat: 3 sets of 8, slow on the way down"
+        },
+        {
+          "min": 1,
+          "target": "Plank: 2 x 30 s"
+        }
+      ],
+      "cue": "Swings are a hip hinge, not a squat. Back flat. If your lower back complains, stop and tell me.",
+      "fuel": {
+        "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
+        "during_carbs_g_per_h": 0,
+        "after": "25-40 g protein within 2 hours, banana milk or yoghurt works."
+      }
+    },
+    {
+      "date": "2026-10-16",
+      "type": "swim",
+      "title": "Swim, 30 min (technique)",
+      "duration_min": 30,
+      "zone": "Z1-Z2",
+      "purpose": "First swim of the plan, and the 4th training day. Technique and comfort, not speed.",
+      "steps": [
+        {
+          "min": 6,
+          "target": "Warm-up: 200 m easy, any stroke you like"
+        },
+        {
+          "min": 8,
+          "target": "Drills: 4 x 50 m, 15 s rest. Kick on your side, then catch-up crawl"
+        },
+        {
+          "min": 12,
+          "target": "Main: 4 x 100 m crawl, 30 s rest. Breathe every 3 strokes, count your strokes"
+        },
+        {
+          "min": 4,
+          "target": "Cool-down: 100 m easy"
+        }
+      ],
+      "cue": "Never go hard. If you get tired, rest 30 more seconds. The coach you may get later will build on this.",
+      "fuel": {
+        "before": "Banana + bread with Nutella (or a bar) 60-90 min before the pool.",
+        "during_carbs_g_per_h": 0,
+        "after": "Dinner at home with protein and carbs within 2 hours."
+      }
+    },
+    {
+      "date": "2026-10-17",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "Rest before the Sunday run.",
+      "steps": [],
+      "cue": "Nothing to do.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-10-18",
+      "type": "run",
+      "title": "Easy run, 35 min",
+      "duration_min": 45,
+      "zone": "Z2",
+      "purpose": "Rebuild running durability slowly: tendons and calves adapt slower than your fitness does. Five minutes longer than last week.",
+      "steps": [
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Brisk walk to warm up"
+        },
+        {
+          "min": 35,
+          "zone": "Z2",
+          "target": "Easy run, RPE 3-4, you can talk in sentences. About 6:00-6:30 per km is fine. Walk breaks allowed"
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Walk and stretch calves and hips"
+        }
+      ],
+      "cue": "Easy means you could run it again tomorrow. Same effort as your run on 4 October or easier. Calf pinching? Walk it out and stop.",
+      "fuel": {
+        "before": "Breakfast 1-2 hours before: bread or oats with a banana.",
+        "during_carbs_g_per_h": 0,
+        "after": "Family lunch: a palm-sized portion of protein, a big portion of pasta, potatoes or rice, plus vegetables."
+      }
+    },
+    {
+      "date": "2026-10-19",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "Recovery after the run.",
+      "steps": [],
+      "cue": "Nothing to do. Bed before midnight.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-10-20",
+      "type": "vo2_intervals",
+      "title": "30/15s, 2 sets (first time)",
+      "duration_min": 80,
+      "zone": "Z4",
+      "purpose": "Maximum time near VO2max. Short surges feel easier than long intervals but give you more time at your limit.",
+      "steps": [
+        {
+          "min": 25,
+          "zone": "Z2",
+          "target": "Warm-up, build gradually from 150 to 200 W"
+        },
+        {
+          "repeat": 3,
+          "rest_between_min": 1,
+          "steps": [
+            {
+              "min": 1,
+              "zone": "Z4",
+              "target": "Build to about 300 W"
+            }
+          ]
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Easy spin"
+        },
+        {
+          "repeat": 2,
           "rest_between_min": 3,
           "steps": [
             {
               "repeat": 13,
               "on_s": 30,
               "off_s": 15,
-              "on_target": "Best 5-min power (~300 W)",
-              "off_target": "Half of on-power (~150 W)"
+              "on_target": "your best 5-min power from the 13 Oct test (about 300-330 W until it is measured)",
+              "off_target": "half of the on-power, easy spinning"
             }
           ]
         },
         {
-          "min": 15,
-          "zone": "Z1",
-          "target": "Cool-down"
-        }
-      ],
-      "cue": "Rep 1 on target, middle on feel, last set strong and empty",
-      "fuel": {
-        "before": "Carb meal 2-3 h before",
-        "during_carbs_g_per_h": 40,
-        "after": "20-40 g protein + carbs"
-      }
-    },
-    {
-      "date": "2026-09-30",
-      "type": "easy",
-      "title": "Easy spin",
-      "duration_min": 60,
-      "zone": "Z2",
-      "purpose": "Aerobic base without extra fatigue",
-      "steps": [
-        {
-          "min": 60,
+          "min": 12,
           "zone": "Z2",
-          "target": "Low Z2, relaxed cadence 85-95 rpm"
+          "target": "Easy Z2 spin, 150-180 W"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Cool-down, easy spinning"
         }
       ],
-      "cue": "If it feels like training, you're going too hard.",
+      "cue": "Rep 1 on target, the middle on feel, the last set strong and empty. New to 30/15s: 2 sets only. Power more than 10% under target: end the set. Rate your left calf 0-10 afterwards: above 4, or a changed pedal stroke, means stop and ease off.",
       "fuel": {
-        "before": "Normal meal",
-        "during_carbs_g_per_h": 0,
-        "after": "Normal meal"
+        "before": "Carb breakfast 2-3 h before (oats + banana). Banana or a gel 30-45 min before. No hard session on an empty stomach.",
+        "during_carbs_g_per_h": 40,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Banana milk is a good first drink."
       }
     },
     {
-      "date": "2026-09-30",
+      "date": "2026-10-20",
       "type": "strength",
-      "title": "Strength: legs + core",
-      "duration_min": 35,
-      "purpose": "Keep strength for climbing and injury prevention",
+      "title": "Kettlebell, 27 min (build)",
+      "duration_min": 27,
+      "zone": "Z1-Z2",
+      "purpose": "Build strength capacity with the 16 kg bell: more sets and slower reps instead of more weight.",
       "steps": [
         {
           "min": 5,
-          "target": "Warm-up: mobility, bodyweight squats"
+          "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles, cat-cow"
         },
         {
-          "repeat": 3,
-          "rest_between_min": 1.5,
-          "steps": [
-            {
-              "min": 1,
-              "target": "Goblet squat × 10"
-            },
-            {
-              "min": 1,
-              "target": "Romanian deadlift × 10"
-            },
-            {
-              "min": 1,
-              "target": "Split squat × 8 each leg"
-            }
-          ]
+          "min": 8,
+          "target": "Two-hand swing: 6 sets of 10, rest 45 s"
         },
         {
-          "repeat": 2,
-          "rest_between_min": 1,
-          "steps": [
-            {
-              "min": 1,
-              "target": "Plank 45 s"
-            },
-            {
-              "min": 1,
-              "target": "Side plank 30 s each side"
-            }
-          ]
+          "min": 6,
+          "target": "Goblet squat: 3 sets of 10"
+        },
+        {
+          "min": 5,
+          "target": "One-arm row: 3 sets of 8 per side"
+        },
+        {
+          "min": 3,
+          "target": "Plank 2 x 40 s and side plank 2 x 25 s per side"
         }
       ],
-      "cue": "Controlled and clean. Stop 2 reps before failure.",
+      "cue": "Stop every set with 2 clean reps left. Technique over numbers.",
       "fuel": {
-        "after": "20-30 g protein within an hour"
-      }
-    },
-    {
-      "date": "2026-10-01",
-      "type": "tempo",
-      "title": "Tempo 3 × 12 min",
-      "duration_min": 75,
-      "zone": "Z3",
-      "purpose": "Muscular endurance at a steady, sustainable effort",
-      "steps": [
-        {
-          "min": 15,
-          "zone": "Z2",
-          "target": "Warm-up"
-        },
-        {
-          "repeat": 3,
-          "rest_between_min": 5,
-          "steps": [
-            {
-              "min": 12,
-              "zone": "Z3",
-              "target": "200-220 W, steady"
-            }
-          ]
-        },
-        {
-          "min": 14,
-          "zone": "Z1",
-          "target": "Cool-down"
-        }
-      ],
-      "cue": "Smooth and even. Don't let the power creep up.",
-      "fuel": {
-        "before": "Carb meal 2-3 h before",
-        "during_carbs_g_per_h": 40,
-        "after": "20-40 g protein + carbs"
-      }
-    },
-    {
-      "date": "2026-10-02",
-      "type": "easy",
-      "title": "Easy ride",
-      "duration_min": 60,
-      "zone": "Z2",
-      "purpose": "Easy volume, freshen up for the weekend",
-      "steps": [
-        {
-          "min": 60,
-          "zone": "Z2",
-          "target": "Easy, conversational"
-        }
-      ],
-      "cue": "Keep it easy. Tomorrow is the big one.",
-      "fuel": {
-        "before": "Normal meal",
+        "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
         "during_carbs_g_per_h": 0,
-        "after": "Carb-rich dinner for tomorrow"
+        "after": "25-40 g protein within 2 hours, banana milk or yoghurt works."
       }
     },
     {
-      "date": "2026-10-03",
-      "type": "long_ride_intervals",
-      "title": "3 h with sweet spot in the last hour",
-      "duration_min": 180,
+      "date": "2026-10-21",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "Rest before the school trip.",
+      "steps": [],
+      "cue": "Nothing to do. Pack and sleep well.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-10-22",
+      "type": "rest",
+      "title": "School trip, no training",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "School trip: this is a free day. No make-up session, the fixed days stay the same.",
+      "steps": [],
+      "cue": "Walk as much as you like. No extra training to catch up.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-10-23",
+      "type": "rest",
+      "title": "School trip, no training",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "School trip. No swim this Friday, no make-up.",
+      "steps": [],
+      "cue": "Eat regular meals and sleep when you can.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-10-24",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "Rest after the trip.",
+      "steps": [],
+      "cue": "Nothing to do. Clocks go back tonight: you gain an hour of sleep.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-10-25",
+      "type": "run",
+      "title": "Easy run, 40 min",
+      "duration_min": 50,
       "zone": "Z2",
-      "purpose": "Endurance plus working hard on tired legs",
+      "purpose": "Rebuild running durability slowly: tendons and calves adapt slower than your fitness does. Five more minutes, and a lighter week behind you because of the trip.",
       "steps": [
         {
-          "min": 120,
+          "min": 5,
+          "zone": "Z1",
+          "target": "Brisk walk to warm up"
+        },
+        {
+          "min": 40,
           "zone": "Z2",
-          "target": "Steady endurance"
+          "target": "Easy run, RPE 3-4, you can talk in sentences. About 6:00-6:30 per km is fine. Walk breaks allowed"
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Walk and stretch calves and hips"
+        }
+      ],
+      "cue": "Easy means you could run it again tomorrow. Same effort as your run on 4 October or easier. Calf pinching? Walk it out and stop.",
+      "fuel": {
+        "before": "Breakfast 1-2 hours before: bread or oats with a banana.",
+        "during_carbs_g_per_h": 0,
+        "after": "Family lunch: a palm-sized portion of protein, a big portion of pasta, potatoes or rice, plus vegetables."
+      }
+    },
+    {
+      "date": "2026-10-26",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "Recovery. Tomorrow is the first 4 x 4 min of the plan.",
+      "steps": [],
+      "cue": "Bed before 23:30.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-10-27",
+      "type": "vo2_intervals",
+      "title": "VO2max 4 x 4 min (fast start)",
+      "duration_min": 75,
+      "zone": "Z4",
+      "purpose": "Raise your ceiling with long intervals. A fast first two minutes, then settle, gives more time near VO2max than a steady effort.",
+      "steps": [
+        {
+          "min": 20,
+          "zone": "Z2",
+          "target": "Warm-up, build gradually from 150 to 200 W"
+        },
+        {
+          "repeat": 3,
+          "rest_between_min": 2,
+          "steps": [
+            {
+              "min": 1,
+              "zone": "Z4",
+              "target": "Build to about 300 W, smooth"
+            }
+          ]
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Easy spin"
         },
         {
           "repeat": 4,
           "rest_between_min": 4,
           "steps": [
             {
-              "min": 8,
-              "zone": "Z3",
-              "target": "220-235 W (high Z3 / low Z4)"
+              "min": 4,
+              "zone": "Z4",
+              "target": "First 2 min hard, then settle at what you can hold. Watts will come from the 13 Oct test (about 290-310 W until measured). RPE 8-9"
             }
           ]
         },
         {
-          "min": 16,
+          "min": 15,
           "zone": "Z1",
-          "target": "Easy ride home"
+          "target": "Cool-down, easy spinning"
         }
       ],
-      "cue": "Eat early. The intervals only work if you arrive fuelled.",
+      "cue": "Rep 1 on target, reps 2-3 on feel, rep 4 strong and empty. Can't hold the target by rep 2? Rest 5 min and do 3 reps. Rate your left calf 0-10 afterwards: above 4, or a changed pedal stroke, means stop and ease off.",
       "fuel": {
-        "before": "Big carb breakfast 2-3 h before",
-        "during_carbs_g_per_h": 70,
-        "during": "Start eating after 20 min, then every 20 min. 500-750 ml fluid per hour.",
-        "after": "Recovery shake + proper meal within 1 h"
+        "before": "Carb breakfast 2-3 h before (oats + banana). Banana or a gel 30-45 min before.",
+        "during_carbs_g_per_h": 40,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Banana milk is a good first drink."
       }
     },
     {
-      "date": "2026-10-04",
-      "type": "long_ride",
-      "title": "Long endurance ride",
-      "duration_min": 210,
-      "zone": "Z2",
-      "purpose": "Build aerobic engine and practise fuelling",
+      "date": "2026-10-27",
+      "type": "strength",
+      "title": "Kettlebell, 27 min (build)",
+      "duration_min": 27,
+      "zone": "Z1-Z2",
+      "purpose": "Build strength capacity with the 16 kg bell: more sets and slower reps instead of more weight.",
       "steps": [
         {
-          "min": 210,
-          "zone": "Z2",
-          "target": "Steady Z2, keep climbs in Z3 or lower"
+          "min": 5,
+          "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles, cat-cow"
+        },
+        {
+          "min": 8,
+          "target": "Two-hand swing: 6 sets of 10, rest 45 s"
+        },
+        {
+          "min": 6,
+          "target": "Goblet squat: 3 sets of 10"
+        },
+        {
+          "min": 5,
+          "target": "One-arm row: 3 sets of 8 per side"
+        },
+        {
+          "min": 3,
+          "target": "Plank 2 x 40 s and side plank 2 x 25 s per side"
         }
       ],
-      "cue": "Ride with discipline. Finish feeling you could do another hour.",
+      "cue": "Stop every set with 2 clean reps left. Technique over numbers.",
       "fuel": {
-        "before": "Big carb breakfast 2-3 h before",
-        "during_carbs_g_per_h": 70,
-        "during": "Practise race fuelling: gels + bars + drink mix",
-        "after": "Recovery shake + proper meal within 1 h"
+        "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
+        "during_carbs_g_per_h": 0,
+        "after": "25-40 g protein within 2 hours, banana milk or yoghurt works."
+      }
+    },
+    {
+      "date": "2026-10-28",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "Rest before the longest ride so far.",
+      "steps": [],
+      "cue": "Nothing to do. Bed before 23:30.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-10-29",
+      "type": "long_ride_intervals",
+      "title": "Long ride 2.5 h with late tempo",
+      "duration_min": 150,
+      "zone": "Z2 + Z3",
+      "purpose": "Your first longer ride of the plan, with tempo near the end, when you are tired. This is the durability session.",
+      "steps": [
+        {
+          "min": 15,
+          "zone": "Z2",
+          "target": "Easy start, 140-170 W"
+        },
+        {
+          "min": 82,
+          "zone": "Z2",
+          "target": "150-185 W, RPE 3-4. After 2 hours go by feel: the Z2 ceiling drops about 10%"
+        },
+        {
+          "repeat": 2,
+          "rest_between_min": 8,
+          "steps": [
+            {
+              "min": 15,
+              "zone": "Z3",
+              "target": "215-235 W, RPE 6. Can't hold 215 W at RPE 6? Stay in Z2"
+            }
+          ]
+        },
+        {
+          "min": 5,
+          "zone": "Z2",
+          "target": "Easy"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Easy spin home, under 150 W"
+        }
+      ],
+      "cue": "Eat from minute 20 and every 20 minutes. Practise real food too: half a Nutella sandwich or a banana each hour. Cola is allowed in the last hour. Outdoors in daylight if it's dry, otherwise the same session on the Kickr. Rate your left calf 0-10 afterwards: above 4, or a changed pedal stroke, means stop and ease off.",
+      "fuel": {
+        "before": "Breakfast 2-3 h before: oats with banana and bread with Nutella. A banana 30 min before.",
+        "during_carbs_g_per_h": 60,
+        "after": "Within 1 h: rice or potatoes with chicken and vegetables, plus banana milk."
+      }
+    },
+    {
+      "date": "2026-10-29",
+      "type": "strength",
+      "title": "Kettlebell, 20 min (light)",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "Keep the habit on a light week or after a long ride. No fatigue before the next key session.",
+      "steps": [
+        {
+          "min": 5,
+          "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles"
+        },
+        {
+          "min": 7,
+          "target": "Two-hand swing: 4 sets of 10, rest 45 s"
+        },
+        {
+          "min": 5,
+          "target": "Goblet squat: 2 sets of 10"
+        },
+        {
+          "min": 3,
+          "target": "Plank 2 x 30 s, side plank 2 x 20 s per side"
+        }
+      ],
+      "cue": "Easy day for the body. If your legs are heavy, do the warm-up and the plank only.",
+      "fuel": {
+        "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
+        "during_carbs_g_per_h": 0,
+        "after": "25-40 g protein within 2 hours, banana milk or yoghurt works."
+      }
+    },
+    {
+      "date": "2026-10-30",
+      "type": "swim",
+      "title": "Swim, 35 min (technique)",
+      "duration_min": 35,
+      "zone": "Z1-Z2",
+      "purpose": "Second swim: five minutes longer than last time.",
+      "steps": [
+        {
+          "min": 6,
+          "target": "Warm-up: 200 m easy"
+        },
+        {
+          "min": 9,
+          "target": "Drills: 4 x 50 m, 15 s rest. Kick on your side, catch-up crawl"
+        },
+        {
+          "min": 15,
+          "target": "Main: 5 x 100 m crawl, 30 s rest. Breathe every 3 strokes, count strokes"
+        },
+        {
+          "min": 5,
+          "target": "Cool-down: 100 m easy"
+        }
+      ],
+      "cue": "Comfort first. Never go hard.",
+      "fuel": {
+        "before": "Banana + bread with Nutella (or a bar) 60-90 min before the pool.",
+        "during_carbs_g_per_h": 0,
+        "after": "Dinner at home with protein and carbs within 2 hours."
+      }
+    },
+    {
+      "date": "2026-10-31",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "Rest before the Sunday run.",
+      "steps": [],
+      "cue": "Nothing to do.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-11-01",
+      "type": "run",
+      "title": "Easy run, 45 min",
+      "duration_min": 55,
+      "zone": "Z2",
+      "purpose": "Rebuild running durability slowly: tendons and calves adapt slower than your fitness does. The longest run of the block, but still easy.",
+      "steps": [
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Brisk walk to warm up"
+        },
+        {
+          "min": 45,
+          "zone": "Z2",
+          "target": "Easy run, RPE 3-4, you can talk in sentences. About 6:00-6:30 per km is fine. Walk breaks allowed"
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Walk and stretch calves and hips"
+        }
+      ],
+      "cue": "Easy means you could run it again tomorrow. Same effort as your run on 4 October or easier. Calf pinching? Walk it out and stop.",
+      "fuel": {
+        "before": "Breakfast 1-2 hours before: bread or oats with a banana.",
+        "during_carbs_g_per_h": 0,
+        "after": "Family lunch: a palm-sized portion of protein, a big portion of pasta, potatoes or rice, plus vegetables."
+      }
+    },
+    {
+      "date": "2026-11-02",
+      "type": "rest",
+      "title": "Rest day (recovery week)",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "Recovery week starts: about a third less load.",
+      "steps": [],
+      "cue": "Nothing to do. Bed before 23:30.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-11-03",
+      "type": "easy",
+      "title": "Easy Z2 ride, 60 min",
+      "duration_min": 60,
+      "zone": "Z2",
+      "purpose": "Recovery week: keep the legs turning while your body absorbs the block.",
+      "steps": [
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Ease in, under 150 W, RPE 2, chat pace"
+        },
+        {
+          "min": 40,
+          "zone": "Z2",
+          "target": "150-190 W, RPE 3-4, steady, cadence 85-95"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Cool-down, easy spinning"
+        }
+      ],
+      "cue": "Boring on purpose. This week is about freshness. Rate your left calf 0-10 afterwards: above 4, or a changed pedal stroke, means stop and ease off.",
+      "fuel": {
+        "before": "As soon as you wake (30-45 min before the ride): 1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach.",
+        "during_carbs_g_per_h": 0,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Banana milk is a good first drink."
+      }
+    },
+    {
+      "date": "2026-11-03",
+      "type": "strength",
+      "title": "Kettlebell, 20 min (light)",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "Keep the habit on a light week or after a long ride. No fatigue before the next key session.",
+      "steps": [
+        {
+          "min": 5,
+          "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles"
+        },
+        {
+          "min": 7,
+          "target": "Two-hand swing: 4 sets of 10, rest 45 s"
+        },
+        {
+          "min": 5,
+          "target": "Goblet squat: 2 sets of 10"
+        },
+        {
+          "min": 3,
+          "target": "Plank 2 x 30 s, side plank 2 x 20 s per side"
+        }
+      ],
+      "cue": "Easy day for the body. If your legs are heavy, do the warm-up and the plank only.",
+      "fuel": {
+        "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
+        "during_carbs_g_per_h": 0,
+        "after": "25-40 g protein within 2 hours, banana milk or yoghurt works."
+      }
+    },
+    {
+      "date": "2026-11-04",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "Rest before the FTP test.",
+      "steps": [],
+      "cue": "Nothing to do. Lights out before 23:30.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-11-05",
+      "type": "benchmark_test",
+      "title": "FTP test #2",
+      "duration_min": 75,
+      "zone": "Z4",
+      "purpose": "See what a month of base work did to your FTP and 5-min power.",
+      "steps": [
+        {
+          "min": 15,
+          "zone": "Z2",
+          "target": "Easy warm-up, 150-190 W"
+        },
+        {
+          "repeat": 3,
+          "rest_between_min": 1,
+          "steps": [
+            {
+              "min": 1,
+              "zone": "Z4",
+              "target": "Build to about 300 W"
+            }
+          ]
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Easy spin"
+        },
+        {
+          "min": 5,
+          "zone": "Z4",
+          "target": "5-minute max: start controlled, hold an even pace, empty in the last 30 seconds. Write down the average power"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Easy spin, recover fully"
+        },
+        {
+          "min": 20,
+          "zone": "Z4",
+          "target": "20-minute max, even pace. Average power x 0.95 = your FTP. Write it down"
+        },
+        {
+          "min": 15,
+          "zone": "Z1",
+          "target": "Cool-down, easy spinning"
+        }
+      ],
+      "cue": "Same protocol and setup as 13 October: Kickr, same time of day, same breakfast. Slept badly or ill? Move it by a day.",
+      "fuel": {
+        "before": "Carb breakfast 2-3 h before (oats + banana + bread with Nutella). Banana or a gel 30 min before. Fresh legs matter: no kettlebell the day before.",
+        "during_carbs_g_per_h": 40,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Banana milk is a good first drink."
+      }
+    },
+    {
+      "date": "2026-11-06",
+      "type": "swim",
+      "title": "Swim, 30 min (technique)",
+      "duration_min": 30,
+      "zone": "Z1-Z2",
+      "purpose": "Recovery-week swim: same as the first one.",
+      "steps": [
+        {
+          "min": 6,
+          "target": "Warm-up: 200 m easy"
+        },
+        {
+          "min": 8,
+          "target": "Drills: 4 x 50 m, 15 s rest"
+        },
+        {
+          "min": 12,
+          "target": "Main: 4 x 100 m crawl, 30 s rest"
+        },
+        {
+          "min": 4,
+          "target": "Cool-down: 100 m easy"
+        }
+      ],
+      "cue": "Easy and relaxed.",
+      "fuel": {
+        "before": "Banana + bread with Nutella (or a bar) 60-90 min before the pool.",
+        "during_carbs_g_per_h": 0,
+        "after": "Dinner at home with protein and carbs within 2 hours."
+      }
+    },
+    {
+      "date": "2026-11-07",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "Rest before the Sunday run.",
+      "steps": [],
+      "cue": "Nothing to do. Block 2 starts on Monday 9 November.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-11-08",
+      "type": "run",
+      "title": "Easy run, 30 min",
+      "duration_min": 40,
+      "zone": "Z2",
+      "purpose": "Rebuild running durability slowly: tendons and calves adapt slower than your fitness does. Recovery week: back to the first-week length.",
+      "steps": [
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Brisk walk to warm up"
+        },
+        {
+          "min": 30,
+          "zone": "Z2",
+          "target": "Easy run, RPE 3-4, you can talk in sentences. About 6:00-6:30 per km is fine. Walk breaks allowed"
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Walk and stretch calves and hips"
+        }
+      ],
+      "cue": "Easy means you could run it again tomorrow. Same effort as your run on 4 October or easier. Calf pinching? Walk it out and stop.",
+      "fuel": {
+        "before": "Breakfast 1-2 hours before: bread or oats with a banana.",
+        "during_carbs_g_per_h": 0,
+        "after": "Family lunch: a palm-sized portion of protein, a big portion of pasta, potatoes or rice, plus vegetables."
       }
     }
   ],
   "nutrition": {
     "day_types": {
       "rest": {
-        "carbs_g": 250,
-        "protein_g": 140,
-        "kcal": 2200
+        "carbs_g": 280,
+        "protein_g": 150,
+        "kcal": 2350
       },
       "easy": {
-        "carbs_g": 330,
-        "protein_g": 140,
-        "kcal": 2600
-      },
-      "tempo": {
         "carbs_g": 380,
-        "protein_g": 140,
+        "protein_g": 150,
         "kcal": 2800
       },
-      "interval": {
-        "carbs_g": 400,
-        "protein_g": 140,
-        "kcal": 2900
+      "hard": {
+        "carbs_g": 470,
+        "protein_g": 150,
+        "kcal": 3250
       },
       "long": {
-        "carbs_g": 550,
+        "carbs_g": 650,
         "protein_g": 150,
-        "kcal": 3500
+        "kcal": 4000
       }
     },
     "meals": [
       {
-        "date": "2026-09-28",
+        "date": "2026-10-08",
+        "day_type": "easy",
+        "items": [
+          "On waking (30-45 min before the ride): 1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach.",
+          "During the ride: 1 bottle (500 ml) of isotonic drink per hour (about 30 g carbs), plus water.",
+          "Breakfast (after the ride): 100 g oats cooked in milk, 1 banana, 3 eggs with bacon bits",
+          "Lunch: 100 g (dry) pasta or rice, 200 g chicken, vegetables, 1 tbsp oil",
+          "Snack: 1 glass of banana milk, or 250 g yoghurt with 40 g chocolate cruesli",
+          "Dinner: 400 g potatoes, 150 g meat or fish, vegetables"
+        ]
+      },
+      {
+        "date": "2026-10-09",
         "day_type": "rest",
         "items": [
-          "Breakfast: Greek yoghurt, berries, granola",
-          "Lunch: Chicken salad wrap",
-          "Snack: Apple + handful of nuts",
-          "Dinner: Salmon, potatoes, green beans"
+          "Lunch on the way home: 2 sandwiches with chicken or cold cuts and a banana",
+          "Home meals (family cooks): protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables",
+          "Snacks: yoghurt, an apple or banana, a handful of nuts"
         ]
       },
       {
-        "date": "2026-09-29",
-        "day_type": "interval",
+        "date": "2026-10-10",
+        "day_type": "rest",
         "items": [
-          "Breakfast: Oats with banana and honey",
-          "Lunch (3 h before): Pasta with tuna and tomato sauce",
-          "Recovery: Milk + banana",
-          "Dinner: Chicken, rice, vegetables"
+          "Away from home: eat three real meals with protein; bring bananas, nuts and bread with Nutella as emergency fuel"
         ]
       },
       {
-        "date": "2026-09-30",
+        "date": "2026-10-11",
         "day_type": "easy",
         "items": [
-          "Breakfast: Eggs on toast",
-          "Lunch: Rice bowl with chicken and vegetables",
-          "After strength: Skyr + fruit",
-          "Dinner: Lean beef chili with rice"
+          "Before the run (1-2 h): bread or oats with a banana, and a glass of milk",
+          "After the run: family lunch with a palm-sized portion of protein, a big carb portion and vegetables",
+          "Snack: yoghurt or banana milk",
+          "Dinner: batch-cooked meal from the dorm freezer, reheated in the microwave, or what the family serves"
         ]
       },
       {
-        "date": "2026-10-01",
-        "day_type": "tempo",
+        "date": "2026-10-12",
+        "day_type": "rest",
         "items": [
-          "Breakfast: Oats with banana and honey",
-          "Lunch: Bagel with turkey and cheese",
-          "Recovery: Milk + banana",
-          "Dinner: Salmon, pasta, spinach"
+          "Breakfast: 3 slices of bread with 2 fried eggs and cheese, 1 glass of milk",
+          "Lunch: batch-cooked bolognese: 90 g (dry) pasta, 150 g mince, tomato sauce, spinach",
+          "Snack: 1 apple, a handful of nuts and 250 g yoghurt",
+          "Dinner: 150 g tuna or salmon, 350 g potatoes, green beans, 1 tbsp oil"
         ]
       },
       {
-        "date": "2026-10-02",
+        "date": "2026-10-13",
+        "day_type": "hard",
+        "items": [
+          "Breakfast (2-3 h before): 100 g oats cooked in milk, 1 banana, 20 g nuts, 2 slices of bread with Nutella",
+          "30-45 min before: 1 banana or a gel with water",
+          "During the session: 1 bottle (500 ml) of isotonic drink (about 40 g carbs), plus water.",
+          "Within 1 h after: 400 ml banana milk and 2 slices of bread with cheese or cold cuts",
+          "Lunch: 120 g (dry) pasta with tomato sauce and 200 g chicken, vegetables",
+          "Snack: 250 g yoghurt, 40 g chocolate cruesli, 1 apple",
+          "Dinner: 400 g oven potatoes, 150 g meat or salmon, vegetables, 1 tbsp oil"
+        ]
+      },
+      {
+        "date": "2026-10-14",
+        "day_type": "rest",
+        "items": [
+          "Breakfast: 3 eggs scrambled with bacon bits, 3 slices of bread, 1 apple",
+          "Lunch: 100 g (dry) pasta with tomato sauce, 150 g chicken, a big portion of broccoli or green beans",
+          "Snack: 250 g high-protein yoghurt, 40 g chocolate cruesli, 1 banana",
+          "Dinner: 400 g oven potatoes, 150 g meat or salmon, carrot, pepper and salad with 1 tbsp oil"
+        ]
+      },
+      {
+        "date": "2026-10-15",
         "day_type": "easy",
         "items": [
-          "Breakfast: Greek yoghurt, berries, granola",
-          "Lunch: Chicken salad wrap",
-          "Dinner (carb-rich for tomorrow): Big pasta bolognese"
+          "On waking (30-45 min before the ride): 1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach.",
+          "During the ride: 1 bottle (500 ml) of isotonic drink per hour (about 30 g carbs), plus water.",
+          "Breakfast (after the ride): 250 g yoghurt with 60 g chocolate cruesli and 1 banana, 2 slices of bread with cheese",
+          "Lunch: 100 g (dry) pasta with tuna, tomato sauce and broccoli",
+          "Snack: 1 sandwich with Nutella and a glass of milk",
+          "Dinner: 400 g potatoes, 150 g chicken, vegetables and salad"
         ]
       },
       {
-        "date": "2026-10-03",
-        "day_type": "long",
+        "date": "2026-10-16",
+        "day_type": "easy",
         "items": [
-          "Breakfast: Oats, banana, honey + toast with jam",
-          "On the bike: 70 g carbs/hour (drink mix + bars)",
-          "Recovery: Shake + banana",
-          "Dinner: Rice, chicken, vegetables"
+          "Lunch on the way home: 2 sandwiches with chicken or cold cuts and a banana",
+          "60-90 min before the swim: banana + bread with Nutella, or a bar",
+          "After the swim: dinner at home with a palm-sized portion of protein and a big carb portion",
+          "Snack: yoghurt or a glass of banana milk"
         ]
       },
       {
-        "date": "2026-10-04",
+        "date": "2026-10-17",
+        "day_type": "rest",
+        "items": [
+          "Home meals (family cooks): protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables",
+          "Snacks: yoghurt, an apple or banana, a handful of nuts"
+        ]
+      },
+      {
+        "date": "2026-10-18",
+        "day_type": "easy",
+        "items": [
+          "Before the run (1-2 h): bread or oats with a banana, and a glass of milk",
+          "After the run: family lunch with a palm-sized portion of protein, a big carb portion and vegetables",
+          "Snack: yoghurt or banana milk",
+          "Dinner: batch-cooked meal from the dorm freezer, reheated in the microwave, or what the family serves"
+        ]
+      },
+      {
+        "date": "2026-10-19",
+        "day_type": "rest",
+        "items": [
+          "Breakfast: 3 slices of bread with 2 fried eggs and cheese, 1 glass of milk",
+          "Lunch: batch-cooked bolognese: 90 g (dry) pasta, 150 g mince, tomato sauce, spinach",
+          "Snack: 1 apple, a handful of nuts and 250 g yoghurt",
+          "Dinner: 150 g tuna or salmon, 350 g potatoes, green beans, 1 tbsp oil"
+        ]
+      },
+      {
+        "date": "2026-10-20",
+        "day_type": "hard",
+        "items": [
+          "Breakfast (2-3 h before): 4 slices of bread with Nutella, 2 eggs, 1 banana, 1 glass of milk",
+          "30-45 min before: 1 banana or a gel with water",
+          "During the session: 1 bottle (500 ml) of isotonic drink (about 40 g carbs), plus water.",
+          "Within 1 h after: 400 ml banana milk and a sandwich with cold cuts",
+          "Lunch: 120 g (dry) rice with 200 g chicken and vegetables",
+          "Snack: 250 g yoghurt with 40 g chocolate cruesli and berries or an apple",
+          "Dinner: 100 g (dry) pasta with mince, tomato sauce, vegetables and cheese"
+        ]
+      },
+      {
+        "date": "2026-10-21",
+        "day_type": "rest",
+        "items": [
+          "Breakfast: 3 eggs scrambled with bacon bits, 3 slices of bread, 1 apple",
+          "Lunch: 100 g (dry) pasta with tomato sauce, 150 g chicken, a big portion of broccoli or green beans",
+          "Snack: 250 g high-protein yoghurt, 40 g chocolate cruesli, 1 banana",
+          "Dinner: 400 g oven potatoes, 150 g meat or salmon, carrot, pepper and salad with 1 tbsp oil"
+        ]
+      },
+      {
+        "date": "2026-10-22",
+        "day_type": "rest",
+        "items": [
+          "Breakfast: 80 g oats cooked in milk, 1 banana, 20 g nuts",
+          "Lunch: 4 slices of bread with cold cuts and cheese, tomato and cucumber, 1 apple",
+          "Snack: 250 g yoghurt with 20 g nuts, and 1 glass of milk",
+          "Dinner: 90 g (dry) rice, 150 g chicken stir-fried with 300 g pepper, broccoli and carrot"
+        ]
+      },
+      {
+        "date": "2026-10-23",
+        "day_type": "rest",
+        "items": [
+          "Home meals (family cooks): protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables",
+          "Snacks: yoghurt, an apple or banana, a handful of nuts"
+        ]
+      },
+      {
+        "date": "2026-10-24",
+        "day_type": "rest",
+        "items": [
+          "Home meals (family cooks): protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables",
+          "Snacks: yoghurt, an apple or banana, a handful of nuts"
+        ]
+      },
+      {
+        "date": "2026-10-25",
+        "day_type": "easy",
+        "items": [
+          "Before the run (1-2 h): bread or oats with a banana, and a glass of milk",
+          "After the run: family lunch with a palm-sized portion of protein, a big carb portion and vegetables",
+          "Snack: yoghurt or banana milk",
+          "Dinner: batch-cooked meal from the dorm freezer, reheated in the microwave, or what the family serves"
+        ]
+      },
+      {
+        "date": "2026-10-26",
+        "day_type": "rest",
+        "items": [
+          "Breakfast: 80 g oats cooked in milk, 1 banana, 20 g nuts",
+          "Lunch: 4 slices of bread with cold cuts and cheese, tomato and cucumber, 1 apple",
+          "Snack: 250 g yoghurt with 20 g nuts, and 1 glass of milk",
+          "Dinner: 90 g (dry) rice, 150 g chicken stir-fried with 300 g pepper, broccoli and carrot"
+        ]
+      },
+      {
+        "date": "2026-10-27",
+        "day_type": "hard",
+        "items": [
+          "Breakfast (2-3 h before): 100 g oats cooked in milk, 1 banana, 20 g nuts, 2 slices of bread with Nutella",
+          "30-45 min before: 1 banana or a gel with water",
+          "During the session: 1 bottle (500 ml) of isotonic drink (about 40 g carbs), plus water.",
+          "Within 1 h after: 400 ml banana milk and 2 slices of bread with cheese or cold cuts",
+          "Lunch: 120 g (dry) pasta with tomato sauce and 200 g chicken, vegetables",
+          "Snack: 250 g yoghurt, 40 g chocolate cruesli, 1 apple",
+          "Dinner: 400 g oven potatoes, 150 g meat or salmon, vegetables, 1 tbsp oil"
+        ]
+      },
+      {
+        "date": "2026-10-28",
+        "day_type": "rest",
+        "items": [
+          "Breakfast: 3 slices of bread with 2 fried eggs and cheese, 1 glass of milk",
+          "Lunch: batch-cooked bolognese: 90 g (dry) pasta, 150 g mince, tomato sauce, spinach",
+          "Snack: 1 apple, a handful of nuts and 250 g yoghurt",
+          "Dinner: 150 g tuna or salmon, 350 g potatoes, green beans, 1 tbsp oil"
+        ]
+      },
+      {
+        "date": "2026-10-29",
         "day_type": "long",
         "items": [
-          "Breakfast: Pancakes with syrup + yoghurt",
-          "On the bike: 70 g carbs/hour (gels + bars + drink mix)",
-          "Recovery: Shake + banana",
-          "Dinner: Homemade pizza + salad"
+          "Breakfast (2-3 h before): 100 g oats cooked in milk with 1 banana, 3 slices of bread with Nutella",
+          "30-45 min before: 1 banana and water",
+          "During the ride: every hour 1 bottle of isotonic drink (about 40 g) + 1 gel or banana (about 25 g). Eat something every 20 minutes. Practise real food too: half a Nutella sandwich or a banana each hour. Cola is fine in the last hour.",
+          "Within 1 h after: 100 g (dry) rice or 400 g potatoes, 200 g chicken, vegetables, plus 400 ml banana milk",
+          "Snack: 250 g yoghurt, 40 g chocolate cruesli, 1 banana",
+          "Dinner: batch pasta, 120 g (dry) with mince, tomato sauce, cheese and a salad"
+        ]
+      },
+      {
+        "date": "2026-10-30",
+        "day_type": "easy",
+        "items": [
+          "Lunch on the way home: 2 sandwiches with chicken or cold cuts and a banana",
+          "60-90 min before the swim: banana + bread with Nutella, or a bar",
+          "After the swim: dinner at home with a palm-sized portion of protein and a big carb portion",
+          "Snack: yoghurt or a glass of banana milk"
+        ]
+      },
+      {
+        "date": "2026-10-31",
+        "day_type": "rest",
+        "items": [
+          "Home meals (family cooks): protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables",
+          "Snacks: yoghurt, an apple or banana, a handful of nuts"
+        ]
+      },
+      {
+        "date": "2026-11-01",
+        "day_type": "easy",
+        "items": [
+          "Before the run (1-2 h): bread or oats with a banana, and a glass of milk",
+          "After the run: family lunch with a palm-sized portion of protein, a big carb portion and vegetables",
+          "Snack: yoghurt or banana milk",
+          "Dinner: batch-cooked meal from the dorm freezer, reheated in the microwave, or what the family serves"
+        ]
+      },
+      {
+        "date": "2026-11-02",
+        "day_type": "rest",
+        "items": [
+          "Breakfast: 80 g oats cooked in milk, 1 banana, 20 g nuts",
+          "Lunch: 4 slices of bread with cold cuts and cheese, tomato and cucumber, 1 apple",
+          "Snack: 250 g yoghurt with 20 g nuts, and 1 glass of milk",
+          "Dinner: 90 g (dry) rice, 150 g chicken stir-fried with 300 g pepper, broccoli and carrot"
+        ]
+      },
+      {
+        "date": "2026-11-03",
+        "day_type": "easy",
+        "items": [
+          "On waking (30-45 min before the ride): 1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach.",
+          "Breakfast (after the ride): 250 g yoghurt with 60 g chocolate cruesli and 1 banana, 2 slices of bread with cheese",
+          "Lunch: 100 g (dry) pasta with tuna, tomato sauce and broccoli",
+          "Snack: 1 sandwich with Nutella and a glass of milk",
+          "Dinner: 400 g potatoes, 150 g chicken, vegetables and salad"
+        ]
+      },
+      {
+        "date": "2026-11-04",
+        "day_type": "rest",
+        "items": [
+          "Breakfast: 3 slices of bread with 2 fried eggs and cheese, 1 glass of milk",
+          "Lunch: batch-cooked bolognese: 90 g (dry) pasta, 150 g mince, tomato sauce, spinach",
+          "Snack: 1 apple, a handful of nuts and 250 g yoghurt",
+          "Dinner: 150 g tuna or salmon, 350 g potatoes, green beans, 1 tbsp oil"
+        ]
+      },
+      {
+        "date": "2026-11-05",
+        "day_type": "hard",
+        "items": [
+          "Breakfast (2-3 h before): 4 slices of bread with Nutella, 2 eggs, 1 banana, 1 glass of milk",
+          "30-45 min before: 1 banana or a gel with water",
+          "During the session: 1 bottle (500 ml) of isotonic drink (about 40 g carbs), plus water.",
+          "Within 1 h after: 400 ml banana milk and a sandwich with cold cuts",
+          "Lunch: 120 g (dry) rice with 200 g chicken and vegetables",
+          "Snack: 250 g yoghurt with 40 g chocolate cruesli and berries or an apple",
+          "Dinner: 100 g (dry) pasta with mince, tomato sauce, vegetables and cheese"
+        ]
+      },
+      {
+        "date": "2026-11-06",
+        "day_type": "easy",
+        "items": [
+          "Lunch on the way home: 2 sandwiches with chicken or cold cuts and a banana",
+          "60-90 min before the swim: banana + bread with Nutella, or a bar",
+          "After the swim: dinner at home with a palm-sized portion of protein and a big carb portion",
+          "Snack: yoghurt or a glass of banana milk"
+        ]
+      },
+      {
+        "date": "2026-11-07",
+        "day_type": "rest",
+        "items": [
+          "Home meals (family cooks): protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables",
+          "Snacks: yoghurt, an apple or banana, a handful of nuts"
+        ]
+      },
+      {
+        "date": "2026-11-08",
+        "day_type": "easy",
+        "items": [
+          "Before the run (1-2 h): bread or oats with a banana, and a glass of milk",
+          "After the run: family lunch with a palm-sized portion of protein, a big carb portion and vegetables",
+          "Snack: yoghurt or banana milk",
+          "Dinner: batch-cooked meal from the dorm freezer, reheated in the microwave, or what the family serves"
         ]
       }
     ],
     "shopping_list": [
-      {
-        "item": "Oats",
-        "qty": "1 kg",
-        "category": "Breakfast",
-        "days": {
-          "2026-09-29": "80 g",
-          "2026-10-01": "80 g",
-          "2026-10-03": "100 g"
-        }
-      },
-      {
-        "item": "Greek yoghurt",
-        "qty": "1 kg",
-        "category": "Breakfast",
-        "days": {
-          "2026-09-28": "250 g",
-          "2026-10-02": "250 g",
-          "2026-10-04": "200 g"
-        }
-      },
-      {
-        "item": "Granola",
-        "qty": "1 pack",
-        "category": "Breakfast",
-        "days": {
-          "2026-09-28": "50 g",
-          "2026-10-02": "50 g"
-        }
-      },
-      {
-        "item": "Eggs",
-        "qty": "6",
-        "category": "Breakfast",
-        "days": {
-          "2026-09-30": "3"
-        }
-      },
-      {
-        "item": "Bananas",
-        "qty": "10",
-        "category": "Fruit & veg",
-        "days": {
-          "2026-09-29": "2",
-          "2026-10-01": "2",
-          "2026-10-03": "3",
-          "2026-10-04": "2"
-        }
-      },
-      {
-        "item": "Berries (frozen)",
-        "qty": "500 g",
-        "category": "Fruit & veg",
-        "days": {
-          "2026-09-28": "125 g",
-          "2026-10-02": "125 g",
-          "2026-10-04": "125 g"
-        }
-      },
-      {
-        "item": "Vegetables (mixed)",
-        "qty": "1.5 kg",
-        "category": "Fruit & veg",
-        "days": {
-          "2026-09-28": "250 g",
-          "2026-09-29": "250 g",
-          "2026-09-30": "250 g",
-          "2026-10-01": "200 g",
-          "2026-10-03": "250 g"
-        }
-      },
-      {
-        "item": "Chicken breast",
-        "qty": "1 kg",
-        "category": "Protein",
-        "days": {
-          "2026-09-28": "150 g",
-          "2026-09-29": "200 g",
-          "2026-09-30": "150 g",
-          "2026-10-02": "150 g",
-          "2026-10-03": "200 g"
-        }
-      },
-      {
-        "item": "Salmon fillets",
-        "qty": "2",
-        "category": "Protein",
-        "days": {
-          "2026-09-28": "1",
-          "2026-10-01": "1"
-        }
-      },
-      {
-        "item": "Pasta",
-        "qty": "1 kg",
-        "category": "Carbs",
-        "days": {
-          "2026-09-29": "120 g",
-          "2026-10-01": "120 g",
-          "2026-10-02": "150 g"
-        }
-      },
-      {
-        "item": "Rice",
-        "qty": "500 g",
-        "category": "Carbs",
-        "days": {
-          "2026-09-29": "100 g",
-          "2026-09-30": "200 g",
-          "2026-10-03": "120 g"
-        }
-      },
-      {
-        "item": "Drink mix + energy bars",
-        "qty": "for 6.5 h riding",
-        "category": "Ride fuel",
-        "days": {
-          "2026-10-03": "210 g carbs",
-          "2026-10-04": "245 g carbs"
-        }
-      }
+      "Broccoli or cauliflower, 2 heads (fresh)",
+      "Green beans, 500 g (fresh)",
+      "Carrots, 1 kg",
+      "Peppers, 3",
+      "Tomatoes, 500 g",
+      "Cucumber, 2",
+      "Spinach or salad leaves, 2 bags",
+      "Frozen vegetables, 1 kg (optional, for batch cooking)",
+      "High-protein yoghurt (skyr, quark or Greek), 1.5 kg (optional, only if your yoghurt is the sweetened kind)"
     ]
   },
-  "notes": "First week of Build 1. Tuesday's 30/15s are the key session: hit the targets on rep 1, then ride on feel. Keep Wednesday and Friday truly easy. At the weekend, practise eating 70 g of carbs per hour. Fill in your check-in every day, even rest days."
+  "notes": "Plan from Thursday 8 Oct to Sunday 8 Nov. Your fixed training days are Tuesday, Thursday and Sunday, and Friday joins on 16 Oct (swim). Wednesday, Saturday and Monday are rest days. FTP test #1 is Tuesday 13 Oct (Thursday 15 Oct if you slept badly). Rate your left calf 0-10 after every ride: above 4, or a changed pedal stroke, means stop. On nights before 7-8 am sessions aim to be in bed by 23:30. Sunday travel back is by train. Calorie numbers are starting estimates for 75 kg and include what you eat on the bike. Send me the FTP test numbers so I can set your zones and interval watts."
 }

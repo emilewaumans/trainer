@@ -159,6 +159,8 @@ a.card, .tap { transition: transform 0.12s ease, background 0.12s ease; }
 .t-hard     { --tcol: var(--z5); }
 .t-long     { --tcol: var(--z1); }
 .t-strength { --tcol: var(--z6); }
+.t-run      { --tcol: #f472b6; }
+.t-swim     { --tcol: #22d3ee; }
 .t-other    { --tcol: var(--z0); }
 
 /* chips */
