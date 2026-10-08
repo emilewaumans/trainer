@@ -578,3 +578,234 @@ svg.ic { width: 1.15em; height: 1.15em; vertical-align: -0.2em; stroke-width: 1.
 .ri-icon .ic { width: 20px; height: 20px; }
 .act-ic { display: flex; color: var(--good); }
 .act-ic .ic { width: 20px; height: 20px; }
+
+/* ==========================================================
+   Design polish (v1.7): depth, colour and rhythm.
+   Everything below only changes the look; remove this block
+   to get the previous look back.
+   ========================================================== */
+:root {
+  --bg: #0a0c0f;
+  --surface: #14171c;
+  --surface-2: #1c2027;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --text: #f1f3f5;
+  --muted: #98a1ad;
+  --faint: #626b78;
+  --accent-2: #ffa24d;
+  --accent-soft: rgba(255, 122, 61, 0.13);
+  --card-bg: linear-gradient(180deg, #171a20 0%, #121519 100%);
+  --card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --radius: 18px;
+  --radius-sm: 12px;
+}
+
+body {
+  background:
+    radial-gradient(120% 420px at 50% -160px, rgba(255, 122, 61, 0.11), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
+  letter-spacing: -0.005em;
+}
+::selection { background: rgba(255, 122, 61, 0.35); }
+
+/* top and bottom bars: glass */
+.topbar { background: rgba(10, 12, 15, 0.72); border-bottom-color: var(--border); }
+.topbar h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+.tabbar { background: rgba(10, 12, 15, 0.8); border-top-color: var(--border); }
+.tabbar a { gap: 3px; font-size: 10.5px; font-weight: 650; letter-spacing: 0.01em; transition: color 0.15s; }
+.tabbar a svg { width: 52px; height: 30px; padding: 3px 14px; border-radius: 15px; transition: background 0.2s; }
+.tabbar a.active svg { background: var(--accent-soft); }
+
+/* headings */
+.page-head { margin: 6px 2px 20px; }
+.page-head .eyebrow { font-size: 12px; font-weight: 750; letter-spacing: 0.12em; }
+.page-head h2 { font-size: 30px; font-weight: 800; letter-spacing: -0.025em; }
+.page-head .sub { font-size: 15px; }
+.section { margin-top: 30px; }
+.section > h3 { font-size: 12px; font-weight: 750; letter-spacing: 0.1em; color: var(--faint); margin-bottom: 12px; }
+.week-total .v { display: inline-flex; align-items: center; gap: 6px; font-size: 21px; letter-spacing: -0.01em; }
+.week-total .v .ic { width: 20px; height: 20px; stroke-width: 2.2; }
+
+/* cards: soft depth instead of flat boxes */
+.card, .gamebar, .route-item, .target-row:not(.head), .step, .fuel {
+  background: var(--card-bg);
+  border-color: var(--border);
+  box-shadow: var(--card-shadow);
+}
+a.card:active, .tap:active { background: var(--surface-2); }
+.chev { color: var(--faint); font-size: 24px; right: 12px; }
+
+/* workout cards: a soft glow of the sport colour instead of a hard stripe */
+.workout {
+  border-left: 1px solid var(--border);
+  background:
+    linear-gradient(105deg, color-mix(in srgb, var(--tcol, var(--z0)) 13%, transparent) 0%, transparent 42%),
+    var(--card-bg);
+}
+.workout::before {
+  content: ""; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px;
+  border-radius: 0 3px 3px 0; background: var(--tcol, var(--z0));
+}
+.sess-ic {
+  width: 30px; height: 30px; border-radius: 9px; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--tcol, var(--muted)) 16%, transparent);
+}
+.sess-ic .ic { width: 19px; height: 19px; stroke-width: 2; }
+.sess-head { grid-template-columns: 30px 1fr auto; gap: 10px; }
+.card.workout .sess-title { font-size: 16.5px; font-weight: 700; letter-spacing: -0.01em; }
+.sess .dur { font-variant-numeric: tabular-nums; font-weight: 600; }
+.mini { margin-left: 40px; }
+.pchart { border-radius: 6px; }
+.rest-card .rest-ic {
+  width: 52px; height: 52px; border-radius: 16px; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, 0.04); color: #a5b4fc;
+}
+.rest-card .rest-ic .ic { width: 28px; height: 28px; }
+
+/* agenda */
+.week-nav .btn.icon { border-radius: 14px; }
+.week-nav .label { font-size: 16px; }
+.day-row { padding: 14px 34px 14px 12px; }
+.day-row .date .d { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.day-row .date .w { font-size: 11px; letter-spacing: 0.08em; color: var(--faint); }
+.day-row.today {
+  border-color: rgba(255, 122, 61, 0.55);
+  box-shadow: 0 0 0 1px rgba(255, 122, 61, 0.25), 0 10px 30px -12px rgba(255, 122, 61, 0.35);
+}
+.day-row.today .date .w { color: var(--accent); }
+.day-row.past { opacity: 0.72; }
+.cal { gap: 5px; }
+.cal-day { background: rgba(255, 255, 255, 0.035); border-radius: 12px; font-variant-numeric: tabular-nums; }
+.cal-day.today { background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); border-color: transparent; }
+.cal-day.light { background: rgba(127, 167, 217, 0.08); }
+.dot { width: 7px; height: 7px; box-shadow: 0 0 6px color-mix(in srgb, var(--tcol, var(--z0)) 60%, transparent); }
+
+/* week summary */
+.pbar { height: 22px; border-radius: 11px; background: rgba(255, 255, 255, 0.05); }
+.pbar i { background: linear-gradient(90deg, #22798a, #34a3b5); border-radius: 11px; }
+.pbar em { line-height: 22px; }
+.wk-sic { color: var(--text); opacity: 0.75; }
+
+/* chips and zones */
+.chip { padding: 4px 10px; font-size: 12.5px; background: rgba(255, 255, 255, 0.05); border-color: var(--border); gap: 5px; }
+.chip .ic { width: 14px; height: 14px; stroke-width: 2.2; }
+.chip.accent { background: var(--accent-soft); }
+.zone { border-radius: 7px; padding: 2px 8px; letter-spacing: 0.02em; }
+.day-type.dt-rest { background: rgba(165, 180, 252, 0.12); color: #a5b4fc; border-color: transparent; }
+.day-type.dt-easy { background: rgba(62, 207, 142, 0.13); color: var(--good); border-color: transparent; }
+.day-type.dt-hard { background: rgba(255, 92, 108, 0.13); color: var(--bad); border-color: transparent; }
+.day-type.dt-long { background: rgba(127, 167, 217, 0.15); color: var(--z1); border-color: transparent; }
+
+/* workout page: steps tinted by their zone */
+.step {
+  border-left: 1px solid var(--border); position: relative; overflow: hidden;
+  background:
+    linear-gradient(100deg, color-mix(in srgb, var(--zc, transparent) 11%, transparent), transparent 55%),
+    var(--card-bg);
+}
+.step::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--zc, var(--border-strong)); }
+.step.group { background: rgba(255, 255, 255, 0.025); }
+.step.group::before { background: var(--accent); }
+.total-row { background: linear-gradient(90deg, rgba(255, 122, 61, 0.16), rgba(255, 122, 61, 0.06)); border: 1px solid rgba(255, 122, 61, 0.25); }
+.stat { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); }
+.stat .v { letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.note { box-shadow: var(--card-shadow); }
+.cue { background: var(--card-bg); }
+
+/* buttons */
+.btn { border-color: var(--border-strong); background: rgba(255, 255, 255, 0.05); transition: transform 0.12s, background 0.15s; }
+.btn .ic { width: 20px; height: 20px; stroke-width: 2.1; }
+.btn.primary {
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  border-color: transparent; color: #1a0b03;
+  box-shadow: 0 8px 22px -8px rgba(255, 122, 61, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.seg span { background: rgba(255, 255, 255, 0.04); border-color: var(--border); transition: background 0.12s; }
+.seg input:checked + span { background: linear-gradient(180deg, var(--accent-2), var(--accent)); color: #1a0b03; box-shadow: 0 6px 16px -8px rgba(255, 122, 61, 0.7); }
+input[type="text"], input[type="password"], input[type="number"], input[type="date"], textarea { background: rgba(255, 255, 255, 0.04); border-color: var(--border-strong); }
+
+/* Today: scoreboard and quest */
+.gamebar { padding: 16px 14px 14px; }
+.gb-v { font-size: 22px; letter-spacing: -0.02em; }
+.gb-ic {
+  width: 30px; height: 30px; border-radius: 10px; align-items: center; justify-content: center;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+}
+.gb-ic svg.ic { width: 18px; height: 18px; }
+.gb-l { margin-top: 4px; font-size: 11.5px; letter-spacing: 0.02em; }
+.gb-bar .progress { height: 8px; margin-top: 12px; }
+.gb-bar .progress > span { box-shadow: 0 0 12px rgba(255, 140, 61, 0.55); }
+.quest-card {
+  background:
+    radial-gradient(140% 90% at 0% 0%, rgba(255, 122, 61, 0.16), transparent 55%),
+    var(--card-bg);
+  border-color: rgba(255, 122, 61, 0.35);
+  box-shadow: 0 18px 50px -20px rgba(255, 122, 61, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.done-card {
+  background: radial-gradient(140% 90% at 50% 0%, rgba(62, 207, 142, 0.16), transparent 60%), var(--card-bg);
+  border-color: rgba(62, 207, 142, 0.4);
+}
+.q-icon {
+  width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center;
+  background: rgba(255, 122, 61, 0.14); color: var(--accent-2);
+}
+.q-icon .ic { width: 28px; height: 28px; stroke-width: 1.9; }
+.q-icon.big { width: 84px; height: 84px; border-radius: 26px; margin: 8px auto 0; background: rgba(62, 207, 142, 0.14); color: var(--good); }
+.q-icon.big .ic { width: 46px; height: 46px; }
+.q-head h3 { letter-spacing: -0.02em; }
+.q-steps li { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); }
+.q-fuel { display: flex; gap: 8px; align-items: flex-start; }
+.q-fuel-ic { flex: none; display: flex; color: var(--accent-2); }
+.q-fuel-ic .ic { width: 18px; height: 18px; }
+.ans { background: rgba(255, 255, 255, 0.04); }
+.route-item.current { background: linear-gradient(90deg, rgba(255, 122, 61, 0.14), rgba(255, 122, 61, 0.04)); border-color: rgba(255, 122, 61, 0.45); }
+.ri-icon { display: flex; justify-content: center; color: var(--muted); }
+.route-item.current .ri-icon { color: var(--accent-2); }
+.ri-mark { background: rgba(255, 255, 255, 0.05); border-color: var(--border-strong); }
+/* confetti: little coloured paper strips */
+.confetti span {
+  width: 8px; height: 14px; border-radius: 2px; top: -20px;
+  background: hsl(calc(var(--i) * 47 + 10) 90% 62%);
+}
+
+/* goals */
+.goal .title { font-size: 18px; letter-spacing: -0.015em; }
+.countdown {
+  background: radial-gradient(120% 120% at 30% 0%, rgba(255, 162, 77, 0.22), rgba(255, 122, 61, 0.08));
+  border: 1px solid rgba(255, 122, 61, 0.25); border-radius: 16px;
+}
+.countdown .n { letter-spacing: -0.03em; background: linear-gradient(180deg, #ffc27a, var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.countdown .n .ic { width: 30px; height: 30px; stroke: var(--accent); }
+.countdown.past { border-color: var(--border); background: rgba(255, 255, 255, 0.04); }
+.countdown.past .n { background: none; color: var(--muted); }
+.progress { background: rgba(255, 255, 255, 0.06); }
+.progress > span { background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+
+/* food */
+details.card > summary { min-height: 54px; }
+details.card[open] { border-color: var(--border-strong); }
+.target-row.hl { border-color: rgba(255, 122, 61, 0.5); box-shadow: 0 0 0 1px rgba(255, 122, 61, 0.2); }
+.toggle { background: rgba(255, 255, 255, 0.05); }
+.toggle button.on { background: var(--surface-2); }
+.shop .box { transition: background 0.15s, border-color 0.15s; }
+
+/* weather and wellness icons */
+.wx-ic, .wl-ic { display: inline-flex; font-style: normal; }
+.wx-ic .ic { width: 17px; height: 17px; stroke-width: 2; }
+.wl-ic .ic { width: 14px; height: 14px; stroke-width: 2.1; margin-right: 3px; }
+.wx-sun { color: #fbbf24; } .wx-cloud { color: #a7b0bd; } .wx-rain { color: #60a5fa; }
+.wl-sleep { color: #a5b4fc; } .wl-heart { color: #fb7185; } .wl-breath { color: #67e8f9; }
+.wellness > span, .wx-rainmm { display: inline-flex; align-items: center; gap: 2px; }
+.wx-rainmm { color: #60a5fa; }
+.wx-rainmm .ic { width: 13px; height: 13px; stroke-width: 2.2; }
+
+/* activity done */
+.act { background: linear-gradient(100deg, rgba(62, 207, 142, 0.12), rgba(62, 207, 142, 0.03)); border-color: rgba(62, 207, 142, 0.25); }
+
+/* toast */
+.toast { background: rgba(241, 243, 245, 0.96); border-radius: 999px; padding: 11px 20px; }
+
+@media (prefers-reduced-motion: reduce) { .quest-card, .confetti span { animation: none !important; } }

@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.6.1';
+  const APP_VERSION = '1.7.0';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -163,6 +163,28 @@
     flame: svgIcon('<path d="M12 21.5c-3.9 0-6.5-2.6-6.5-6.2 0-3.4 2.4-5.4 3.6-8.3.5 1.6 1.4 2.6 2.4 3.1.2-3.1 1.6-5.6 4-7.6-.4 3.4 1.2 5.6 2.4 7.6.9 1.5 1.6 3.1 1.6 5.2 0 3.6-2.6 6.2-7.5 6.2z"/><path d="M12 21.5c-1.8 0-3-1.2-3-2.9 0-1.8 1.4-2.8 2.2-4.3.9 1.4 3.8 2.4 3.8 4.6 0 1.5-1.2 2.6-3 2.6z"/>'),
     bolt: svgIcon('<path d="M13.5 2.5 4.5 13.5h6.5l-1 8 9-11h-6.5z"/>'),
     trophy: svgIcon('<path d="M7 3.5h10v5.5a5 5 0 0 1-10 0z"/><path d="M7 5.5H4v1.5a3.5 3.5 0 0 0 3.4 3.5M17 5.5h3v1.5a3.5 3.5 0 0 1-3.4 3.5M12 14v3.5M8 20.5h8M9.5 17.5h5v3h-5z"/>'),
+    sun: svgIcon('<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/>'),
+    moon: svgIcon('<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>'),
+    note: svgIcon('<rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M9 8.5h6M9 12h6M9 15.5h3.5"/>'),
+    bowl: svgIcon('<path d="M3.5 11.5h17a8.5 8.5 0 0 1-17 0z"/><path d="M9 7.5c0-1.5 1-2 1-3.5M13.5 7.5c0-1.5 1-2 1-3.5"/>'),
+    plate: svgIcon('<path d="M7 2.5v8.5M4.5 2.5v5a2.5 2.5 0 0 0 5 0v-5M7 11v10.5M17 21.5v-19c-2.5 1.5-3.5 4-3.5 7.5V14H17"/>'),
+    bottle: svgIcon('<path d="M9.5 2.5h5M10 2.5v3l-2 2.5v12A1.5 1.5 0 0 0 9.5 21.5h5a1.5 1.5 0 0 0 1.5-1.5V8l-2-2.5v-3M8 12h8"/>'),
+    apple: svgIcon('<path d="M12 7.5c-1.5-1-5.5-1.5-6.5 2.5-1 4 1.5 10 4 10 1 0 1.5-.5 2.5-.5s1.5.5 2.5.5c2.5 0 5-6 4-10-1-4-5-3.5-6.5-2.5z"/><path d="M12 7.5c0-2 1-3.5 2.5-4.5"/>'),
+    flag: svgIcon('<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>'),
+    copy: svgIcon('<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/>'),
+    check: svgIcon('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
+    clock: svgIcon('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M10 2.5h4"/>'),
+    calendar: svgIcon('<rect x="3" y="4.5" width="18" height="16.5" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>'),
+    heart: svgIcon('<path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/>'),
+    breath: svgIcon('<path d="M3 8h10a2.5 2.5 0 1 0-2.5-2.5M3 12h15a2.5 2.5 0 1 1-2.5 2.5M3 16h7"/>'),
+    drop: svgIcon('<path d="M12 3.5s-6 6.5-6 10.5a6 6 0 0 0 12 0c0-4-6-10.5-6-10.5z"/>'),
+    medal: svgIcon('<circle cx="12" cy="15" r="5.5"/><path d="M8.5 10.8 5.5 2.5h4l2.5 6 2.5-6h4l-3 8.3M12 12.5l.9 1.8 2 .3-1.4 1.4.3 2-1.8-.9-1.8.9.3-2-1.4-1.4 2-.3z"/>'),
+    cloud: svgIcon('<path d="M7 18.5h10.5a4 4 0 0 0 .3-8A6 6 0 0 0 6.3 12 3.3 3.3 0 0 0 7 18.5z"/>'),
+    cloudSun: svgIcon('<path d="M8.5 3v1.2M3.8 5l.9.9M2.5 9.5h1.2M5.3 12.3a3.5 3.5 0 1 1 5.7-4"/><path d="M9 20h8.5a3.5 3.5 0 0 0 .3-7 5 5 0 0 0-9.4 1.3A2.9 2.9 0 0 0 9 20z"/>'),
+    rain: svgIcon('<path d="M7 15.5h10a3.5 3.5 0 0 0 .3-7A5.5 5.5 0 0 0 6.6 9.8 2.9 2.9 0 0 0 7 15.5z"/><path d="M8.5 18.5l-1 2.5M12.5 18.5l-1 2.5M16.5 18.5l-1 2.5"/>'),
+    storm: svgIcon('<path d="M7 15.5h10a3.5 3.5 0 0 0 .3-7A5.5 5.5 0 0 0 6.6 9.8 2.9 2.9 0 0 0 7 15.5z"/><path d="M12.5 16.5l-2 3h3l-2 3"/>'),
+    snow: svgIcon('<path d="M7 15.5h10a3.5 3.5 0 0 0 .3-7A5.5 5.5 0 0 0 6.6 9.8 2.9 2.9 0 0 0 7 15.5z"/><path d="M8.5 19.5h.01M12 19.5h.01M15.5 19.5h.01M10.2 22h.01M13.8 22h.01"/>'),
+    fog: svgIcon('<path d="M4 9h16M6 13h14M4 17h12"/>'),
   };
 
   const TYPES = {
@@ -426,7 +448,7 @@
     const dt = txt(m.day_type);
     const items = arr(m.items).map(mealItemHTML).filter(Boolean).join('');
     return `<div class="card">
-      ${dt ? `<div class="chips" style="margin-top:0"><span class="chip accent day-type">${esc(prettify(dt))} day</span></div>` : ''}
+      ${dt ? `<div class="chips" style="margin-top:0"><span class="chip day-type dt-${esc(dt)}">${esc(prettify(dt))} day</span></div>` : ''}
       ${withTargets && dt ? `<div style="margin-top:10px">${targetStats(dt)}</div>` : ''}
       ${items ? `<ul class="meal-list">${items}</ul>` : '<div class="muted small" style="margin-top:8px">No meals listed.</div>'}
     </div>`;
@@ -464,13 +486,13 @@
 
   function mealIcon(label) {
     const l = txt(label).toLowerCase();
-    if (/breakfast/.test(l)) return '🥣';
-    if (/lunch/.test(l)) return '🥪';
-    if (/dinner|supper/.test(l)) return '🍽️';
-    if (/recovery|after|post/.test(l)) return '🥤';
-    if (/bike|during/.test(l)) return '🍌';
-    if (/snack/.test(l)) return '🍎';
-    return '🍴';
+    if (/breakfast/.test(l)) return ICON.bowl;
+    if (/lunch/.test(l)) return ICON.plate;
+    if (/dinner|supper/.test(l)) return ICON.plate;
+    if (/recovery|after|post/.test(l)) return ICON.bottle;
+    if (/bike|during/.test(l)) return ICON.bottle;
+    if (/snack/.test(l)) return ICON.apple;
+    return ICON.plate;
   }
 
   function parseTime(v) {
@@ -495,7 +517,7 @@
   // Build today's steps in time order
   function dayFlow(ds) {
     const c = obj(getCheckins()[ds]);
-    const steps = [{ id: 'morning', kind: 'morning', slot: 0, icon: '☀️', title: 'Good morning', sub: 'Sleep, legs and stress' }];
+    const steps = [{ id: 'morning', kind: 'morning', slot: 0, icon: ICON.sun, title: 'Good morning', sub: 'Sleep, legs and stress' }];
 
     const ws = workoutsOn(ds);
     const wSlots = [];
@@ -510,7 +532,7 @@
     });
     const firstW = wSlots.length ? Math.min(...wSlots) : null;
     const lastW = wSlots.length ? Math.max(...wSlots) : null;
-    if (wSlots.length) steps.push({ id: 'session', kind: 'session', slot: lastW + 0.2, icon: '📝', title: 'Session check-in', sub: 'How did it feel?' });
+    if (wSlots.length) steps.push({ id: 'session', kind: 'session', slot: lastW + 0.2, icon: ICON.note, title: 'Session check-in', sub: 'How did it feel?' });
 
     let prev = 6.9;
     mealsOn(ds).forEach((m, mi) => {
@@ -531,7 +553,7 @@
       });
     });
 
-    steps.push({ id: 'wrap', kind: 'wrap', slot: 23, icon: '🌙', title: 'Wrap up the day', sub: 'Anything for your coach?' });
+    steps.push({ id: 'wrap', kind: 'wrap', slot: 23, icon: ICON.moon, title: 'Wrap up the day', sub: 'Anything for your coach?' });
 
     steps.forEach((s, i) => { s.order = i; });
     steps.sort((a, b) => a.slot - b.slot || a.order - b.order);
@@ -633,7 +655,7 @@
   function questCardBody(s, ds, c) {
     if (s.kind === 'meal') {
       const t = obj(dayTypes()[s.dayType]);
-      const chip = s.dayType ? `<div class="chips"><span class="chip accent day-type">${esc(prettify(s.dayType))} day${isNum(t.carbs_g) && t.carbs_g > 0 ? ' · ' + esc(num(t.carbs_g)) + ' g carbs' : ''}</span></div>` : '';
+      const chip = s.dayType ? `<div class="chips"><span class="chip day-type dt-${esc(s.dayType)}">${esc(prettify(s.dayType))} day${isNum(t.carbs_g) && t.carbs_g > 0 ? ' · ' + esc(num(t.carbs_g)) + ' g carbs' : ''}</span></div>` : '';
       return `${s.sub && s.meal.label ? `<div class="q-text">${esc(s.sub)}</div>` : ''}${chip}
         ${answerButtons(s, [['done', '✓ Done'], ['half', '½ Half'], ['no', "✕ Didn't"]])}`;
     }
@@ -641,7 +663,7 @@
       const w = s.x.w;
       return `${txt(w.purpose) ? `<div class="q-text">${esc(txt(w.purpose))}</div>` : ''}
         ${txt(w.cue) ? `<div class="cue" style="margin-top:12px">“${esc(txt(w.cue))}”</div>` : ''}
-        ${answerButtons(s, [['done', '👍 Got it, resting']])}`;
+        ${answerButtons(s, [['done', 'Got it, resting']])}`;
     }
     if (s.kind === 'workout') {
       const w = s.x.w;
@@ -655,10 +677,10 @@
         txt(f.before) ? 'Before: ' + esc(txt(f.before)) : '',
         isNum(f.during_carbs_g_per_h) && f.during_carbs_g_per_h > 0 ? `During: <b>${esc(num(f.during_carbs_g_per_h))} g carbs/h</b>` : '',
       ].filter(Boolean).join('<br>');
-      return `<div class="chips">${dur ? `<span class="chip">⏱ ${esc(dur)}</span>` : ''}${zoneChip(w.zone)}</div>
+      return `<div class="chips">${dur ? `<span class="chip">${ICON.clock} ${esc(dur)}</span>` : ''}${zoneChip(w.zone)}</div>
         ${txt(w.purpose) ? `<div class="q-text">${esc(txt(w.purpose))}</div>` : ''}
         ${summary ? `<ul class="q-steps">${summary}</ul>` : ''}
-        ${fuel ? `<div class="q-fuel">⛽ ${fuel}</div>` : ''}
+        ${fuel ? `<div class="q-fuel"><span class="q-fuel-ic">${ICON.bottle}</span><span>${fuel}</span></div>` : ''}
         <a class="btn" href="#workout/${s.x.i}" style="margin-top:14px">See full workout ›</a>
         ${answerButtons(s, [['done', '✓ Done'], ['half', '½ Partly'], ['no', "✕ Didn't"]])}`;
     }
@@ -690,7 +712,7 @@
     if (s.kind === 'wrap') {
       return `<form data-flow-form="wrap" autocomplete="off">
         <div class="field"><textarea name="notes" placeholder="Pain, illness, motivation, weather… or leave empty.">${esc(c.notes || '')}</textarea></div>
-        <button class="btn primary" type="submit">🏁 Finish the day</button>
+        <button class="btn primary" type="submit">${ICON.flag} Finish the day</button>
       </form>`;
     }
     return '';
@@ -728,11 +750,11 @@
       </div>`;
     } else {
       html += `<div class="quest-card done-card" id="questCard">
-        <div class="confetti" aria-hidden="true">${['🎉', '✨', '🏅', '⭐', '🎊', '🎉', '✨', '⭐'].map((e, i) => `<span style="--i:${i}">${e}</span>`).join('')}</div>
-        <div class="q-icon big">🏅</div>
+        <div class="confetti" aria-hidden="true">${[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `<span style="--i:${i}"></span>`).join('')}</div>
+        <div class="q-icon big">${ICON.medal}</div>
         <h3>Day complete!</h3>
         <div class="q-text">You earned <b>${xp} XP</b> today${streak > 1 ? ` and you're on a <b>${streak}-day streak</b>` : ''}. Nice work.</div>
-        <button class="btn primary" data-action="copy-today" style="margin-top:16px">📋 Copy today for my coach</button>
+        <button class="btn primary" data-action="copy-today" style="margin-top:16px">${ICON.copy} Copy today for my coach</button>
       </div>`;
     }
 
@@ -762,7 +784,7 @@
   function afterAnswer(ds, fromId) {
     const next = nextOpenStep(ds, fromId);
     goToStep(next ? next.id : '');
-    if (!next) toast('Day complete! 🎉');
+    if (!next) toast('Day complete!');
   }
 
   function viewToday() {
@@ -1048,27 +1070,28 @@
   }
   const sportOfPlan = (t) => (t === 'run' ? 'Run' : t === 'swim' ? 'Swim' : t === 'strength' ? 'WeightTraining' : t === 'rest' ? '' : 'Ride');
 
-  const WX_ICON = { '01': '☀️', '02': '🌤️', '03': '⛅', '04': '☁️', '09': '🌧️', '10': '🌦️', '11': '⛈️', '13': '❄️', '50': '🌫️' };
+  const WX_ICON = { '01': ['sun', 'wx-sun'], '02': ['cloudSun', 'wx-sun'], '03': ['cloudSun', 'wx-cloud'], '04': ['cloud', 'wx-cloud'], '09': ['rain', 'wx-rain'], '10': ['rain', 'wx-rain'], '11': ['storm', 'wx-rain'], '13': ['snow', 'wx-cloud'], '50': ['fog', 'wx-cloud'] };
   function weatherHTML(d) {
     if (!d) return '';
     const w = obj(arr(d.weather)[0]);
-    const icon = WX_ICON[txt(w.icon).slice(0, 2)] || '🌡️';
+    const wi = WX_ICON[txt(w.icon).slice(0, 2)] || ['cloud', 'wx-cloud'];
+    const icon = `<span class="wx-ic ${wi[1]}">${ICON[wi[0]]}</span>`;
     const t = obj(d.temp);
     const kmh = (v) => (isNum(v) ? Math.round(v * 3.6) : '');
     // wind_deg is where the wind comes FROM, the arrow shows where it blows TO
     const arrow = isNum(d.wind_deg) ? `<span class="wind-arrow" style="transform:rotate(${Math.round(d.wind_deg + 180)}deg)">↑</span>` : '';
     return `<span class="wx" title="${esc(txt(w.description))}">${icon} <b>${esc(num(t.min, 0))}°/${esc(num(t.max, 0))}°</b>
       ${arrow}<span>${kmh(d.wind_speed)}<small>/${kmh(d.wind_gust)} km/h</small></span>
-      ${isNum(d.rain) && d.rain >= 0.5 ? `<span>💧${esc(num(d.rain, 0))} mm</span>` : ''}</span>`;
+      ${isNum(d.rain) && d.rain >= 0.5 ? `<span class="wx-rainmm">${ICON.drop}${esc(num(d.rain, 0))} mm</span>` : ''}</span>`;
   }
 
   function wellnessHTML(x) {
     if (!x) return '';
     const parts = [];
-    if (isNum(x.sleepSecs)) parts.push(`<span title="Sleep">🌙 <b>${esc(hm(x.sleepSecs))}</b>${isNum(x.sleepScore) ? ` ${esc(num(x.sleepScore, 0))}` : ''}</span>`);
-    if (isNum(x.restingHR)) parts.push(`<span title="Resting heart rate">❤️ <b>${esc(num(x.restingHR, 0))}</b></span>`);
+    if (isNum(x.sleepSecs)) parts.push(`<span title="Sleep"><i class="wl-ic wl-sleep">${ICON.moon}</i><b>${esc(hm(x.sleepSecs))}</b>${isNum(x.sleepScore) ? ` ${esc(num(x.sleepScore, 0))}` : ''}</span>`);
+    if (isNum(x.restingHR)) parts.push(`<span title="Resting heart rate"><i class="wl-ic wl-heart">${ICON.heart}</i><b>${esc(num(x.restingHR, 0))}</b></span>`);
     if (isNum(x.hrv)) parts.push(`<span title="HRV (rMSSD)">HRV <b>${esc(num(x.hrv, 0))}</b> ms</span>`);
-    if (isNum(x.respiration)) parts.push(`<span title="Breathing rate">🫁 <b>${esc(num(x.respiration, 1))}</b></span>`);
+    if (isNum(x.respiration)) parts.push(`<span title="Breathing rate"><i class="wl-ic wl-breath">${ICON.breath}</i><b>${esc(num(x.respiration, 1))}</b></span>`);
     if (isNum(x.spO2)) parts.push(`<span title="Blood oxygen">SpO₂ <b>${esc(num(x.spO2, 0))}%</b></span>`);
     if (isNum(x.readiness)) parts.push(`<span title="Readiness">Ready <b>${esc(num(x.readiness, 0))}</b></span>`);
     return parts.length ? `<div class="wellness">${parts.join('')}</div>` : '';
@@ -1226,7 +1249,7 @@
           if (s > 0) { sec += s; sessions++; }
         });
       }
-      const total = sec ? `<div class="week-total"><div class="v">⏱ ${esc(fmtDur(sec))}</div><div class="l">${sessions} session${sessions === 1 ? '' : 's'} planned</div></div>` : '';
+      const total = sec ? `<div class="week-total"><div class="v">${ICON.clock} ${esc(fmtDur(sec))}</div><div class="l">${sessions} session${sessions === 1 ? '' : 's'} planned</div></div>` : '';
       return `<div class="page-head"><div class="eyebrow">Agenda</div><div class="head-row"><h2>Your week</h2>${total}</div></div>`;
     }, 'the week total');
 
@@ -1380,8 +1403,8 @@
       <div class="eyebrow">${t.icon} ${esc(t.label)}</div>
       <h2>${esc(txt(w.title) || t.label)}</h2>
       <div class="chips">
-        ${ds ? `<a class="chip" href="#day/${ds}">📅 ${esc(fmtDate(ds))}${relDay(ds) ? ' · ' + relDay(ds) : ''}</a>` : ''}
-        ${dur ? `<span class="chip">⏱ ${esc(dur)}</span>` : ''}
+        ${ds ? `<a class="chip" href="#day/${ds}">${ICON.calendar} ${esc(fmtDate(ds))}${relDay(ds) ? ' · ' + relDay(ds) : ''}</a>` : ''}
+        ${dur ? `<span class="chip">${ICON.clock} ${esc(dur)}</span>` : ''}
         ${zoneChip(w.zone)}
       </div>
     </div>`;
@@ -1451,7 +1474,7 @@
         const past = days != null && days < 0;
         let cd = '';
         if (days != null) {
-          if (days === 0) cd = `<div class="countdown"><div class="n">🎉</div><div class="u">Today!</div></div>`;
+          if (days === 0) cd = `<div class="countdown"><div class="n">${ICON.flag}</div><div class="u">Today!</div></div>`;
           else if (past) cd = `<div class="countdown past"><div class="n">${-days}</div><div class="u">days ago</div></div>`;
           else cd = `<div class="countdown"><div class="n">${days}</div><div class="u">${days === 1 ? 'day' : 'days'} to go</div></div>`;
         }
@@ -1568,7 +1591,7 @@
         const dt = txt(m.day_type);
         const items = arr(m.items).map(mealItemHTML).filter(Boolean).join('');
         return `<details class="card${ds === t ? ' today' : ''}"${ds === t ? ' open' : ''}>
-          <summary><span>${esc(ds ? fmtDate(ds) : txt(m.date) || 'Day')}${ds === t ? ' · Today' : ''}</span>${dt ? `<span class="chip day-type">${esc(prettify(dt))}</span>` : ''}</summary>
+          <summary><span>${esc(ds ? fmtDate(ds) : txt(m.date) || 'Day')}${ds === t ? ' · Today' : ''}</span>${dt ? `<span class="chip day-type dt-${esc(dt)}">${esc(prettify(dt))}</span>` : ''}</summary>
           <div class="inner">${dt ? targetStats(dt) : ''}${items ? `<ul class="meal-list">${items}</ul>` : '<div class="muted small">No meals listed.</div>'}</div>
         </details>`;
       }).join('')}</div>`;
@@ -1693,7 +1716,7 @@
     const dates = Object.keys(all).sort().reverse();
     html += `<div class="section"><h3><span>Saved check-ins · ${dates.length}</span></h3>
       <div class="stack" style="margin-bottom:14px">
-        <button class="btn primary" data-action="copy-checkins"${dates.length ? '' : ' disabled style="opacity:.5"'}>📋 Copy all for my coach</button>
+        <button class="btn primary" data-action="copy-checkins"${dates.length ? '' : ' disabled style="opacity:.5"'}>${ICON.copy} Copy all for my coach</button>
       </div>
       ${dates.length ? dates.map((d) => {
         const x = obj(all[d]);
@@ -1732,7 +1755,7 @@
     if (old.what_auto && c.what === old.what_auto) c.what_auto = old.what_auto;
     all[ds] = c;
     if (!lsSet(LS.checkins, all)) { toast('Could not save on this phone'); return; }
-    toast('Check-in saved ✓');
+    toast('Check-in saved');
     state.pendingDelete = '';
     if (location.hash !== '#checkin') location.hash = '#checkin';
     else render();
