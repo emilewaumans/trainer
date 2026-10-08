@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.4.0';
+  const APP_VERSION = '1.6.1';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -149,21 +149,37 @@
   }
   function zones() { return arr(P().zones).map(obj).filter((z) => txt(z.id) || txt(z.name)); }
 
+  // Line icons (drawn, not emoji). They take the text colour around them.
+  const svgIcon = (body) => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
+  const ICON = {
+    bike: svgIcon('<circle cx="5.5" cy="16.5" r="3.8"/><circle cx="18.5" cy="16.5" r="3.8"/><path d="M5.5 16.5 9 9.5h6.5l3 7M9 9.5l3.2 7M12.2 16.5l3.3-7M7.5 7h3M15.5 9.5 14.6 6.5h2.4"/>'),
+    run: svgIcon('<circle cx="15" cy="4.2" r="2"/><path d="M7 11.5 10.5 8h4l2.5 3.5 3 .5M10.5 8 9 14l3.5 3V22M9 14l-2.5 3.5H3"/>'),
+    kettlebell: svgIcon('<path d="M8.6 10.2C7.6 5.2 9.4 3 12 3s4.4 2.2 3.4 7.2"/><circle cx="12" cy="15.2" r="6"/><path d="M9.5 15.2h5"/>'),
+    swim: svgIcon('<circle cx="17.5" cy="6.5" r="2"/><path d="M3 12.5 8 9l4 2.5 3-2.5M2 17c1.7 0 2.3-1.2 4-1.2s2.3 1.2 4 1.2 2.3-1.2 4-1.2 2.3 1.2 4 1.2 2.3-1.2 4-1.2M2 21c1.7 0 2.3-1.2 4-1.2s2.3 1.2 4 1.2 2.3-1.2 4-1.2 2.3 1.2 4 1.2 2.3-1.2 4-1.2"/>'),
+    rest: svgIcon('<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/><path d="M15 3.5h3l-3 3.5h3"/>'),
+    // an old-fashioned weight for a balance scale
+    load: svgIcon('<circle cx="12" cy="5.8" r="2.6"/><path d="M7.2 9.5h9.6l3.2 11H4z"/>'),
+    dot: svgIcon('<circle cx="12" cy="12" r="3"/>'),
+    flame: svgIcon('<path d="M12 21.5c-3.9 0-6.5-2.6-6.5-6.2 0-3.4 2.4-5.4 3.6-8.3.5 1.6 1.4 2.6 2.4 3.1.2-3.1 1.6-5.6 4-7.6-.4 3.4 1.2 5.6 2.4 7.6.9 1.5 1.6 3.1 1.6 5.2 0 3.6-2.6 6.2-7.5 6.2z"/><path d="M12 21.5c-1.8 0-3-1.2-3-2.9 0-1.8 1.4-2.8 2.2-4.3.9 1.4 3.8 2.4 3.8 4.6 0 1.5-1.2 2.6-3 2.6z"/>'),
+    bolt: svgIcon('<path d="M13.5 2.5 4.5 13.5h6.5l-1 8 9-11h-6.5z"/>'),
+    trophy: svgIcon('<path d="M7 3.5h10v5.5a5 5 0 0 1-10 0z"/><path d="M7 5.5H4v1.5a3.5 3.5 0 0 0 3.4 3.5M17 5.5h3v1.5a3.5 3.5 0 0 1-3.4 3.5M12 14v3.5M8 20.5h8M9.5 17.5h5v3h-5z"/>'),
+  };
+
   const TYPES = {
-    rest: { label: 'Rest', icon: '😴', cls: 't-rest' },
-    easy: { label: 'Easy ride', icon: '🚴', cls: 't-easy' },
-    recovery: { label: 'Recovery ride', icon: '🌿', cls: 't-easy' },
-    tempo: { label: 'Tempo', icon: '⏱️', cls: 't-tempo' },
-    vo2_intervals: { label: 'VO2max intervals', icon: '🔥', cls: 't-hard' },
-    long_ride: { label: 'Long ride', icon: '🛣️', cls: 't-long' },
-    long_ride_intervals: { label: 'Long ride + intervals', icon: '🛣️', cls: 't-long' },
-    strength: { label: 'Strength', icon: '🏋️', cls: 't-strength' },
-    benchmark_test: { label: 'Benchmark test', icon: '📊', cls: 't-hard' },
-    run: { label: 'Run', icon: '🏃', cls: 't-run' },
-    swim: { label: 'Swim', icon: '🏊', cls: 't-swim' },
+    rest: { label: 'Rest', icon: ICON.rest, cls: 't-rest' },
+    easy: { label: 'Easy ride', icon: ICON.bike, cls: 't-easy' },
+    recovery: { label: 'Recovery ride', icon: ICON.bike, cls: 't-easy' },
+    tempo: { label: 'Tempo', icon: ICON.bike, cls: 't-tempo' },
+    vo2_intervals: { label: 'VO2max intervals', icon: ICON.bike, cls: 't-hard' },
+    long_ride: { label: 'Long ride', icon: ICON.bike, cls: 't-long' },
+    long_ride_intervals: { label: 'Long ride + intervals', icon: ICON.bike, cls: 't-long' },
+    strength: { label: 'Strength', icon: ICON.kettlebell, cls: 't-strength' },
+    benchmark_test: { label: 'Benchmark test', icon: ICON.bike, cls: 't-hard' },
+    run: { label: 'Run', icon: ICON.run, cls: 't-run' },
+    swim: { label: 'Swim', icon: ICON.swim, cls: 't-swim' },
   };
   function typeInfo(t) {
-    return TYPES[t] || { label: prettify(t) || 'Workout', icon: '•', cls: 't-other' };
+    return TYPES[t] || { label: prettify(t) || 'Workout', icon: ICON.dot, cls: 't-other' };
   }
 
   function zoneClass(id) {
@@ -323,16 +339,34 @@
 
   /* ---------------- shared building blocks ---------------- */
 
+  // One workout, the same look everywhere: icon, title, duration, then load/intensity and a mini power chart
+  function sessionHTML(w, wk) {
+    const t = typeInfo(txt(w.type));
+    const dur = durationLabel(w);
+    return `<div class="sess ${t.cls}">
+      <div class="sess-head"><span class="sess-ic">${t.icon}</span><span class="sess-title">${esc(txt(w.title) || t.label)}</span>${dur ? `<span class="dur">${esc(dur)}</span>` : ''}</div>
+      ${txt(w.type) === 'rest' ? '' : safe(() => plannedMiniHTML(w, wk), 'the chart')}
+    </div>`;
+  }
+
   function workoutCard(x) {
     const w = x.w, t = typeInfo(txt(w.type));
-    const dur = durationLabel(w);
-    return `<a class="card workout ${t.cls}" href="#workout/${x.i}">
-      <div class="wk-top"><span>${t.icon} ${esc(t.label)}</span>${zoneChip(w.zone)}</div>
-      <div class="wk-title">${esc(txt(w.title) || t.label)}</div>
-      ${dur ? `<div class="wk-meta"><span>⏱ ${esc(dur)}</span></div>` : ''}
-      ${txt(w.purpose) ? `<div class="wk-purpose">${esc(txt(w.purpose))}</div>` : ''}
-      <span class="chev">›</span>
-    </a>`;
+    const d = parseDate(w.date);
+    const wk = d ? icuWeek(mondayOf(d)) : null;
+    return `<a class="card workout ${t.cls}" href="#workout/${x.i}">${sessionHTML(w, wk)}<span class="chev">›</span></a>`;
+  }
+
+  // Today's workouts at the top of the Today page, or a rest-day card of the same size
+  function todaySessionsHTML(ds) {
+    const ws = workoutsOn(ds).filter((x) => txt(x.w.type) !== 'rest');
+    if (ws.length) return `<div class="section today-sess" style="margin-top:0"><h3>Today's session${ws.length > 1 ? 's' : ''}</h3>${ws.map(workoutCard).join('')}</div>`;
+    const rest = workoutsOn(ds).find((x) => txt(x.w.type) === 'rest');
+    const sub = rest ? txt(rest.w.title).replace(/^rest day\s*/i, '').replace(/^\((.*)\)$/, '$1') : '';
+    return `<div class="section today-sess" style="margin-top:0"><h3>Today's session</h3>
+      <${rest ? `a href="#workout/${rest.i}"` : 'div'} class="card workout t-rest rest-card">
+        <span class="rest-ic">${ICON.rest}</span>
+        <div><div class="sess-title">Rest day</div><div class="muted small">${esc(sub || 'No training planned. Recover well.')}</div></div>
+      </${rest ? 'a' : 'div'}></div>`;
   }
 
   function fuelHTML(fuel, w) {
@@ -675,9 +709,9 @@
     const streak = streakDays();
 
     let html = `<div class="gamebar">
-      <div class="gb"><div class="gb-v">🔥 ${streak}</div><div class="gb-l">day streak</div></div>
-      <div class="gb"><div class="gb-v">⚡ ${xp}</div><div class="gb-l">XP today</div></div>
-      <div class="gb"><div class="gb-v">🏆 ${lvl.level}</div><div class="gb-l">level</div></div>
+      <div class="gb"><div class="gb-v"><span class="gb-ic gb-streak">${ICON.flame}</span>${streak}</div><div class="gb-l">day streak</div></div>
+      <div class="gb"><div class="gb-v"><span class="gb-ic gb-xp">${ICON.bolt}</span>${xp}</div><div class="gb-l">XP today</div></div>
+      <div class="gb"><div class="gb-v"><span class="gb-ic gb-lvl">${ICON.trophy}</span>${lvl.level}</div><div class="gb-l">level</div></div>
       <div class="gb-bar"><div class="progress"><span style="width:${pct}%"></span></div>
         <div class="gb-foot"><span>${answered} of ${steps.length} steps</span><span>${lvl.toNext} XP to level ${lvl.level + 1}</span></div></div>
     </div>`;
@@ -741,6 +775,7 @@
     </div>`;
     if (!state.plan) return html + noPlanHTML();
 
+    html += safe(() => todaySessionsHTML(t), "today's session");
     html += safe(() => questHTML(t), "today's steps");
 
     html += safe(() => {
@@ -814,6 +849,329 @@
     return html;
   }
 
+  /* ---------------- power model (planned watts per second, from plan.json steps) ---------------- */
+
+  const POWER_SPORTS = ['easy', 'recovery', 'tempo', 'vo2_intervals', 'long_ride', 'long_ride_intervals', 'benchmark_test'];
+  const isRideType = (t) => POWER_SPORTS.includes(txt(t)) || /ride/.test(txt(t));
+  const ftp = () => (isNum(obj(P().athlete).ftp_w) ? obj(P().athlete).ftp_w : 0);
+
+  // Watts for a step text + zone. Same rules as push-workouts.js, so the app and the Bolt agree.
+  function stepWatts(text, zoneId) {
+    const t = txt(text);
+    let m;
+    if ((m = /from\s+(\d{2,4})\s*(?:W\s*)?to\s+(\d{2,4})\s*W/i.exec(t))) return { w0: +m[1], w1: +m[2] };
+    if ((m = /(\d{2,4})\s*[-–]\s*(\d{2,4})\s*W\b/i.exec(t))) { const v = (+m[1] + +m[2]) / 2; return { w0: v, w1: v }; }
+    const under = /(under|below|max\.?|less than)\s+\d{2,4}\s*W/i.test(t);
+    if (!under && (m = /(\d{2,4})\s*W\b/i.exec(t))) return { w0: +m[1], w1: +m[1] };
+    const z = zones().find((x) => txt(x.id) === txt(zoneId));
+    if (!z || !Array.isArray(z.power_w) || !isNum(z.power_w[0]) || !isNum(z.power_w[1])) return null;
+    const wide = z.power_w[1] - z.power_w[0] > 150;
+    const v = wide ? z.power_w[0] : Math.round((z.power_w[0] + z.power_w[1]) / 2);
+    return { w0: v, w1: v };
+  }
+
+  // Flattens a workout into segments [{sec, w0, w1}], writing out repeats
+  function powerSegments(w) {
+    const out = [];
+    const easy = () => stepWatts('', 'Z1') || { w0: 0, w1: 0 };
+    const walk = (s, depth) => {
+      s = obj(s);
+      if (depth > 6) return;
+      const n = repCount(s) || 1;
+      if (Array.isArray(s.steps)) {
+        for (let i = 0; i < n; i++) {
+          s.steps.forEach((k) => walk(k, depth + 1));
+          if (i < n - 1 && restSec(s)) out.push(Object.assign({ sec: restSec(s) }, easy()));
+        }
+      } else if (isOnOff(s)) {
+        const on = stepWatts(s.on_target, null) || stepWatts('', s.zone) || { w0: 0, w1: 0 };
+        const off = /half/i.test(txt(s.off_target)) ? { w0: on.w0 / 2, w1: on.w1 / 2 } : stepWatts(s.off_target, 'Z1') || easy();
+        for (let i = 0; i < n; i++) {
+          if (onSec(s)) out.push(Object.assign({ sec: onSec(s) }, on));
+          if (offSec(s)) out.push(Object.assign({ sec: offSec(s) }, off));
+        }
+      } else {
+        const p = stepWatts(s.target, s.zone) || { w0: 0, w1: 0 };
+        for (let i = 0; i < n; i++) out.push(Object.assign({ sec: baseSec(s) }, p));
+      }
+    };
+    arr(w.steps).forEach((s) => walk(s, 0));
+    return out.filter((x) => x.sec > 0);
+  }
+
+  // Duration, load, intensity etc. the way Intervals.icu calculates them for a plan
+  function workoutMetrics(w) {
+    if (!isRideType(w.type)) return null;
+    const segs = powerSegments(w);
+    const F = ftp();
+    const T = segs.reduce((t, s) => t + s.sec, 0);
+    if (!T || !F) return null;
+    let sum = 0, sum4 = 0;
+    const zoneSec = {};
+    segs.forEach((s) => {
+      // ramps: sample 10 points
+      for (let i = 0; i < 10; i++) {
+        const p = s.w0 + ((s.w1 - s.w0) * (i + 0.5)) / 10, dt = s.sec / 10;
+        sum += p * dt;
+        sum4 += p ** 4 * dt;
+        const z = zoneOfWatts(p);
+        zoneSec[z] = (zoneSec[z] || 0) + dt;
+      }
+    });
+    const avg = sum / T, np = (sum4 / T) ** 0.25, IF = np / F;
+    return {
+      segs, sec: T, avg, np, IF, vi: avg ? np / avg : 0,
+      load: (T * np * IF) / (F * 3600) * 100,
+      kj: (avg * T) / 1000,
+      zones: zones().map((z) => ({ id: txt(z.id), sec: zoneSec[txt(z.id)] || 0 })),
+    };
+  }
+
+  function zoneOfWatts(p) {
+    const zs = zones();
+    for (const z of zs) if (Array.isArray(z.power_w) && p <= z.power_w[1]) return txt(z.id);
+    return zs.length ? txt(zs[zs.length - 1].id) : '';
+  }
+  function zoneColor(p) { return `var(--${zoneClass(zoneOfWatts(p))})`; }
+
+  // Power profile as an SVG. Small version for cards, big version with axes for the workout page.
+  function powerChartSVG(segs, big) {
+    const T = segs.reduce((t, s) => t + s.sec, 0);
+    if (!T) return '';
+    const W = big ? 360 : 600, H = big ? 190 : 34, padL = big ? 30 : 0, padB = big ? 18 : 0;
+    const maxW = Math.max(100, big ? ftp() : 0, ...segs.map((s) => Math.max(s.w0, s.w1)));
+    const top = Math.ceil((maxW * 1.1) / 100) * 100;
+    const x = (t) => padL + (t / T) * (W - padL);
+    const padT = big ? 10 : 2;
+    const y = (p) => (H - padB) - (p / top) * (H - padB - padT);
+    let t = 0, shapes = '';
+    segs.forEach((s) => {
+      const x0 = x(t), x1 = x(t + s.sec);
+      shapes += `<polygon points="${x0},${H - padB} ${x0},${y(s.w0)} ${x1},${y(s.w1)} ${x1},${H - padB}" fill="${zoneColor((s.w0 + s.w1) / 2)}"/>`;
+      t += s.sec;
+    });
+    let axes = '';
+    if (big) {
+      for (let p = 100; p <= top; p += 100) axes += `<line x1="${padL}" x2="${W}" y1="${y(p)}" y2="${y(p)}" class="grid"/><text x="${padL - 4}" y="${y(p) + 4}" text-anchor="end">${p}</text>`;
+      if (ftp()) axes += `<line x1="${padL}" x2="${W}" y1="${y(ftp())}" y2="${y(ftp())}" class="ftp"/>`;
+      for (let i = 0; i <= 4; i++) {
+        const tt = (T * i) / 4;
+        axes += `<text x="${x(tt)}" y="${H - 4}" text-anchor="${i === 0 ? 'start' : i === 4 ? 'end' : 'middle'}">${clock(tt)}</text>`;
+      }
+    }
+    return `<svg class="pchart${big ? ' big' : ''}" viewBox="0 0 ${W} ${H}"${big ? '' : ' preserveAspectRatio="none"'} role="img" aria-label="Power profile">${axes}${shapes}</svg>`;
+  }
+  function clock(sec) {
+    sec = Math.round(sec);
+    const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+    return h ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}` : `${m}:${String(s).padStart(2, '0')}`;
+  }
+  const hm = (sec) => { sec = Math.round(sec || 0); const h = Math.floor(sec / 3600), m = Math.round((sec % 3600) / 60); return h ? `${h}h${String(m).padStart(2, '0')}m` : `${m}m`; };
+
+  /* ---------------- Intervals.icu (live data: wellness, weather, done activities) ---------------- */
+  // The API key is stored only on this device (localStorage), never in the website files.
+
+  const LS_ICU = 'trainer.intervals';
+  const icu = { cache: {}, loading: {}, error: '', weather: null, weatherAt: 0 };
+  const icuCfg = () => { const c = obj(lsGet(LS_ICU, null)); return c.key ? c : null; };
+
+  async function icuGet(url) {
+    const c = icuCfg();
+    if (!c) throw new Error('not connected');
+    const res = await fetch(`https://intervals.icu/api/v1/athlete/${encodeURIComponent(c.athlete || '0')}${url}`, {
+      headers: { Authorization: 'Basic ' + btoa('API_KEY:' + c.key) },
+    });
+    if (res.status === 401 || res.status === 403) throw new Error('Intervals.icu refused the API key');
+    if (!res.ok) throw new Error('Intervals.icu answered ' + res.status);
+    return res.json();
+  }
+
+  // Loads one week (Monday date) and redraws the screen when it arrives
+  function icuWeek(mon) {
+    const key = iso(mon);
+    if (!icuCfg()) return null;
+    const c = icu.cache[key];
+    const fresh = c && Date.now() - c.at < 5 * 60 * 1000;
+    if (!fresh && !icu.loading[key]) {
+      icu.loading[key] = true;
+      const sun = iso(addDays(mon, 6));
+      Promise.all([
+        icuGet(`/wellness?oldest=${key}&newest=${sun}`),
+        icuGet(`/events?oldest=${key}&newest=${sun}`),
+        icuGet(`/activities?oldest=${key}&newest=${sun}T23:59:59`),
+        Date.now() - icu.weatherAt > 30 * 60 * 1000 ? icuGet('/weather-forecast').catch(() => null) : Promise.resolve(undefined),
+      ]).then(([wellness, events, activities, weather]) => {
+        icu.cache[key] = { at: Date.now(), wellness: arr(wellness), events: arr(events), activities: arr(activities) };
+        if (weather !== undefined) { icu.weather = weather; icu.weatherAt = Date.now(); }
+        icu.error = '';
+      }).catch((e) => {
+        icu.error = e.message || 'Could not reach Intervals.icu';
+      }).finally(() => {
+        icu.loading[key] = false;
+        if (['agenda', 'day', 'workout', 'today', 'overview'].includes(state.route)) render(true);
+      });
+    }
+    return c || null;
+  }
+
+  const icuDay = (wk, ds) => (wk ? {
+    wellness: wk.wellness.find((x) => x.id === ds) || null,
+    events: wk.events.filter((e) => txt(e.start_date_local).slice(0, 10) === ds),
+    activities: wk.activities.filter((a) => txt(a.start_date_local).slice(0, 10) === ds),
+  } : null);
+
+  function weatherOn(ds) {
+    const f = obj(arr(obj(icu.weather).forecasts)[0]);
+    return arr(f.daily).find((d) => d.id === ds) || null;
+  }
+
+  // Same id as push-workouts.js, to find the Intervals.icu event of a plan workout
+  function planSlug(s) {
+    return String(s || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
+  }
+  function icuEventFor(w, wk) {
+    if (!wk) return null;
+    const ds = normDate(w.date);
+    const ext = `trainer:${ds}:${planSlug(w.title)}`;
+    return wk.events.find((e) => e.external_id === ext) || null;
+  }
+
+  const SPORT_ICON = { Ride: ICON.bike, Run: ICON.run, Swim: ICON.swim, WeightTraining: ICON.kettlebell, Workout: ICON.kettlebell };
+  const SPORT_LABEL = { Ride: 'Cycling', WeightTraining: 'Strength', Run: 'Running', Swim: 'Swimming', Other: 'Other' };
+  function sportOfActivity(t) {
+    t = txt(t);
+    if (/Ride|Cyclocross|Velomobile|Handcycle/.test(t)) return 'Ride';
+    if (/Run/.test(t)) return 'Run';
+    if (/Swim/.test(t)) return 'Swim';
+    if (/Weight|Workout|Crossfit/.test(t)) return 'WeightTraining';
+    return 'Other';
+  }
+  const sportOfPlan = (t) => (t === 'run' ? 'Run' : t === 'swim' ? 'Swim' : t === 'strength' ? 'WeightTraining' : t === 'rest' ? '' : 'Ride');
+
+  const WX_ICON = { '01': '☀️', '02': '🌤️', '03': '⛅', '04': '☁️', '09': '🌧️', '10': '🌦️', '11': '⛈️', '13': '❄️', '50': '🌫️' };
+  function weatherHTML(d) {
+    if (!d) return '';
+    const w = obj(arr(d.weather)[0]);
+    const icon = WX_ICON[txt(w.icon).slice(0, 2)] || '🌡️';
+    const t = obj(d.temp);
+    const kmh = (v) => (isNum(v) ? Math.round(v * 3.6) : '');
+    // wind_deg is where the wind comes FROM, the arrow shows where it blows TO
+    const arrow = isNum(d.wind_deg) ? `<span class="wind-arrow" style="transform:rotate(${Math.round(d.wind_deg + 180)}deg)">↑</span>` : '';
+    return `<span class="wx" title="${esc(txt(w.description))}">${icon} <b>${esc(num(t.min, 0))}°/${esc(num(t.max, 0))}°</b>
+      ${arrow}<span>${kmh(d.wind_speed)}<small>/${kmh(d.wind_gust)} km/h</small></span>
+      ${isNum(d.rain) && d.rain >= 0.5 ? `<span>💧${esc(num(d.rain, 0))} mm</span>` : ''}</span>`;
+  }
+
+  function wellnessHTML(x) {
+    if (!x) return '';
+    const parts = [];
+    if (isNum(x.sleepSecs)) parts.push(`<span title="Sleep">🌙 <b>${esc(hm(x.sleepSecs))}</b>${isNum(x.sleepScore) ? ` ${esc(num(x.sleepScore, 0))}` : ''}</span>`);
+    if (isNum(x.restingHR)) parts.push(`<span title="Resting heart rate">❤️ <b>${esc(num(x.restingHR, 0))}</b></span>`);
+    if (isNum(x.hrv)) parts.push(`<span title="HRV (rMSSD)">HRV <b>${esc(num(x.hrv, 0))}</b> ms</span>`);
+    if (isNum(x.respiration)) parts.push(`<span title="Breathing rate">🫁 <b>${esc(num(x.respiration, 1))}</b></span>`);
+    if (isNum(x.spO2)) parts.push(`<span title="Blood oxygen">SpO₂ <b>${esc(num(x.spO2, 0))}%</b></span>`);
+    if (isNum(x.readiness)) parts.push(`<span title="Readiness">Ready <b>${esc(num(x.readiness, 0))}</b></span>`);
+    return parts.length ? `<div class="wellness">${parts.join('')}</div>` : '';
+  }
+
+  function activityHTML(a) {
+    const sp = sportOfActivity(a.type);
+    const bits = [];
+    if (isNum(a.moving_time)) bits.push(hm(a.moving_time));
+    if (isNum(a.distance) && a.distance > 0) bits.push(`${num(a.distance / 1000, 1)} km`);
+    if (isNum(a.icu_average_watts)) bits.push(`${num(a.icu_average_watts, 0)} W`);
+    if (isNum(a.average_heartrate)) bits.push(`${num(a.average_heartrate, 0)} bpm`);
+    if (isNum(a.icu_training_load)) bits.push(`load ${num(a.icu_training_load, 0)}`);
+    return `<div class="act"><span class="act-ic">${SPORT_ICON[sp] || '✓'}</span><div><div class="act-name">✓ ${esc(txt(a.name) || sp)}</div><div class="act-meta">${esc(bits.join(' · '))}</div></div></div>`;
+  }
+
+  // Week summary like the "Wk 41" box in Intervals.icu
+  function weekSummaryHTML(mon, wk) {
+    const days = [...Array(7)].map((_, i) => iso(addDays(mon, i)));
+    // planned: from Intervals.icu events when connected, else from plan.json
+    const sports = {};
+    const add = (sp, field, v) => { if (!sp) return; sports[sp] = sports[sp] || { pt: 0, pl: 0, dt: 0, dl: 0 }; sports[sp][field] += v || 0; };
+    days.forEach((ds) => workoutsOn(ds).forEach((x) => {
+      const sp = sportOfPlan(txt(x.w.type));
+      if (!sp) return;
+      const ev = icuEventFor(x.w, wk);
+      const m = workoutMetrics(x.w);
+      const sec = isNum(x.w.duration_min) ? x.w.duration_min * 60 : workoutTotalSec(x.w);
+      add(sp, 'pt', sec);
+      add(sp, 'pl', ev && isNum(ev.icu_training_load) ? ev.icu_training_load : m ? m.load : 0);
+    }));
+    let kcal = 0, climb = 0;
+    if (wk) wk.activities.forEach((a) => {
+      const sp = sportOfActivity(a.type);
+      add(sp, 'dt', a.moving_time);
+      add(sp, 'dl', a.icu_training_load);
+      kcal += isNum(a.calories) ? a.calories : 0;
+      climb += isNum(a.total_elevation_gain) ? a.total_elevation_gain : 0;
+    });
+    const list = Object.entries(sports);
+    const tot = list.reduce((t, [, s]) => ({ pt: t.pt + s.pt, pl: t.pl + s.pl, dt: t.dt + s.dt, dl: t.dl + s.dl }), { pt: 0, pl: 0, dt: 0, dl: 0 });
+    if (!list.length && !wk) return '';
+
+    // Fitness / fatigue / form at the end of the week (or the last day Intervals.icu has)
+    let fit = '';
+    if (wk && wk.wellness.length) {
+      const last = wk.wellness.filter((x) => isNum(x.ctl)).sort((a, b) => (a.id < b.id ? -1 : 1)).pop();
+      if (last) {
+        const form = last.ctl - last.atl;
+        fit = `<div class="wk-grid">
+          <div><span>Fitness</span><b class="c-fit">${esc(num(last.ctl, 0))}</b></div>
+          <div><span>Fatigue</span><b class="c-fat">${esc(num(last.atl, 0))}</b></div>
+          <div><span>Form</span><b class="${form < -10 ? 'c-bad' : form > 5 ? 'c-good' : 'c-neutral'}">${esc(num(form, 0))}</b></div>
+          <div><span>Ramp</span><b>${esc(num(last.rampRate, 1))}</b></div>
+          ${kcal ? `<div><span>kCal</span><b>${esc(num(kcal, 0))}</b></div>` : ''}
+          ${climb ? `<div><span>Climbing</span><b>${esc(num(climb, 0))} m</b></div>` : ''}
+        </div>`;
+      }
+    }
+    const bar = (done, plan, fmt) => {
+      if (!(plan > 0)) return `<div class="pbar"><i style="width:100%"></i><em>${esc(fmt(done))} done</em></div><span class="pbar-p">extra</span>`;
+      const pct = Math.round((done / plan) * 100);
+      return `<div class="pbar"><i style="width:${Math.min(100, pct)}%"></i><em>${esc(fmt(done))} / ${esc(fmt(plan))}</em></div><span class="pbar-p">${pct}%</span>`;
+    };
+    // 1. load for the whole week, 2. time per sport in a fixed order
+    const ORDER = ['Ride', 'WeightTraining', 'Run', 'Swim', 'Other'];
+    const row = (icon, label, html) => `<div class="wk-sport"><span class="wk-sic">${icon}</span><span class="pbar-l">${label}</span>${html}</div>`;
+    let rows = tot.pl || tot.dl ? row(ICON.load, 'Load', bar(tot.dl, tot.pl, (v) => num(v, 0))) : '';
+    ORDER.filter((sp) => sports[sp]).forEach((sp) => {
+      rows += row(SPORT_ICON[sp] || ICON.dot, SPORT_LABEL[sp], bar(sports[sp].dt, sports[sp].pt, hm));
+    });
+    return `<div class="card wk-sum">
+      <div class="wk-top-row"><b>Week ${esc(isoWeek(mon))}</b>${icu.loading[iso(mon)] ? '<span class="muted small">updating…</span>' : ''}</div>
+      <div class="wk-grid">
+        <div><span>Done</span><b>${esc(hm(tot.dt))}</b></div>
+        <div><span>Planned</span><b>${esc(hm(tot.pt))}</b></div>
+        <div><span>Load</span><b>${esc(num(tot.dl, 0))}${tot.pl ? '/' + esc(num(tot.pl, 0)) : ''}</b></div>
+      </div>
+      ${fit}
+      ${rows ? `<div class="wk-sports">${rows}</div>` : ''}
+      ${wk ? '' : `<div class="muted small" style="margin-top:8px">${icuCfg() ? 'Loading from Intervals.icu…' : 'Connect Intervals.icu in <a href="#settings">Settings</a> to see sleep, fitness and done rides.'}</div>`}
+      <details class="explain"><summary>What do these mean?</summary>
+        <p><b>Load</b>: how hard the training is (an hour all-out ≈ 100). <b>Fitness</b>: your average load over 6 weeks. <b>Fatigue</b>: your average load over the last week. <b>Form</b> = fitness − fatigue: below −10 you're tired, above +5 you're fresh. <b>Ramp</b>: how fast fitness is rising per week.</p>
+      </details>
+    </div>`;
+  }
+  function isoWeek(d) {
+    const x = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    const day = x.getUTCDay() || 7;
+    x.setUTCDate(x.getUTCDate() + 4 - day);
+    return Math.ceil(((x - Date.UTC(x.getUTCFullYear(), 0, 1)) / 86400000 + 1) / 7);
+  }
+
+  // Load + intensity line and mini chart for a planned workout
+  function plannedMiniHTML(w, wk) {
+    const m = workoutMetrics(w);
+    if (!m) return '';
+    const ev = icuEventFor(w, wk);
+    const load = ev && isNum(ev.icu_training_load) ? ev.icu_training_load : m.load;
+    const IF = ev && isNum(ev.icu_intensity) ? ev.icu_intensity / 100 : m.IF;
+    return `<div class="mini"><div class="mini-meta"><span class="load-ic">${ICON.load}</span>Load <b>${esc(num(load, 0))}</b> · Intensity <b>${esc(num(IF * 100, 0))}%</b></div>${powerChartSVG(m.segs, false)}</div>`;
+  }
+
   /* ---------------- screen: Agenda ---------------- */
 
   function calendarHTML() {
@@ -878,20 +1236,21 @@
       const wbs = blockStatus(iso(mon));
       const sub = state.weekOffset === 0 ? 'This week' : state.weekOffset === 1 ? 'Next week' : state.weekOffset === -1 ? 'Last week' : '';
       const blockTxt = wbs && wbs.inBlock ? `${txt(wbs.b.name) || 'Block'} · week ${wbs.week}${wbs.light ? ' (light)' : ''}` : '';
+      const wk = icuWeek(mon);
       let rows = '';
       for (let i = 0; i < 7; i++) {
         const d = addDays(mon, i), ds = iso(d);
         const ws = workoutsOn(ds);
+        const live = icuDay(wk, ds);
         const items = ws.length
-          ? ws.map((x) => {
-              const ti = typeInfo(txt(x.w.type));
-              const dur = durationLabel(x.w);
-              return `<div class="item"><span class="dot ${ti.cls}"></span><span>${esc(txt(x.w.title) || ti.label)}</span>${dur ? `<span class="dur">${esc(dur)}</span>` : ''}</div>`;
-            }).join('')
+          ? ws.map((x) => sessionHTML(x.w, wk)).join('')
           : '<div class="item muted" style="font-weight:500">Nothing planned</div>';
-        rows += `<a class="card day-row tap${ds === today() ? ' today' : ''}" href="#day/${ds}">
+        const acts = live ? live.activities.map(activityHTML).join('') : '';
+        const top = ds <= today() ? wellnessHTML(live && live.wellness) : '';
+        const wx = ds >= today() ? weatherHTML(weatherOn(ds)) : '';
+        rows += `<a class="card day-row tap${ds === today() ? ' today' : ''}${ds < today() ? ' past' : ''}" href="#day/${ds}">
           <div class="date"><div class="w">${DOW[i]}</div><div class="d">${d.getDate()}</div></div>
-          <div class="items">${items}</div><span class="chev">›</span></a>`;
+          <div class="items">${top || wx ? `<div class="day-live">${top}${wx}</div>` : ''}${items}${acts}</div><span class="chev">›</span></a>`;
       }
       return `<div class="week-nav">
           <button class="btn icon" data-action="week" data-dir="-1" aria-label="Previous week">‹</button>
@@ -899,6 +1258,8 @@
           <button class="btn icon" data-action="week" data-dir="1" aria-label="Next week">›</button>
         </div>
         ${state.weekOffset !== 0 ? '<button class="btn small" data-action="week" data-dir="0" style="margin:0 auto 12px">Back to this week</button>' : ''}
+        ${icu.error && icuCfg() ? `<div class="card warn small">Intervals.icu: ${esc(icu.error)}</div>` : ''}
+        ${safe(() => weekSummaryHTML(mon, wk), 'the week summary')}
         ${rows}`;
     }, 'the week');
 
@@ -926,6 +1287,14 @@
       ${bs && bs.inBlock ? `<div class="chips"><span class="chip accent">${esc(txt(bs.b.name) || 'Block')} · week ${bs.week}</span>${bs.light ? '<span class="chip light-badge">Light week</span>' : ''}</div>` : ''}
     </div>`;
     if (!state.plan) return html + noPlanHTML();
+
+    html += safe(() => {
+      const live = icuDay(icuWeek(mondayOf(parseDate(ds))), ds);
+      const top = ds <= today() ? wellnessHTML(live && live.wellness) : '';
+      const wx = ds >= today() ? weatherHTML(weatherOn(ds)) : '';
+      const acts = live && live.activities.length ? `<div class="section" style="margin-top:0"><h3>Done</h3><div class="card">${live.activities.map(activityHTML).join('')}</div></div>` : '';
+      return (top || wx ? `<div class="card day-live big">${top}${wx}</div>` : '') + acts;
+    }, 'the Intervals.icu data');
 
     html += safe(() => {
       const ws = workoutsOn(ds);
@@ -966,6 +1335,38 @@
     return `<div class="card" style="padding:12px 10px"><table class="zone-table"><thead><tr><th>Zone</th><th>Power</th><th>Heart rate</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   }
 
+  // The numbers from the Intervals.icu workout popup: duration, load, intensity, NP, average, VI, work, zones + chart
+  function workoutStatsHTML(w, ds) {
+    const m = workoutMetrics(w);
+    if (!m) return '';
+    const d = parseDate(ds);
+    const wk = d ? icuWeek(mondayOf(d)) : null;
+    const ev = icuEventFor(w, wk);
+    const doc = obj(ev && ev.workout_doc);
+    const pick = (a, b) => (isNum(a) ? a : b);
+    const load = pick(ev && ev.icu_training_load, m.load);
+    const IF = isNum(ev && ev.icu_intensity) ? ev.icu_intensity / 100 : m.IF;
+    const np = pick(doc.normalized_power, m.np), avg = pick(doc.average_watts, m.avg);
+    const vi = pick(doc.variability_index, m.vi);
+    const ss = isNum(ev && ev.strain_score) ? ev.strain_score : null;
+    const stat = (v, l) => `<div class="stat"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`;
+    const zrows = m.zones.filter((z) => z.sec > 0).map((z) => {
+      const pct = (z.sec / m.sec) * 100;
+      return `<div class="zrow">${zoneChip(z.id)}<div class="zbar"><i class="${zoneClass(z.id)}" style="width:${pct}%"></i></div><span>${esc(hm(z.sec))}</span><span class="muted">${esc(num(pct, 1))}%</span></div>`;
+    }).join('');
+    return `<div class="section" style="margin-top:0"><h3>Planned numbers${ev ? ' <span class="muted" style="text-transform:none;letter-spacing:0">· from Intervals.icu</span>' : ''}</h3>
+      <div class="card">
+        <div class="stats">${stat(hm(m.sec), 'Duration')}${stat(num(load, 0), 'Load')}${stat(num(IF * 100, 0) + '%', 'Intensity')}</div>
+        <div class="stats" style="margin-top:8px">${stat(num(np, 0) + ' W', 'Normalized')}${stat(num(avg, 0) + ' W', 'Average')}${stat(num(vi, 2), 'Variability')}</div>
+        <div class="stats" style="margin-top:8px">${stat(num(m.kj, 0) + ' kJ', 'Work')}${ss != null ? stat(num(ss, 0), 'Strain score') : ''}${stat(num(ftp(), 0) + ' W', 'FTP used')}</div>
+        <div class="pchart-wrap">${powerChartSVG(m.segs, true)}</div>
+        ${zrows ? `<div class="zrows">${zrows}</div>` : ''}
+        <details class="explain"><summary>What do these mean?</summary>
+          <p><b>Load</b>: how hard the session is (an hour all-out ≈ 100). <b>Intensity</b>: normalized power as % of your FTP. <b>Normalized</b>: what the ride "feels like" in watts, with hard bits counting extra. <b>Variability</b>: normalized ÷ average; 1.00 is perfectly steady. <b>Work</b>: total energy you put into the pedals. The dashed line in the chart is your FTP.</p>
+        </details>
+      </div></div>`;
+  }
+
   function viewWorkout(idx) {
     const raw = arr(P().workouts)[+idx];
     if (!state.plan || !raw || typeof raw !== 'object') {
@@ -984,6 +1385,8 @@
         ${zoneChip(w.zone)}
       </div>
     </div>`;
+
+    html += safe(() => workoutStatsHTML(w, ds), 'the workout numbers');
 
     html += safe(() => (txt(w.purpose) ? `<div class="section" style="margin-top:0"><h3>Purpose</h3><div class="card">${esc(txt(w.purpose))}</div></div>` : ''), 'the purpose');
 
@@ -1458,8 +1861,40 @@
       return zt ? `<div class="section"><h3>Zones</h3>${zt}</div>` : '';
     }, 'the zones');
 
+    html += icuSettingsHTML();
+
     html += `<p class="center muted small" style="margin-top:28px">Trainer v${APP_VERSION} · your check-ins stay on this phone</p>`;
     return html;
+  }
+
+  function icuSettingsHTML() {
+    const c = icuCfg();
+    return `<div class="section"><h3>Intervals.icu</h3><div class="card">
+      ${c ? `<dl class="kv"><dt>Status</dt><dd>${icu.error ? '⚠ ' + esc(icu.error) : '✓ Connected'}</dd><dt>Athlete id</dt><dd>${esc(c.athlete || '0')}</dd><dt>API key</dt><dd>saved on this device</dd></dl>
+        <div class="btn-row" style="margin-top:12px"><button class="btn" data-action="icu-test">Test connection</button><button class="btn danger" data-action="icu-forget">Disconnect</button></div>`
+      : `<p class="small muted" style="margin-top:0">Shows your sleep, HRV, fitness, weather and done rides in the Agenda. In Intervals.icu go to <b>Settings → Developer Settings</b> and copy your athlete id and API key. The key is saved only on this device, never on the website.</p>
+        <form id="icuForm" autocomplete="off">
+          <div class="field"><label class="lbl" for="icuAthlete">Athlete id <small>(looks like i123456)</small></label><input type="text" id="icuAthlete" name="athlete" placeholder="i123456" autocapitalize="off" spellcheck="false"></div>
+          <div class="field"><label class="lbl" for="icuKey">API key</label><input type="password" id="icuKey" name="key" autocapitalize="off" spellcheck="false" style="width:100%"></div>
+          <button class="btn primary" type="submit">Connect</button>
+        </form>`}
+    </div></div>`;
+  }
+
+  async function icuConnect(form) {
+    const athlete = form.athlete.value.trim(), key = form.key.value.trim();
+    if (!key) { toast('Paste your API key first'); return; }
+    lsSet(LS_ICU, { athlete: athlete || '0', key });
+    icu.cache = {}; icu.weatherAt = 0;
+    try {
+      const a = await icuGet('');
+      icu.error = '';
+      toast(`Connected as ${txt(a.name) || 'you'} ✓`);
+    } catch (e) {
+      icu.error = e.message;
+      toast(e.message);
+    }
+    render(true);
   }
 
   function doImport() {
@@ -1667,6 +2102,23 @@
       choosePlan();
       state.importMsg = '<div class="card success msg">Pasted plan removed. Using the website plan.</div>';
       render(true);
+    } else if (action === 'icu-test') {
+      el.textContent = 'Testing…';
+      try {
+        const a = await icuGet('');
+        icu.error = '';
+        icu.cache = {}; icu.weatherAt = 0;
+        toast(`Connected as ${txt(a.name) || 'you'} ✓`);
+      } catch (err) {
+        icu.error = err.message;
+        toast(err.message);
+      }
+      render(true);
+    } else if (action === 'icu-forget') {
+      lsSet(LS_ICU, null);
+      icu.cache = {}; icu.weather = null; icu.error = '';
+      toast('Intervals.icu disconnected on this device');
+      render(true);
     } else if (action === 'reload') {
       el.textContent = 'Checking…';
       await loadPlan();
@@ -1698,6 +2150,9 @@
     if (e.target.id === 'ciForm') {
       e.preventDefault();
       saveCheckin(e.target);
+    } else if (e.target.id === 'icuForm') {
+      e.preventDefault();
+      icuConnect(e.target);
     } else if (e.target.dataset.flowForm) {
       // a form step on the Today screen (morning / session / wrap-up)
       e.preventDefault();
