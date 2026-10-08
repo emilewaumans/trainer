@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.7.0';
+  const APP_VERSION = '1.9.0';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -362,12 +362,15 @@
   /* ---------------- shared building blocks ---------------- */
 
   // One workout, the same look everywhere: icon, title, duration, then load/intensity and a mini power chart
-  function sessionHTML(w, wk) {
+  // r (optional) = planned-vs-done result: a finished session gets a check badge and a "completed" footer
+  function sessionHTML(w, wk, r) {
     const t = typeInfo(txt(w.type));
     const dur = durationLabel(w);
-    return `<div class="sess ${t.cls}">
-      <div class="sess-head"><span class="sess-ic">${t.icon}</span><span class="sess-title">${esc(txt(w.title) || t.label)}</span>${dur ? `<span class="dur">${esc(dur)}</span>` : ''}</div>
+    const st = r && ['done', 'partly', 'skipped'].includes(r.status) ? r.status : '';
+    return `<div class="sess ${t.cls}${st ? ' is-' + st : ''}">
+      <div class="sess-head"><span class="sess-ic">${t.icon}${st === 'done' || st === 'partly' ? `<i class="sess-check">${ICON.check}</i>` : ''}</span><span class="sess-title">${esc(txt(w.title) || t.label)}</span>${dur ? `<span class="dur">${esc(dur)}</span>` : ''}</div>
       ${txt(w.type) === 'rest' ? '' : safe(() => plannedMiniHTML(w, wk), 'the chart')}
+      ${st ? doneStripHTML(r) : ''}
     </div>`;
   }
 
@@ -375,7 +378,9 @@
     const w = x.w, t = typeInfo(txt(w.type));
     const d = parseDate(w.date);
     const wk = d ? icuWeek(mondayOf(d)) : null;
-    return `<a class="card workout ${t.cls}" href="#workout/${x.i}">${sessionHTML(w, wk)}<span class="chev">›</span></a>`;
+    const r = txt(w.type) === 'rest' ? null : matchFor(x, wk);
+    const st = r && ['done', 'partly', 'skipped'].includes(r.status) ? ' card-' + r.status : '';
+    return `<a class="card workout ${t.cls}${st}" href="#workout/${x.i}">${sessionHTML(w, wk, r)}<span class="chev">›</span></a>`;
   }
 
   // Today's workouts at the top of the Today page, or a rest-day card of the same size
@@ -718,25 +723,57 @@
     return '';
   }
 
+  // A workout with a matching activity (from Intervals.icu) ticks itself off in today's steps
+  function autoMarkDone(ds) {
+    const md = matchDay(ds, icuDay(icuWeek(mondayOf(parseDate(ds))), ds));
+    const answered = obj(obj(getCheckins()[ds]).steps);
+    md.rows.forEach((r) => {
+      const id = 'workout-' + r.x.i;
+      if (answered[id] || (r.status !== 'done' && r.status !== 'partly')) return;
+      const step = dayFlow(ds).find((s) => s.id === id);
+      if (step) answerStep(ds, step, r.status === 'done' ? 'done' : 'half');
+    });
+  }
+
+  // The game bar that stays at the top of the Today page: level ring, today's steps, streak and XP
+  function hudHTML(ds) {
+    const steps = dayFlow(ds);
+    const c = obj(getCheckins()[ds]);
+    const answered = steps.filter((s) => s.status).length;
+    const xp = xpOf(c);
+    const total = Object.values(getCheckins()).reduce((t, x) => t + xpOf(x), 0);
+    const lvl = levelOf(total);
+    const streak = streakDays();
+    const bump = state.hudXp != null && total > state.hudXp ? ' bump' : '';
+    state.hudXp = total;
+    const r = 20, circ = 2 * Math.PI * r, f = lvl.into / lvl.per;
+    return `<div class="hud-wrap"><div class="hud${bump}${answered === steps.length ? ' all-done' : ''}">
+      <div class="hud-lvl" title="Level ${lvl.level}: ${lvl.toNext} XP to level ${lvl.level + 1}">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="hudGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd27a"/><stop offset="1" stop-color="#ff6a2b"/></linearGradient></defs>
+          <circle class="hl-bg" cx="24" cy="24" r="${r}"/><circle class="hl-fg" cx="24" cy="24" r="${r}" stroke-dasharray="${(circ * f).toFixed(1)} ${circ.toFixed(1)}" transform="rotate(-90 24 24)"/></svg>
+        <span class="hl-num"><small>LVL</small><b>${lvl.level}</b></span>
+      </div>
+      <div class="hud-mid">
+        <div class="hud-top"><b>Level ${lvl.level}</b><span>${lvl.into} / ${lvl.per} XP</span></div>
+        <div class="hud-steps" aria-label="${answered} of ${steps.length} steps">${steps.map((s) => `<i class="hs-${s.status || 'open'}"></i>`).join('')}</div>
+        <div class="hud-foot">${answered === steps.length ? 'All steps done today' : `${answered} of ${steps.length} steps today`}</div>
+      </div>
+      <div class="hud-stats">
+        <span class="hud-pill hp-streak${streak ? ' lit' : ''}" title="Day streak">${ICON.flame}<b>${streak}</b><small>streak</small></span>
+        <span class="hud-pill hp-xp" title="XP earned today">${ICON.bolt}<b>+${xp}</b><small>XP</small></span>
+      </div>
+    </div></div>`;
+  }
+
   function questHTML(ds) {
     const steps = dayFlow(ds);
     const c = obj(getCheckins()[ds]);
     if (state.focusDate !== ds) { state.focus = ''; state.focusDate = ds; }
     const cur = steps.find((s) => s.id === state.focus) || steps.find((s) => !s.status) || null;
-    const answered = steps.filter((s) => s.status).length;
-    const pct = Math.round((answered / steps.length) * 100);
     const xp = xpOf(c);
-    const total = Object.values(getCheckins()).reduce((t, x) => t + xpOf(x), 0);
-    const lvl = levelOf(total);
     const streak = streakDays();
 
-    let html = `<div class="gamebar">
-      <div class="gb"><div class="gb-v"><span class="gb-ic gb-streak">${ICON.flame}</span>${streak}</div><div class="gb-l">day streak</div></div>
-      <div class="gb"><div class="gb-v"><span class="gb-ic gb-xp">${ICON.bolt}</span>${xp}</div><div class="gb-l">XP today</div></div>
-      <div class="gb"><div class="gb-v"><span class="gb-ic gb-lvl">${ICON.trophy}</span>${lvl.level}</div><div class="gb-l">level</div></div>
-      <div class="gb-bar"><div class="progress"><span style="width:${pct}%"></span></div>
-        <div class="gb-foot"><span>${answered} of ${steps.length} steps</span><span>${lvl.toNext} XP to level ${lvl.level + 1}</span></div></div>
-    </div>`;
+    let html = '';
 
     if (cur) {
       const n = steps.indexOf(cur) + 1;
@@ -790,7 +827,8 @@
   function viewToday() {
     const t = today();
     const bs = blockStatus(t);
-    let html = `<div class="page-head">
+    if (state.plan) safe(() => { autoMarkDone(t); return ''; }, 'marking done sessions');
+    let html = (state.plan ? safe(() => hudHTML(t), 'the game bar') : '') + `<div class="page-head">
       <div class="eyebrow">Today</div>
       <h2>${esc(fmtLong(t))}</h2>
       ${bs && bs.inBlock ? `<div class="chips"><span class="chip accent">${esc(txt(bs.b.name) || 'Block')} · week ${bs.week}${bs.weeks ? ' of ' + bs.weeks : ''}</span>${bs.light ? '<span class="chip light-badge">Light week</span>' : ''}</div>` : ''}
@@ -1108,6 +1146,121 @@
     return `<div class="act"><span class="act-ic">${SPORT_ICON[sp] || '✓'}</span><div><div class="act-name">✓ ${esc(txt(a.name) || sp)}</div><div class="act-meta">${esc(bits.join(' · '))}</div></div></div>`;
   }
 
+  /* ---------------- planned vs done ---------------- */
+
+  // Completed activities on a date: live from Intervals.icu (phone) plus activities.json (laptop), no doubles
+  function doneOn(ds, live) {
+    const seen = new Set(), out = [];
+    (live ? live.activities : []).concat(arr(state.fileActs)).forEach((a) => {
+      if (!a || txt(a.start_date_local).slice(0, 10) !== ds) return;
+      const id = txt(a.id) || txt(a.start_date_local);
+      if (seen.has(id)) return;
+      seen.add(id);
+      out.push(a);
+    });
+    return out;
+  }
+  function planSport(t) {
+    t = txt(t);
+    if (t === 'run') return 'Run';
+    if (t === 'swim') return 'Swim';
+    if (t === 'strength') return 'WeightTraining';
+    return 'Ride';
+  }
+  const plannedSec = (w) => (isNum(w.duration_min) && w.duration_min > 0 ? w.duration_min * 60 : workoutTotalSec(w));
+  const actSec = (a) => a.moving_time || a.elapsed_time || 0;
+  const actMin = (a) => Math.round(actSec(a) / 60) * 60; // shown rounded to whole minutes
+
+  // Pairs each planned workout with an activity of the same sport on the same date.
+  // done = at least 80% of the planned time, partly = less, skipped = nothing recorded on a day that is over.
+  const DONE_SHARE = 0.8;
+  function matchDay(ds, live) {
+    const acts = doneOn(ds, live);
+    const used = new Set();
+    const rows = workoutsOn(ds).filter((x) => txt(x.w.type) !== 'rest').map((x) => {
+      const sp = planSport(x.w.type), want = plannedSec(x.w);
+      let best = null;
+      acts.forEach((a, i) => {
+        if (used.has(i) || sportOfActivity(a.type) !== sp) return;
+        const diff = Math.abs(actSec(a) - want);
+        if (!best || diff < best.diff) best = { i, diff };
+      });
+      const a = best ? acts[best.i] : null;
+      if (best) used.add(best.i);
+      let status = '';
+      if (a) status = want && actSec(a) < want * DONE_SHARE ? 'partly' : 'done';
+      else if (ds < today()) status = 'skipped';
+      else if (ds === today()) status = 'open';
+      return Object.assign({ x, a, status, want }, a ? followScore(x.w, a, want) : {});
+    });
+    return { rows, extra: acts.filter((_, i) => !used.has(i)) };
+  }
+
+  // How closely you followed the plan, 0-100. Each part scores 100 when it matches the plan
+  // and loses 1 point per % you were off (too short, too long, too easy or too hard).
+  // Parts: duration always, average power for rides when both are known. Score = their average.
+  function followScore(w, a, want) {
+    const close = (done, plan) => Math.max(0, Math.round(100 - Math.abs(done / plan - 1) * 100));
+    const parts = [];
+    if (want > 0 && actSec(a) > 0) parts.push({ k: 'Time', v: close(actSec(a), want) });
+    let m = null;
+    try { m = workoutMetrics(w); } catch (e) { m = null; }
+    if (m && m.avg > 0 && isNum(a.icu_average_watts) && a.icu_average_watts > 0) parts.push({ k: 'Power', v: close(a.icu_average_watts, m.avg) });
+    if (!parts.length) return {};
+    return { score: Math.round(parts.reduce((t, p) => t + p.v, 0) / parts.length), parts };
+  }
+  const scoreWord = (s) => (s >= 90 ? 'Spot on' : s >= 75 ? 'Close' : s >= 50 ? 'Off plan' : 'Way off');
+  const scoreCls = (s) => (s >= 90 ? 'sc-top' : s >= 75 ? 'sc-good' : s >= 50 ? 'sc-mid' : 'sc-low');
+  function scoreRing(s, size) {
+    const r = 15, c = 2 * Math.PI * r;
+    return `<span class="ring ${scoreCls(s)}" style="--sz:${size || 44}px" title="Follow score ${s}/100">
+      <svg viewBox="0 0 36 36" aria-hidden="true"><circle class="ring-bg" cx="18" cy="18" r="${r}"/><circle class="ring-fg" cx="18" cy="18" r="${r}" stroke-dasharray="${(c * s) / 100} ${c}" transform="rotate(-90 18 18)"/></svg>
+      <b>${s}</b></span>`;
+  }
+
+  // The "completed" footer of a session card: label, what you did and the follow score
+  function doneStripHTML(r) {
+    if (!r || !['done', 'partly', 'skipped'].includes(r.status)) return '';
+    if (!r.a) return `<div class="done-strip st-skipped">${statusChip('skipped')}<span class="ds-txt">Nothing recorded</span></div>`;
+    return `<div class="done-strip st-${r.status}">
+      <div class="ds-main">${statusChip(r.status)}<span class="ds-txt">${esc(actBits(r.a).join(' · '))}</span>
+        ${isNum(r.score) ? `<span class="ds-score">${esc(scoreWord(r.score))} · ${r.parts.map((p) => `${p.k} ${p.v}`).join(' · ')}</span>` : ''}</div>
+      ${isNum(r.score) ? scoreRing(r.score) : ''}</div>`;
+  }
+
+  // Match result for one plan workout (only for today and earlier)
+  function matchFor(x, wk) {
+    const ds = normDate(x.w.date);
+    if (!ds || ds > today()) return null;
+    return matchDay(ds, icuDay(wk, ds)).rows.find((r) => r.x.i === x.i) || null;
+  }
+
+  const STATUS_LABEL = { done: 'Done', partly: 'Partly done', skipped: 'Skipped', open: 'Not yet' };
+  const statusChip = (s) => (STATUS_LABEL[s] ? `<span class="st-chip st-${s}">${STATUS_LABEL[s]}</span>` : '');
+  function actBits(a) {
+    const bits = [fmtDur(actMin(a))].filter(Boolean);
+    if (isNum(a.icu_average_watts)) bits.push(`${num(a.icu_average_watts, 0)} W`);
+    if (isNum(a.average_heartrate)) bits.push(`${num(a.average_heartrate, 0)} bpm`);
+    return bits;
+  }
+
+  // Planned next to done, on the day page
+  function compareHTML(r) {
+    const w = r.x.w, t = typeInfo(txt(w.type)), a = r.a;
+    let m = null;
+    try { m = workoutMetrics(w); } catch (e) { m = null; }
+    const row = (label, p, d) => `<div class="cmp-row"><span>${label}</span><b>${p}</b><b class="cmp-done">${d}</b></div>`;
+    return `<a class="card cmp ${t.cls}" href="#workout/${r.x.i}">
+      <div class="sess-head"><span class="sess-ic">${t.icon}</span><span class="sess-title">${esc(txt(w.title) || t.label)}</span>${statusChip(r.status)}</div>
+      <div class="cmp-grid">
+        <div class="cmp-row cmp-h"><span></span><span>Planned</span><span>Done</span></div>
+        ${row('Duration', r.want ? esc(fmtDur(r.want)) : '—', a && actMin(a) ? esc(fmtDur(actMin(a))) : '—')}
+        ${row('Avg power', m ? `${Math.round(m.avg)} W` : '—', a && isNum(a.icu_average_watts) ? `${esc(num(a.icu_average_watts, 0))} W` : '—')}
+        ${row('Avg heart rate', '—', a && isNum(a.average_heartrate) ? `${esc(num(a.average_heartrate, 0))} bpm` : '—')}
+      </div>
+      ${isNum(r.score) ? `<div class="cmp-score">${scoreRing(r.score, 52)}<div><b>${esc(scoreWord(r.score))}</b><div class="muted small">Follow score · ${r.parts.map((p) => `${p.k} ${p.v}`).join(' · ')}</div></div></div>` : ''}</a>`;
+  }
+
   // Week summary like the "Wk 41" box in Intervals.icu
   function weekSummaryHTML(mon, wk) {
     const days = [...Array(7)].map((_, i) => iso(addDays(mon, i)));
@@ -1124,7 +1277,8 @@
       add(sp, 'pl', ev && isNum(ev.icu_training_load) ? ev.icu_training_load : m ? m.load : 0);
     }));
     let kcal = 0, climb = 0;
-    if (wk) wk.activities.forEach((a) => {
+    // done: live activities plus activities.json, without doubles
+    days.flatMap((ds) => doneOn(ds, icuDay(wk, ds))).forEach((a) => {
       const sp = sportOfActivity(a.type);
       add(sp, 'dt', a.moving_time);
       add(sp, 'dl', a.icu_training_load);
@@ -1265,10 +1419,11 @@
         const d = addDays(mon, i), ds = iso(d);
         const ws = workoutsOn(ds);
         const live = icuDay(wk, ds);
+        const md = matchDay(ds, live);
         const items = ws.length
-          ? ws.map((x) => sessionHTML(x.w, wk)).join('')
+          ? ws.map((x) => sessionHTML(x.w, wk, md.rows.find((r) => r.x.i === x.i))).join('')
           : '<div class="item muted" style="font-weight:500">Nothing planned</div>';
-        const acts = live ? live.activities.map(activityHTML).join('') : '';
+        const acts = md.extra.map(activityHTML).join('');
         const top = ds <= today() ? wellnessHTML(live && live.wellness) : '';
         const wx = ds >= today() ? weatherHTML(weatherOn(ds)) : '';
         rows += `<a class="card day-row tap${ds === today() ? ' today' : ''}${ds < today() ? ' past' : ''}" href="#day/${ds}">
@@ -1315,8 +1470,11 @@
       const live = icuDay(icuWeek(mondayOf(parseDate(ds))), ds);
       const top = ds <= today() ? wellnessHTML(live && live.wellness) : '';
       const wx = ds >= today() ? weatherHTML(weatherOn(ds)) : '';
-      const acts = live && live.activities.length ? `<div class="section" style="margin-top:0"><h3>Done</h3><div class="card">${live.activities.map(activityHTML).join('')}</div></div>` : '';
-      return (top || wx ? `<div class="card day-live big">${top}${wx}</div>` : '') + acts;
+      const md = ds <= today() ? matchDay(ds, live) : { rows: [], extra: [] };
+      const cmp = md.rows.length ? `<div class="section" style="margin-top:0"><h3>Planned vs done</h3>${md.rows.map(compareHTML).join('')}
+        <div class="muted small cmp-note">Done = at least ${Math.round(DONE_SHARE * 100)}% of the planned time. The plan has no heart-rate targets.</div></div>` : '';
+      const extra = md.extra.length ? `<div class="section"${cmp ? '' : ' style="margin-top:0"'}><h3>${md.rows.length ? 'Extra (not planned)' : 'Done'}</h3><div class="card">${md.extra.map(activityHTML).join('')}</div></div>` : '';
+      return (top || wx ? `<div class="card day-live big">${top}${wx}</div>` : '') + cmp + extra;
     }, 'the Intervals.icu data');
 
     html += safe(() => {
@@ -1984,6 +2142,14 @@
       state.repoError = "Couldn't load plan.json (are you offline?).";
     }
     choosePlan();
+    // activities.json is made on the laptop by fetch-activities.js. It is not on the
+    // public website, so there this simply finds nothing and the live data is used.
+    try {
+      const res = await fetch('activities.json', { cache: 'no-store' });
+      state.fileActs = res.ok ? arr(obj(await res.json()).activities) : [];
+    } catch (e) {
+      state.fileActs = [];
+    }
   }
 
   /* ---------------- navigation ---------------- */
