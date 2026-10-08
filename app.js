@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.9.0';
+  const APP_VERSION = '1.9.1';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -835,6 +835,9 @@
     </div>`;
     if (!state.plan) return html + noPlanHTML();
 
+    // Finished rides come from Intervals.icu: say so when that link is missing or failing
+    if (!icuCfg()) html += `<a class="card warn small tap" href="#settings">Your finished sessions can't show yet: connect Intervals.icu in Settings ›</a>`;
+    else if (icu.error) html += `<a class="card warn small tap" href="#settings">Intervals.icu: ${esc(icu.error)}. Check the key in Settings ›</a>`;
     html += safe(() => todaySessionsHTML(t), "today's session");
     html += safe(() => questHTML(t), "today's steps");
 
