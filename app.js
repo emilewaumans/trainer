@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.9.1';
+  const APP_VERSION = '1.11.1';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -18,6 +18,9 @@
   };
 
   const state = {
+    numMode: {},         // per workout: 'done' or 'plan' numbers shown (finished sessions)
+    showRoute: false,    // full step list open in the step card
+    calMonth: 0,         // month shown on the Progress page (0 = this month)
     plan: null,          // the plan in use
     source: '',          // 'website' or 'pasted'
     repoPlan: null,      // plan.json from the website
@@ -78,6 +81,9 @@
   }
 
   // Draw one part of a screen. If the data is weird, show a small warning instead of crashing.
+  // Like safe(), but returns a value (false when it fails)
+  function safeVal(fn) { try { return fn(); } catch (e) { console.error(e); return false; } }
+
   function safe(fn, what) {
     try {
       return fn();
@@ -365,13 +371,38 @@
   // r (optional) = planned-vs-done result: a finished session gets a check badge and a "completed" footer
   function sessionHTML(w, wk, r) {
     const t = typeInfo(txt(w.type));
-    const dur = durationLabel(w);
     const st = r && ['done', 'partly', 'skipped'].includes(r.status) ? r.status : '';
+    const hasDone = !!(r && r.a && (st === 'done' || st === 'partly'));
+    const mode = hasDone ? numMode(r.x.i) : 'plan';
+    const toggle = hasDone ? numToggleHTML(r.x.i, mode) : '';
+    const dur = mode === 'done' ? fmtDur(actMin(r.a)) : durationLabel(w);
+    let body = '';
+    if (mode === 'done') body = doneMiniHTML(r.a, toggle) + doneStripHTML(r);
+    else if (txt(w.type) !== 'rest') {
+      body = safe(() => plannedMiniHTML(w, wk, toggle), 'the chart') ||
+        (toggle ? `<div class="mini"><div class="mini-meta"><span>Planned</span>${toggle}</div></div>` : '');
+      if (st === 'skipped') body += doneStripHTML(r);
+    }
     return `<div class="sess ${t.cls}${st ? ' is-' + st : ''}">
-      <div class="sess-head"><span class="sess-ic">${t.icon}${st === 'done' || st === 'partly' ? `<i class="sess-check">${ICON.check}</i>` : ''}</span><span class="sess-title">${esc(txt(w.title) || t.label)}</span>${dur ? `<span class="dur">${esc(dur)}</span>` : ''}</div>
-      ${txt(w.type) === 'rest' ? '' : safe(() => plannedMiniHTML(w, wk), 'the chart')}
-      ${st ? doneStripHTML(r) : ''}
+      <div class="sess-head"><span class="sess-ic">${t.icon}${hasDone ? `<i class="sess-check">${ICON.check}</i>` : ''}</span><span class="sess-title">${esc(txt(w.title) || t.label)}</span>${dur ? `<span class="dur">${esc(dur)}</span>` : ''}</div>
+      ${body}
     </div>`;
+  }
+
+  // Finished sessions show what you really did; the switch flips back to the plan
+  const numMode = (i) => state.numMode[i] || 'done';
+  function numToggleHTML(i, mode) {
+    return `<span class="num-toggle" role="group" aria-label="Show planned or done numbers">
+      <button type="button" class="${mode === 'done' ? 'sel' : ''}" data-action="num-mode" data-i="${i}" data-mode="done" aria-pressed="${mode === 'done'}">Done</button>
+      <button type="button" class="${mode === 'plan' ? 'sel' : ''}" data-action="num-mode" data-i="${i}" data-mode="plan" aria-pressed="${mode === 'plan'}">Planned</button></span>`;
+  }
+  // Load, intensity and normalized power of the real ride (as Intervals.icu calculated them)
+  function doneMiniHTML(a, toggle) {
+    const bits = [];
+    if (isNum(a.icu_training_load)) bits.push(`Load <b>${esc(num(a.icu_training_load, 0))}</b>`);
+    if (isNum(a.icu_intensity)) bits.push(`Intensity <b>${esc(num(a.icu_intensity, 0))}%</b>`);
+    if (isNum(a.icu_weighted_avg_watts)) bits.push(`NP <b>${esc(num(a.icu_weighted_avg_watts, 0))} W</b>`);
+    return `<div class="mini"><div class="mini-meta"><span class="load-ic">${ICON.load}</span><span>${bits.join(' · ') || 'Done'}</span>${toggle}</div></div>`;
   }
 
   function workoutCard(x) {
@@ -747,7 +778,7 @@
     const bump = state.hudXp != null && total > state.hudXp ? ' bump' : '';
     state.hudXp = total;
     const r = 20, circ = 2 * Math.PI * r, f = lvl.into / lvl.per;
-    return `<div class="hud-wrap"><div class="hud${bump}${answered === steps.length ? ' all-done' : ''}">
+    return `<div class="hud-wrap"><a class="hud${bump}${answered === steps.length ? ' all-done' : ''}" href="#progress" aria-label="Level ${lvl.level}, ${streak}-day streak, ${xp} XP today. Tap for details.">
       <div class="hud-lvl" title="Level ${lvl.level}: ${lvl.toNext} XP to level ${lvl.level + 1}">
         <svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="hudGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd27a"/><stop offset="1" stop-color="#ff6a2b"/></linearGradient></defs>
           <circle class="hl-bg" cx="24" cy="24" r="${r}"/><circle class="hl-fg" cx="24" cy="24" r="${r}" stroke-dasharray="${(circ * f).toFixed(1)} ${circ.toFixed(1)}" transform="rotate(-90 24 24)"/></svg>
@@ -762,7 +793,127 @@
         <span class="hud-pill hp-streak${streak ? ' lit' : ''}" title="Day streak">${ICON.flame}<b>${streak}</b><small>streak</small></span>
         <span class="hud-pill hp-xp" title="XP earned today">${ICON.bolt}<b>+${xp}</b><small>XP</small></span>
       </div>
+    </a></div>`;
+  }
+
+  // Longest run of days in a row with a check-in
+  function bestStreak() {
+    const days = Object.keys(getCheckins()).filter(normDate).sort();
+    let best = 0, run = 0, prev = '';
+    days.forEach((d) => {
+      run = prev && iso(addDays(parseDate(prev), 1)) === d ? run + 1 : 1;
+      best = Math.max(best, run);
+      prev = d;
+    });
+    return best;
+  }
+
+  // A month on one screen: every finished workout shows its follow score; tap it to open the workout
+  function monthCalHTML() {
+    const t = today(), base = parseDate(t);
+    const first = new Date(base.getFullYear(), base.getMonth() + (state.calMonth || 0), 1);
+    const lastDay = new Date(first.getFullYear(), first.getMonth() + 1, 0);
+    const days = [];
+    for (let d = mondayOf(first); d <= lastDay || d.getDay() !== 1; d = addDays(d, 1)) days.push(d);
+    const weeks = {};
+    // the days the plan covers (rest days are only shown inside it)
+    const dates = allWorkouts().map((x) => x.date).filter(Boolean).sort();
+    const span = [dates[0] || '', dates[dates.length - 1] || ''];
+    let scored = 0, sum = 0;
+    const cells = days.map((d) => {
+      const ds = iso(d), inMonth = d.getMonth() === first.getMonth();
+      const mon = iso(mondayOf(d));
+      if (!(mon in weeks)) weeks[mon] = icuWeek(mondayOf(d));
+      const planned = workoutsOn(ds).filter((x) => txt(x.w.type) !== 'rest');
+      const md = ds <= t ? matchDay(ds, icuDay(weeks[mon], ds)) : { rows: [], extra: [] };
+      const sc = md.rows.filter((r) => isNum(r.score));
+      let inner = '', href = '';
+      if (sc.length) {
+        const s = Math.round(sc.reduce((a, r) => a + r.score, 0) / sc.length);
+        if (inMonth) { scored++; sum += s; }
+        inner = `<span class="mc-score ${scoreCls(s)}">${s}</span>`;
+        href = sc.length === 1 ? `#workout/${sc[0].x.i}` : `#day/${ds}`;
+      } else if (md.rows.some((r) => r.status === 'skipped')) {
+        inner = '<span class="mc-mark mc-skip" title="Skipped">✕</span>';
+        href = `#day/${ds}`;
+      } else if (md.rows.some((r) => r.a) || md.extra.length) {
+        inner = `<span class="mc-mark mc-done" title="Done">${ICON.check}</span>`;
+        href = md.rows.length === 1 ? `#workout/${md.rows[0].x.i}` : `#day/${ds}`;
+      } else if (planned.length) {
+        inner = `<span class="mc-plan" title="Planned"></span>`;
+        href = planned.length === 1 ? `#workout/${planned[0].i}` : `#day/${ds}`;
+      } else if (ds >= span[0] && ds <= span[1]) {
+        // inside the plan but no workout: a rest day
+        const rest = workoutsOn(ds)[0];
+        inner = `<span class="mc-mark mc-rest" title="Rest day">${ICON.rest}</span>`;
+        href = rest ? `#workout/${rest.i}` : `#day/${ds}`;
+      }
+      const cls = `mc-day${inMonth ? '' : ' out'}${ds === t ? ' today' : ''}${href ? ' has' : ''}`;
+      const body = `<span class="mc-num">${d.getDate()}</span>${inner}`;
+      return href && inMonth ? `<a class="${cls}" href="${href}">${body}</a>` : `<div class="${cls}">${inMonth ? body : ''}</div>`;
+    }).join('');
+    const label = first.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+    return `<div class="section"><h3>Workout scores</h3><div class="card month-cal">
+      <div class="mc-nav">
+        <button class="btn icon" data-action="cal-month" data-dir="-1" aria-label="Previous month">‹</button>
+        <div class="mc-label"><b>${esc(label)}</b><small>${scored ? `${scored} scored · average ${Math.round(sum / scored)}` : 'No scores yet'}</small></div>
+        <button class="btn icon" data-action="cal-month" data-dir="1" aria-label="Next month">›</button>
+      </div>
+      ${state.calMonth ? '<button class="btn small" data-action="cal-month" data-dir="0" style="margin:0 auto 10px">Back to this month</button>' : ''}
+      <div class="mc-grid">${['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((x) => `<span class="mc-dow">${x}</span>`).join('')}${cells}</div>
+      <div class="mc-legend"><span><i class="sc-top"></i>90+ spot on</span><span><i class="sc-good"></i>75+ close</span><span><i class="sc-mid"></i>50+ off plan</span><span><i class="mc-plan"></i>planned</span><span class="mc-rest">${ICON.rest}rest day</span></div>
+      <div class="muted small" style="margin-top:8px">Tap a score to open that workout.</div>
     </div></div>`;
+  }
+
+  // Details behind the game bar: level, XP, streak and the last two weeks
+  function viewProgress() {
+    const all = getCheckins();
+    const t = today();
+    const total = Object.values(all).reduce((s, x) => s + xpOf(x), 0);
+    const lvl = levelOf(total);
+    const streak = streakDays(), best = Math.max(bestStreak(), streak);
+    const days = Object.keys(all).filter(normDate);
+    const perfect = state.plan ? days.filter((ds) => safeVal(() => { const st = dayFlow(ds); return st.length && st.every((s) => s.status); })).length : 0;
+    const r = 52, circ = 2 * Math.PI * r, f = lvl.into / lvl.per;
+    const last = Array.from({ length: 14 }, (_, i) => iso(addDays(parseDate(t), i - 13)));
+    const xps = last.map((ds) => xpOf(all[ds]));
+    const max = Math.max(50, ...xps);
+    const DL = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+    let html = `<div class="page-head"><div class="eyebrow">Progress</div><h2>Level ${lvl.level}</h2></div>`;
+    html += `<div class="card prog-hero">
+      <div class="prog-ring"><svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="progGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd27a"/><stop offset="1" stop-color="#ff6a2b"/></linearGradient></defs>
+        <circle class="pr-bg" cx="60" cy="60" r="${r}"/><circle class="pr-fg" cx="60" cy="60" r="${r}" stroke-dasharray="${(circ * f).toFixed(1)} ${circ.toFixed(1)}" transform="rotate(-90 60 60)"/></svg>
+        <span class="pr-num"><small>LEVEL</small><b>${lvl.level}</b></span></div>
+      <div class="prog-hero-txt">
+        <div class="prog-big">${lvl.into} <span>/ ${lvl.per} XP</span></div>
+        <div class="prog-bar"><i style="width:${(f * 100).toFixed(1)}%"></i></div>
+        <div class="muted small"><b>${lvl.toNext} XP</b> to level ${lvl.level + 1} · ${total} XP in total</div>
+      </div>
+    </div>`;
+    const tile = (ic, cls, val, label) => `<div class="card prog-tile ${cls}"><span class="pt-ic">${ic}</span><b>${val}</b><small>${label}</small></div>`;
+    html += `<div class="prog-grid">
+      ${tile(ICON.flame, 'pt-streak' + (streak ? ' lit' : ''), streak, streak === 1 ? 'day streak' : 'days streak')}
+      ${tile(ICON.trophy, 'pt-best', best, 'best streak')}
+      ${tile(ICON.bolt, 'pt-xp', '+' + xpOf(all[t]), 'XP today')}
+      ${tile(ICON.medal, 'pt-perfect', perfect, perfect === 1 ? 'perfect day' : 'perfect days')}
+    </div>`;
+    html += `<div class="section"><h3>Last 14 days</h3><div class="card"><div class="prog-chart">
+      ${last.map((ds, i) => `<div class="pc-col${ds === t ? ' today' : ''}${all[ds] ? ' on' : ''}" title="${esc(fmtDate(ds))}: ${xps[i]} XP">
+        <span class="pc-val">${xps[i] || ''}</span><span class="pc-bar"><i style="height:${Math.round((xps[i] / max) * 100)}%"></i></span>
+        <span class="pc-dot"></span><span class="pc-day">${DL[parseDate(ds).getDay()]}</span></div>`).join('')}
+    </div><div class="muted small" style="margin-top:10px">Bars show the XP of each day. A dot means you checked in that day; dots in a row make your streak.</div></div></div>`;
+    html += safe(() => monthCalHTML(), 'the month calendar');
+    html += `<div class="section"><h3>How to earn XP</h3><div class="card"><ul class="prog-rules">
+      <li><span>Step done</span><b>+10 XP</b></li>
+      <li><span>Step half done, or session partly done</span><b>+5 XP</b></li>
+      <li><span>Step skipped</span><b>0 XP</b></li>
+      <li><span>New level</span><b>every ${lvl.per} XP</b></li>
+      <li><span>Streak</span><b>+1 each day in a row you check in</b></li>
+    </ul><div class="muted small" style="margin-top:10px">A session that Intervals.icu shows as done ticks itself off, so it earns XP on its own.</div></div></div>`;
+    html += `<a class="btn primary" href="#today" style="margin-top:18px">Back to today's steps ›</a>`;
+    return html;
   }
 
   function questHTML(ds) {
@@ -784,6 +935,7 @@
         ${cur.kind !== 'meal' || !cur.meal.label ? `<div class="q-sub">${esc(cur.sub)}</div>` : ''}
         ${questCardBody(cur, ds, c)}
         ${openLeft ? `<button class="btn later" data-action="flow-later" data-step="${esc(cur.id)}">Later ›</button>` : ''}
+        ${routeToggleHTML(steps, cur)}
       </div>`;
     } else {
       html += `<div class="quest-card done-card" id="questCard">
@@ -792,17 +944,25 @@
         <h3>Day complete!</h3>
         <div class="q-text">You earned <b>${xp} XP</b> today${streak > 1 ? ` and you're on a <b>${streak}-day streak</b>` : ''}. Nice work.</div>
         <button class="btn primary" data-action="copy-today" style="margin-top:16px">${ICON.copy} Copy today for my coach</button>
+        ${routeToggleHTML(steps, null)}
       </div>`;
     }
-
-    const marks = { done: '✓', half: '½', no: '✕' };
-    html += `<div class="section"><h3>Today's route</h3><div class="route">${steps.map((s, i) => `
-      <button class="route-item st-${s.status || 'open'}${cur && s.id === cur.id ? ' current' : ''}" data-action="flow-focus" data-step="${esc(s.id)}">
-        <span class="ri-mark">${marks[s.status] || i + 1}</span>
-        <span class="ri-icon">${s.icon}</span>
-        <span class="ri-text"><b>${esc(s.title)}</b>${s.sub ? `<small>${esc(s.sub)}</small>` : ''}</span>
-      </button>`).join('')}</div></div>`;
     return html;
+  }
+
+  // "See all steps" button inside the step card; the full list only shows after tapping it
+  function routeToggleHTML(steps, cur) {
+    const open = !!state.showRoute;
+    const done = steps.filter((s) => s.status).length;
+    const marks = { done: '✓', half: '½', no: '✕' };
+    return `<button class="btn route-toggle${open ? ' open' : ''}" data-action="route-toggle" aria-expanded="${open}">
+        <span>${open ? 'Hide the list' : `See all ${steps.length} steps`} <small>${done} of ${steps.length} done</small></span><span class="rt-chev">›</span></button>
+      ${open ? `<div class="route route-in">${steps.map((s, i) => `
+        <button class="route-item st-${s.status || 'open'}${cur && s.id === cur.id ? ' current' : ''}" data-action="flow-focus" data-step="${esc(s.id)}">
+          <span class="ri-mark">${marks[s.status] || i + 1}</span>
+          <span class="ri-icon">${s.icon}</span>
+          <span class="ri-text"><b>${esc(s.title)}</b>${s.sub ? `<small>${esc(s.sub)}</small>` : ''}</span>
+        </button>`).join('')}</div>` : ''}`;
   }
 
   function nextOpenStep(ds, fromId) {
@@ -836,8 +996,8 @@
     if (!state.plan) return html + noPlanHTML();
 
     // Finished rides come from Intervals.icu: say so when that link is missing or failing
-    if (!icuCfg()) html += `<a class="card warn small tap" href="#settings">Your finished sessions can't show yet: connect Intervals.icu in Settings ›</a>`;
-    else if (icu.error) html += `<a class="card warn small tap" href="#settings">Intervals.icu: ${esc(icu.error)}. Check the key in Settings ›</a>`;
+    if (!icuCfg()) html += `<a class="card warn small tap" href="#settings/icu">Your finished sessions can't show yet: connect Intervals.icu in Settings ›</a>`;
+    else if (icu.error) html += `<a class="card warn small tap" href="#settings/icu">Intervals.icu: ${esc(icu.error)}. Check the key in Settings ›</a>`;
     html += safe(() => todaySessionsHTML(t), "today's session");
     html += safe(() => questHTML(t), "today's steps");
 
@@ -1071,7 +1231,7 @@
         icu.error = e.message || 'Could not reach Intervals.icu';
       }).finally(() => {
         icu.loading[key] = false;
-        if (['agenda', 'day', 'workout', 'today', 'overview'].includes(state.route)) render(true);
+        if (['agenda', 'day', 'workout', 'today', 'overview', 'progress'].includes(state.route)) render(true);
       });
     }
     return c || null;
@@ -1343,13 +1503,13 @@
   }
 
   // Load + intensity line and mini chart for a planned workout
-  function plannedMiniHTML(w, wk) {
+  function plannedMiniHTML(w, wk, extra) {
     const m = workoutMetrics(w);
     if (!m) return '';
     const ev = icuEventFor(w, wk);
     const load = ev && isNum(ev.icu_training_load) ? ev.icu_training_load : m.load;
     const IF = ev && isNum(ev.icu_intensity) ? ev.icu_intensity / 100 : m.IF;
-    return `<div class="mini"><div class="mini-meta"><span class="load-ic">${ICON.load}</span>Load <b>${esc(num(load, 0))}</b> · Intensity <b>${esc(num(IF * 100, 0))}%</b></div>${powerChartSVG(m.segs, false)}</div>`;
+    return `<div class="mini"><div class="mini-meta"><span class="load-ic">${ICON.load}</span>Load <b>${esc(num(load, 0))}</b> · Intensity <b>${esc(num(IF * 100, 0))}%</b>${extra || ''}</div>${powerChartSVG(m.segs, false)}</div>`;
   }
 
   /* ---------------- screen: Agenda ---------------- */
@@ -1439,7 +1599,7 @@
           <button class="btn icon" data-action="week" data-dir="1" aria-label="Next week">›</button>
         </div>
         ${state.weekOffset !== 0 ? '<button class="btn small" data-action="week" data-dir="0" style="margin:0 auto 12px">Back to this week</button>' : ''}
-        ${icu.error && icuCfg() ? `<div class="card warn small">Intervals.icu: ${esc(icu.error)}</div>` : ''}
+        ${icu.error && icuCfg() ? `<a class="card warn small tap" href="#settings/icu">Intervals.icu: ${esc(icu.error)}. Check the key in Settings ›</a>` : ''}
         ${safe(() => weekSummaryHTML(mon, wk), 'the week summary')}
         ${rows}`;
     }, 'the week');
@@ -1520,11 +1680,16 @@
   }
 
   // The numbers from the Intervals.icu workout popup: duration, load, intensity, NP, average, VI, work, zones + chart
-  function workoutStatsHTML(w, ds) {
-    const m = workoutMetrics(w);
-    if (!m) return '';
+  function workoutStatsHTML(w, ds, idx) {
     const d = parseDate(ds);
     const wk = d ? icuWeek(mondayOf(d)) : null;
+    const r = matchFor({ w, i: idx }, wk);
+    const hasDone = !!(r && r.a && (r.status === 'done' || r.status === 'partly'));
+    const mode = hasDone ? numMode(idx) : 'plan';
+    const toggle = hasDone ? numToggleHTML(idx, mode) : '';
+    if (mode === 'done') return doneStatsHTML(r, toggle);
+    const m = workoutMetrics(w);
+    if (!m) return toggle ? `<div class="section" style="margin-top:0"><h3 class="h-toggle"><span>Planned</span>${toggle}</h3><div class="card">${esc(durationLabel(w) || 'No planned numbers')}</div></div>` : '';
     const ev = icuEventFor(w, wk);
     const doc = obj(ev && ev.workout_doc);
     const pick = (a, b) => (isNum(a) ? a : b);
@@ -1538,7 +1703,7 @@
       const pct = (z.sec / m.sec) * 100;
       return `<div class="zrow">${zoneChip(z.id)}<div class="zbar"><i class="${zoneClass(z.id)}" style="width:${pct}%"></i></div><span>${esc(hm(z.sec))}</span><span class="muted">${esc(num(pct, 1))}%</span></div>`;
     }).join('');
-    return `<div class="section" style="margin-top:0"><h3>Planned numbers${ev ? ' <span class="muted" style="text-transform:none;letter-spacing:0">· from Intervals.icu</span>' : ''}</h3>
+    return `<div class="section" style="margin-top:0"><h3 class="h-toggle"><span>Planned numbers${ev ? ' <span class="muted" style="text-transform:none;letter-spacing:0">· from Intervals.icu</span>' : ''}</span>${toggle}</h3>
       <div class="card">
         <div class="stats">${stat(hm(m.sec), 'Duration')}${stat(num(load, 0), 'Load')}${stat(num(IF * 100, 0) + '%', 'Intensity')}</div>
         <div class="stats" style="margin-top:8px">${stat(num(np, 0) + ' W', 'Normalized')}${stat(num(avg, 0) + ' W', 'Average')}${stat(num(vi, 2), 'Variability')}</div>
@@ -1548,6 +1713,21 @@
         <details class="explain"><summary>What do these mean?</summary>
           <p><b>Load</b>: how hard the session is (an hour all-out ≈ 100). <b>Intensity</b>: normalized power as % of your FTP. <b>Normalized</b>: what the ride "feels like" in watts, with hard bits counting extra. <b>Variability</b>: normalized ÷ average; 1.00 is perfectly steady. <b>Work</b>: total energy you put into the pedals. The dashed line in the chart is your FTP.</p>
         </details>
+      </div></div>`;
+  }
+
+  // What you really did, in the same layout as the planned numbers
+  function doneStatsHTML(r, toggle) {
+    const a = r.a;
+    const stat = (v, l) => `<div class="stat"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`;
+    const n = (v, d, u) => (isNum(v) ? num(v, d) + (u || '') : '—');
+    return `<div class="section" style="margin-top:0"><h3 class="h-toggle"><span>Done numbers <span class="muted" style="text-transform:none;letter-spacing:0">· from Intervals.icu</span></span>${toggle}</h3>
+      <div class="card done-stats">
+        <div class="ds-head">${statusChip(r.status)}<span class="muted small">${esc(txt(a.name))}</span></div>
+        <div class="stats">${stat(hm(actSec(a)), 'Duration')}${stat(n(a.icu_training_load, 0), 'Load')}${stat(n(a.icu_intensity, 0, '%'), 'Intensity')}</div>
+        <div class="stats" style="margin-top:8px">${stat(n(a.icu_weighted_avg_watts, 0, ' W'), 'Normalized')}${stat(n(a.icu_average_watts, 0, ' W'), 'Average')}${stat(n(a.icu_variability_index, 2), 'Variability')}</div>
+        <div class="stats" style="margin-top:8px">${stat(n(a.average_heartrate, 0, ' bpm'), 'Avg HR')}${stat(n(a.max_heartrate, 0, ' bpm'), 'Max HR')}${stat(isNum(a.icu_joules) ? num(a.icu_joules / 1000, 0) + ' kJ' : isNum(a.calories) ? num(a.calories, 0) + ' kcal' : '—', isNum(a.icu_joules) ? 'Work' : 'Calories')}</div>
+        ${isNum(r.score) ? `<div class="cmp-score">${scoreRing(r.score, 52)}<div><b>${esc(scoreWord(r.score))}</b><div class="muted small">Follow score · ${r.parts.map((p) => `${p.k} ${p.v}`).join(' · ')}</div></div></div>` : ''}
       </div></div>`;
   }
 
@@ -1570,7 +1750,7 @@
       </div>
     </div>`;
 
-    html += safe(() => workoutStatsHTML(w, ds), 'the workout numbers');
+    html += safe(() => workoutStatsHTML(w, ds, +idx), 'the workout numbers');
 
     html += safe(() => (txt(w.purpose) ? `<div class="section" style="margin-top:0"><h3>Purpose</h3><div class="card">${esc(txt(w.purpose))}</div></div>` : ''), 'the purpose');
 
@@ -2053,15 +2233,18 @@
 
   function icuSettingsHTML() {
     const c = icuCfg();
-    return `<div class="section"><h3>Intervals.icu</h3><div class="card">
+    // The form shows when not connected, and also when the saved key is refused, so it can be replaced right here
+    const form = `<form id="icuForm" autocomplete="off">
+          <div class="field"><label class="lbl" for="icuAthlete">Athlete id <small>(looks like i123456)</small></label><input type="text" id="icuAthlete" name="athlete" placeholder="i123456" value="${esc(c ? c.athlete || '' : '')}" autocapitalize="off" spellcheck="false"></div>
+          <div class="field"><label class="lbl" for="icuKey">${c ? 'New API key' : 'API key'}</label><input type="password" id="icuKey" name="key" autocapitalize="off" spellcheck="false" style="width:100%"></div>
+          <button class="btn primary" type="submit">${c ? 'Save new key' : 'Connect'}</button>
+        </form>`;
+    return `<div class="section go-target" id="go-icu"><h3>Intervals.icu</h3><div class="card">
       ${c ? `<dl class="kv"><dt>Status</dt><dd>${icu.error ? '⚠ ' + esc(icu.error) : '✓ Connected'}</dd><dt>Athlete id</dt><dd>${esc(c.athlete || '0')}</dd><dt>API key</dt><dd>saved on this device</dd></dl>
-        <div class="btn-row" style="margin-top:12px"><button class="btn" data-action="icu-test">Test connection</button><button class="btn danger" data-action="icu-forget">Disconnect</button></div>`
+        <div class="btn-row" style="margin-top:12px"><button class="btn" data-action="icu-test">Test connection</button><button class="btn danger" data-action="icu-forget">Disconnect</button></div>
+        ${icu.error ? `<div style="margin-top:16px">${form}</div>` : ''}`
       : `<p class="small muted" style="margin-top:0">Shows your sleep, HRV, fitness, weather and done rides in the Agenda. In Intervals.icu go to <b>Settings → Developer Settings</b> and copy your athlete id and API key. The key is saved only on this device, never on the website.</p>
-        <form id="icuForm" autocomplete="off">
-          <div class="field"><label class="lbl" for="icuAthlete">Athlete id <small>(looks like i123456)</small></label><input type="text" id="icuAthlete" name="athlete" placeholder="i123456" autocapitalize="off" spellcheck="false"></div>
-          <div class="field"><label class="lbl" for="icuKey">API key</label><input type="password" id="icuKey" name="key" autocapitalize="off" spellcheck="false" style="width:100%"></div>
-          <button class="btn primary" type="submit">Connect</button>
-        </form>`}
+        ${form}`}
     </div></div>`;
   }
 
@@ -2157,7 +2340,7 @@
 
   /* ---------------- navigation ---------------- */
 
-  const TITLES = { today: 'Today', agenda: 'Agenda', goals: 'Goals', food: 'Food', checkin: 'Check-in', settings: 'Settings', day: 'Day', workout: 'Workout', overview: 'Day overview' };
+  const TITLES = { today: 'Today', agenda: 'Agenda', goals: 'Goals', food: 'Food', checkin: 'Check-in', settings: 'Settings', progress: 'Progress', day: 'Day', workout: 'Workout', overview: 'Day overview' };
   const TOP_LEVEL = ['today', 'agenda', 'goals', 'food', 'checkin'];
 
   function parseRoute() {
@@ -2180,6 +2363,7 @@
         case 'day': html = viewDay(r.arg); break;
         case 'workout': html = viewWorkout(r.arg); break;
         case 'overview': html = viewOverview(); break;
+        case 'progress': html = viewProgress(); break;
         default: html = viewToday();
       }
     } catch (e) {
@@ -2202,10 +2386,35 @@
     $('#backBtn').hidden = isTop;
     $('#overviewBtn').hidden = r.name !== 'today';
     $('#gearBtn').classList.toggle('active', r.name === 'settings');
-    const activeTab = { day: 'agenda', workout: 'agenda', overview: 'today' }[r.name] || r.name;
+    const activeTab = { day: 'agenda', workout: 'agenda', overview: 'today', progress: 'today' }[r.name] || r.name;
     document.querySelectorAll('.tabbar a').forEach((a) => a.classList.toggle('active', a.dataset.tab === activeTab));
     if (!keepScroll) window.scrollTo(0, 0);
+    hudCompact(true);
+    // A link like #settings/icu goes all the way to that spot: scroll there and put the cursor in the first empty field
+    const target = r.arg && !keepScroll && document.getElementById('go-' + r.arg);
+    if (target) goTo(target);
   }
+
+  function goTo(el) {
+    requestAnimationFrame(() => {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.classList.add('flash');
+      setTimeout(() => el.classList.remove('flash'), 1600);
+      const field = [...el.querySelectorAll('input, textarea')].find((i) => !i.value);
+      if (field) setTimeout(() => field.focus({ preventScroll: true }), 450);
+    });
+  }
+
+  // The game bar shrinks to a one-line summary when you scroll down, and grows back at the top
+  function hudCompact(now) {
+    const w = document.querySelector('.hud-wrap');
+    if (!w) return;
+    const y = window.scrollY;
+    if (now) w.classList.toggle('compact', y > 36);
+    else if (y > 64) w.classList.add('compact');
+    else if (y < 8) w.classList.remove('compact');
+  }
+  window.addEventListener('scroll', () => hudCompact(false), { passive: true });
 
   window.addEventListener('hashchange', () => {
     state.navDepth++;
@@ -2231,7 +2440,21 @@
       answerStep(ds, step, el.dataset.value);
       afterAnswer(ds, step.id);
     } else if (action === 'flow-focus') {
+      state.showRoute = false;
       goToStep(el.dataset.step);
+    } else if (action === 'route-toggle') {
+      state.showRoute = !state.showRoute;
+      render(true);
+    } else if (action === 'num-mode') {
+      // the switch sits inside a card that is a link: switch, don't open the workout
+      e.preventDefault();
+      state.numMode[el.dataset.i] = el.dataset.mode;
+      render(true);
+    } else if (action === 'cal-month') {
+      e.preventDefault();
+      const dir = +el.dataset.dir;
+      state.calMonth = dir === 0 ? 0 : (state.calMonth || 0) + dir;
+      render(true);
     } else if (action === 'flow-later') {
       const next = nextOpenStep(today(), el.dataset.step);
       goToStep(next ? next.id : '');

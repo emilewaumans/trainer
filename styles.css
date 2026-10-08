@@ -931,4 +931,143 @@ details.card[open] { border-color: var(--border-strong); }
 @keyframes flicker { 0%, 100% { transform: scale(1) rotate(0); } 30% { transform: scale(1.08, 0.94) rotate(-3deg); } 60% { transform: scale(0.95, 1.07) rotate(2deg); } }
 @keyframes xp-pop { 0% { transform: scale(1); } 35% { transform: scale(1.14); box-shadow: 0 0 22px rgba(250, 204, 21, 0.6); } 100% { transform: scale(1); } }
 
-@media (prefers-reduced-motion: reduce) { .quest-card, .confetti span, .hp-streak.lit .ic, .hud.bump .hp-xp, .hud.bump .hud-lvl { animation: none !important; } }
+/* The game bar is a link to the Progress page */
+a.hud { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; cursor: pointer; }
+a.hud:active { transform: scale(0.985); }
+
+/* Scrolled down: the game bar shrinks to one line (ring, level, step bar, streak and XP) */
+.hud-wrap, .hud, .hud-lvl, .hl-num b, .hl-num small, .hud-steps, .hud-steps i, .hud-foot, .hud-stats, .hud-pill, .hud-pill b, .hud-pill small, .hud-pill .ic {
+  transition: all 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.hud-lvl svg { transition: none; }
+.hl-num small { display: block; max-height: 10px; overflow: hidden; }
+.hud-foot { max-height: 16px; overflow: hidden; }
+.hud-pill small { display: inline-block; max-width: 48px; overflow: hidden; white-space: nowrap; }
+.hud-wrap.compact { padding-top: 4px; padding-bottom: 10px; }
+.compact .hud { grid-template-columns: 36px 1fr auto; gap: 10px; padding: 6px 10px 6px 7px; border-radius: 16px; }
+.compact .hud-lvl { width: 36px; height: 36px; }
+.compact .hl-num small { max-height: 0; opacity: 0; }
+.compact .hl-num b { font-size: 15px; margin-top: 0; }
+.compact .hud-steps { margin-top: 4px; }
+.compact .hud-steps i { height: 4px; }
+.compact .hud-foot { max-height: 0; margin-top: 0; opacity: 0; }
+.compact .hud-stats { gap: 3px; }
+.compact .hud-pill { min-width: 0; padding: 1px 8px 1px 6px; grid-template-columns: 13px auto 0; gap: 4px; }
+.compact .hud-pill .ic { width: 13px; height: 13px; }
+.compact .hud-pill b { font-size: 12.5px; }
+.compact .hud-pill small { max-width: 0; opacity: 0; }
+
+/* A link that jumps to a spot (like #settings/icu) lights it up briefly */
+.go-target { scroll-margin-top: calc(var(--topbar-h) + var(--safe-top) + 12px); }
+.go-target.flash > .card { animation: go-flash 1.6s ease; }
+@keyframes go-flash { 0%, 60% { box-shadow: 0 0 0 2px var(--accent), 0 0 24px -4px var(--accent); } 100% { box-shadow: var(--card-shadow); } }
+
+/* ---------- Progress page (tap the game bar) ---------- */
+.prog-hero { display: grid; grid-template-columns: 120px 1fr; gap: 18px; align-items: center; padding: 18px;
+  background: radial-gradient(120% 140% at 0% 0%, rgba(255, 122, 61, 0.2), transparent 60%), var(--card-bg); border-color: rgba(255, 162, 77, 0.28); }
+.prog-ring { position: relative; width: 120px; height: 120px; display: grid; place-items: center; }
+.prog-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.prog-ring circle { fill: none; stroke-width: 9; }
+.prog-ring .pr-bg { stroke: rgba(255, 255, 255, 0.08); }
+.prog-ring .pr-fg { stroke: url(#progGrad); stroke-linecap: round; filter: drop-shadow(0 0 6px rgba(255, 140, 61, 0.6)); }
+.pr-num { position: relative; display: flex; flex-direction: column; align-items: center; line-height: 1; }
+.pr-num small { font-size: 10px; font-weight: 800; letter-spacing: 0.14em; color: var(--accent-2); }
+.pr-num b { font-size: 40px; font-weight: 900; letter-spacing: -0.04em; margin-top: 2px; }
+.prog-hero-txt { min-width: 0; }
+.prog-big { font-size: 28px; font-weight: 900; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.prog-big span { font-size: 14px; font-weight: 650; color: var(--muted); letter-spacing: 0; }
+.prog-bar { height: 8px; border-radius: 5px; background: rgba(255, 255, 255, 0.08); margin: 8px 0 8px; overflow: hidden; }
+.prog-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--accent-2)); box-shadow: 0 0 10px rgba(255, 140, 61, 0.6); }
+.prog-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.prog-tile { display: grid; grid-template-columns: 34px 1fr; grid-template-rows: auto auto; column-gap: 10px; align-items: center; padding: 12px 14px; margin: 0; }
+.prog-tile .pt-ic { grid-row: span 2; width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; background: rgba(255, 255, 255, 0.06); color: var(--muted); }
+.prog-tile .pt-ic .ic { width: 19px; height: 19px; }
+.prog-tile b { font-size: 22px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.prog-tile small { font-size: 11.5px; color: var(--muted); font-weight: 650; }
+.pt-streak.lit .pt-ic { color: #fb923c; background: rgba(251, 146, 60, 0.14); }
+.pt-streak.lit .pt-ic .ic { animation: flicker 1.6s ease-in-out infinite; transform-origin: 50% 90%; }
+.pt-best .pt-ic { color: #fbbf24; background: rgba(251, 191, 36, 0.12); }
+.pt-xp .pt-ic { color: #facc15; background: rgba(250, 204, 21, 0.1); }
+.pt-perfect .pt-ic { color: #34d399; background: rgba(52, 211, 153, 0.12); }
+.prog-chart { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; align-items: end; }
+.pc-col { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.pc-val { font-size: 9.5px; color: var(--muted); font-weight: 700; height: 12px; font-variant-numeric: tabular-nums; }
+.pc-bar { width: 100%; max-width: 16px; height: 84px; border-radius: 6px; background: rgba(255, 255, 255, 0.05); display: flex; align-items: flex-end; overflow: hidden; }
+.pc-bar i { display: block; width: 100%; border-radius: 6px; background: linear-gradient(180deg, var(--accent-2), var(--accent)); }
+.pc-col.today .pc-bar { box-shadow: inset 0 0 0 1.5px rgba(255, 162, 77, 0.55); }
+.pc-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); }
+.pc-col.on .pc-dot { background: #fb923c; box-shadow: 0 0 6px rgba(251, 146, 60, 0.8); }
+.pc-day { font-size: 10px; color: var(--faint); font-weight: 700; }
+.pc-col.today .pc-day { color: var(--accent-2); }
+.prog-rules { list-style: none; margin: 0; padding: 0; }
+.prog-rules li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+.prog-rules li:last-child { border-bottom: 0; }
+.prog-rules b { text-align: right; color: var(--accent-2); }
+@media (max-width: 360px) { .prog-hero { grid-template-columns: 96px 1fr; } .prog-ring { width: 96px; height: 96px; } .pr-num b { font-size: 32px; } }
+
+/* ---------- Step list behind a button in the step card ---------- */
+.btn.route-toggle {
+  width: 100%; margin-top: 12px; justify-content: space-between; min-height: 48px; padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.04); border-color: var(--border); color: var(--text); font-size: 15px; font-weight: 700;
+}
+.btn.route-toggle small { margin-left: 6px; color: var(--muted); font-weight: 600; font-size: 12.5px; }
+.btn.route-toggle .rt-chev { font-size: 22px; line-height: 1; color: var(--muted); transform: rotate(90deg); transition: transform 0.25s ease; }
+.btn.route-toggle.open .rt-chev { transform: rotate(-90deg); }
+.route-in { margin-top: 10px; animation: route-in 0.28s ease; }
+@keyframes route-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+/* ---------- Planned / Done switch on finished sessions ---------- */
+.mini-meta { flex-wrap: wrap; }
+.num-toggle { margin-left: auto; display: inline-flex; padding: 2px; gap: 2px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border); }
+.num-toggle button {
+  appearance: none; border: 0; background: none; color: var(--muted); font: inherit; font-size: 11.5px; font-weight: 750;
+  padding: 4px 10px; min-height: 26px; border-radius: 999px; cursor: pointer; transition: background 0.2s, color 0.2s;
+}
+.num-toggle button.sel { background: #3ecf8e; color: #062016; }
+.num-toggle button[data-mode="plan"].sel { background: var(--text); color: var(--bg, #0a0c0f); }
+.h-toggle { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.h-toggle .num-toggle { text-transform: none; letter-spacing: 0; }
+.h-toggle .num-toggle button { font-size: 12.5px; padding: 6px 14px; min-height: 32px; }
+.done-stats { border-color: rgba(62, 207, 142, 0.35); }
+.done-stats .ds-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; min-width: 0; }
+.done-stats .ds-head .muted { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- Month calendar with scores (Progress page) ---------- */
+.mc-nav { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px; margin-bottom: 10px; }
+.mc-label { text-align: center; line-height: 1.25; }
+.mc-label b { display: block; font-size: 16px; }
+.mc-label small { color: var(--muted); font-size: 12px; font-weight: 600; }
+.mc-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.mc-dow { text-align: center; font-size: 10.5px; font-weight: 800; color: var(--faint); padding-bottom: 2px; }
+.mc-day {
+  aspect-ratio: 1 / 1.12; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  gap: 3px; padding-top: 5px; background: rgba(255, 255, 255, 0.025); color: inherit; text-decoration: none; min-width: 0;
+}
+.mc-day.out { background: none; }
+.mc-day.has { background: rgba(255, 255, 255, 0.05); }
+a.mc-day:active { transform: scale(0.94); }
+.mc-day.today { box-shadow: inset 0 0 0 1.5px var(--accent); }
+.mc-num { font-size: 11px; font-weight: 700; color: var(--muted); line-height: 1; }
+.mc-day.today .mc-num { color: var(--accent-2); }
+.mc-score {
+  min-width: 30px; padding: 3px 0; border-radius: 8px; text-align: center; font-size: 14px; font-weight: 850; font-variant-numeric: tabular-nums;
+  color: var(--rc); background: color-mix(in srgb, var(--rc) 16%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rc) 40%, transparent);
+}
+.mc-mark { font-size: 13px; font-weight: 800; line-height: 1.6; }
+.mc-mark .ic { width: 15px; height: 15px; }
+.mc-skip { color: #ff5c6c; opacity: 0.8; }
+.mc-done { color: #3ecf8e; }
+.mc-plan { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); margin-top: 6px; }
+.mc-legend { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 12px; font-size: 11.5px; color: var(--muted); font-weight: 600; }
+.mc-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.mc-legend i { width: 9px; height: 9px; border-radius: 3px; background: var(--rc); }
+.mc-legend i.mc-plan { margin: 0; border-radius: 50%; background: var(--faint); }
+
+@media (prefers-reduced-motion: reduce) {
+  .route-in { animation: none !important; }
+  .quest-card, .confetti span, .hp-streak.lit .ic, .pt-streak.lit .pt-ic .ic, .hud.bump .hp-xp, .hud.bump .hud-lvl, .go-target.flash > .card { animation: none !important; }
+  .hud-wrap, .hud, .hud * { transition: none !important; }
+}
+.mc-rest { color: #8b9cf7; opacity: 0.85; }
+.mc-legend .mc-rest { color: var(--muted); opacity: 1; }
+.mc-legend .mc-rest .ic { width: 12px; height: 12px; color: #8b9cf7; }
