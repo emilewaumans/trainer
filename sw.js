@@ -3,7 +3,7 @@
    Strategy: always try the internet first so you get the newest
    plan and app; if there is no connection, use the saved copy.
    ========================================================== */
-const CACHE = 'trainer-v20';
+const CACHE = 'trainer-v23';
 const FILES = [
   './',
   './index.html',

@@ -549,6 +549,10 @@ details.explain p { margin: 8px 0 0; line-height: 1.45; }
 .pchart .grid { stroke: var(--border); stroke-width: 1; }
 .pchart .ftp { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 4; }
 .pchart-wrap { margin-top: 14px; }
+.pchart .mhit { fill: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+svg.pchart:has(.mhit) { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.pchart.has-sel polygon:not(.sel) { opacity: 0.4; }
+.pblock { margin-top: 8px; min-height: 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
 .act { display: grid; grid-template-columns: 24px 1fr; gap: 8px; align-items: center; background: rgba(62, 207, 142, 0.08); border: 1px solid rgba(62, 207, 142, 0.3); border-radius: var(--radius-sm); padding: 6px 8px; margin-top: 4px; }
 .act-name { font-weight: 650; font-size: 14px; color: var(--good); }
 .act-meta { font-size: 12.5px; color: var(--muted); }
@@ -1364,6 +1368,30 @@ svg.mchart { display: block; width: 100%; height: auto; margin-top: 8px; overflo
 .mchart .mbar.sel { fill: var(--accent); }
 .mchart .msel { stroke: rgba(255, 162, 77, 0.6); stroke-width: 1.2; stroke-dasharray: 2 3; }
 .mchart .mhit { fill: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+/* full-screen graph detail: value bubble, zero line, form zone names, sub-headings */
+.mchart .mtip { fill: var(--text); font-size: 10.5px; font-weight: 800; }
+.mchart .mg.zero { stroke: var(--faint); stroke-dasharray: none; }
+.mchart .mband { fill: var(--faint); font-size: 8.5px; font-weight: 700; }
+.me-sub { margin-top: 14px; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); }
+/* time in zones */
+.tz-stack { display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin: 12px 0 4px; background: var(--border); }
+.tz-stack i { display: block; height: 100%; }
+.tz-list { margin-top: 8px; }
+.tz-row { display: grid; grid-template-columns: 28px minmax(0, 1fr) 26% 86px; gap: 8px; align-items: center; padding: 8px 0; border-top: 1px solid var(--border); }
+.tz-row:first-child { border-top: 0; }
+.tz-id { font-weight: 800; color: var(--zc); }
+.tz-name { font-size: 13px; font-weight: 600; min-width: 0; }
+.tz-name small { display: block; color: var(--faint); font-size: 11px; font-weight: 500; }
+.tz-bar { height: 8px; border-radius: 4px; background: var(--border); overflow: hidden; }
+.tz-bar i { display: block; height: 100%; border-radius: 4px; background: var(--zc); }
+.tz-time { white-space: nowrap; text-align: right; font-weight: 700; font-size: 13px; }
+.tz-time small { display: block; color: var(--faint); font-size: 11px; font-weight: 600; }
+/* power curve models */
+.pm-row { padding: 7px 0; border-top: 1px solid var(--border); }
+.pm-row:first-child { border-top: 0; padding-top: 0; }
+.pm-row b { display: block; font-size: 13px; }
+/* sideways slides on a graph pick points; up/down still scrolls the page */
+svg.mchart:has(.mhit) { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
 .me-key { display: flex; gap: 14px; margin-top: 8px; font-size: 11.5px; color: var(--muted); font-weight: 650; }
 .me-key span { display: inline-flex; align-items: center; gap: 5px; }
 .me-key i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; }
