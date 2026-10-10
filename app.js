@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.21.0';
+  const APP_VERSION = '1.22.0';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -1426,23 +1426,25 @@
       if (Array.isArray(s.steps)) {
         for (let i = 0; i < n; i++) {
           s.steps.forEach((k) => walk(k, depth + 1));
-          if (i < n - 1 && restSec(s)) out.push(Object.assign({ sec: restSec(s) }, easy()));
+          if (i < n - 1 && restSec(s)) out.push(Object.assign({ sec: restSec(s), z: 'Z1', t: 'Easy between sets' }, easy()));
         }
       } else if (isOnOff(s)) {
         const on = stepWatts(s.on_target, null) || stepWatts('', s.zone) || { w0: 0, w1: 0 };
         const off = /half/i.test(txt(s.off_target)) ? { w0: on.w0 / 2, w1: on.w1 / 2 } : stepWatts(s.off_target, 'Z1') || easy();
         for (let i = 0; i < n; i++) {
-          if (onSec(s)) out.push(Object.assign({ sec: onSec(s) }, on));
-          if (offSec(s)) out.push(Object.assign({ sec: offSec(s) }, off));
+          if (onSec(s)) out.push(Object.assign({ sec: onSec(s), z: txt(s.zone), t: txt(s.on_target) }, on));
+          if (offSec(s)) out.push(Object.assign({ sec: offSec(s), z: 'Z1', t: txt(s.off_target) }, off));
         }
       } else {
         const p = stepWatts(s.target, s.zone) || { w0: 0, w1: 0 };
-        for (let i = 0; i < n; i++) out.push(Object.assign({ sec: baseSec(s) }, p));
+        for (let i = 0; i < n; i++) out.push(Object.assign({ sec: baseSec(s), z: txt(s.zone), t: txt(s.target) }, p));
       }
     };
     arr(w.steps).forEach((s) => walk(s, 0));
     return out.filter((x) => x.sec > 0);
   }
+
+  const runSegs = (w) => (/run/i.test(txt(w.type)) ? powerSegments(w) : []);
 
   // Duration, load, intensity etc. the way Intervals.icu calculates them for a plan
   function workoutMetrics(w) {
@@ -1482,12 +1484,19 @@
   // Power profile as an SVG. Small version for cards, big version with axes for the workout page.
   // A plan's blocks have different widths, so this is not a chartSVG graph, but with `key` it uses the
   // same .mhit tap/slide handling: tap or slide to pick a block (state.sel[key] = block index).
-  function powerChartSVG(segs, big, key) {
+  // byZone (runs have no watt targets): block height = its zone, Z1 lowest.
+  // Laptop: graphs are drawn twice as wide so text, dots and lines keep their phone size instead of being stretched.
+  const WIDE = matchMedia('(min-width: 1000px)');
+  WIDE.addEventListener('change', () => render(true));
+  const chartW = (w) => (WIDE.matches ? w * 2 : w), chartH = (h) => (WIDE.matches ? Math.round(h * 1.25) : h);
+  function powerChartSVG(segs, big, key, byZone) {
     const T = segs.reduce((t, s) => t + s.sec, 0);
     if (!T) return '';
-    const W = big ? 360 : 600, H = big ? 190 : 34, padL = big ? 30 : 0, padB = big ? 18 : 0;
+    const W = big ? chartW(360) : 600, H = big ? chartH(190) : 34, padL = big ? 30 : 0, padB = big ? 18 : 0;
+    const zs = zones().map((z) => txt(z.id).toUpperCase());
+    const lvl = (s) => Math.max(1, zs.indexOf(txt(s.z).toUpperCase()) + 1);
     const maxW = Math.max(100, big ? ftp() : 0, ...segs.map((s) => Math.max(s.w0, s.w1)));
-    const top = Math.ceil((maxW * 1.1) / 100) * 100;
+    const top = byZone ? Math.max(1, zs.length) + 0.5 : Math.ceil((maxW * 1.1) / 100) * 100;
     const x = (t) => padL + (t / T) * (W - padL);
     const padT = big ? 10 : 2;
     const y = (p) => (H - padB) - (p / top) * (H - padB - padT);
@@ -1495,21 +1504,24 @@
     let t = 0, shapes = '', hits = '';
     segs.forEach((s, i) => {
       const x0 = x(t), x1 = x(t + s.sec);
-      shapes += `<polygon${sel === String(i) ? ' class="sel"' : ''} points="${x0},${H - padB} ${x0},${y(s.w0)} ${x1},${y(s.w1)} ${x1},${H - padB}" fill="${zoneColor((s.w0 + s.w1) / 2)}"/>`;
+      const h0 = byZone ? lvl(s) : s.w0, h1 = byZone ? lvl(s) : s.w1;
+      const fill = byZone ? `var(--${zoneClass(s.z || 'Z1')})` : zoneColor((s.w0 + s.w1) / 2);
+      shapes += `<polygon${sel === String(i) ? ' class="sel"' : ''} points="${x0},${H - padB} ${x0},${y(h0)} ${x1},${y(h1)} ${x1},${H - padB}" fill="${fill}"/>`;
       if (key) hits += `<rect class="mhit" x="${x0}" y="0" width="${x1 - x0}" height="${H}" data-action="sel-day" data-key="${key}" data-date="${i}" data-href=""/>`;
       t += s.sec;
     });
     shapes += hits;
     let axes = '';
+    if (big && byZone) zs.forEach((id, k) => { axes += `<line x1="${padL}" x2="${W}" y1="${y(k + 1)}" y2="${y(k + 1)}" class="grid"/><text x="${padL - 4}" y="${y(k + 1) + 4}" text-anchor="end">${esc(id)}</text>`; });
     if (big) {
-      for (let p = 100; p <= top; p += 100) axes += `<line x1="${padL}" x2="${W}" y1="${y(p)}" y2="${y(p)}" class="grid"/><text x="${padL - 4}" y="${y(p) + 4}" text-anchor="end">${p}</text>`;
-      if (ftp()) axes += `<line x1="${padL}" x2="${W}" y1="${y(ftp())}" y2="${y(ftp())}" class="ftp"/>`;
+      if (!byZone) for (let p = 100; p <= top; p += 100) axes += `<line x1="${padL}" x2="${W}" y1="${y(p)}" y2="${y(p)}" class="grid"/><text x="${padL - 4}" y="${y(p) + 4}" text-anchor="end">${p}</text>`;
+      if (ftp() && !byZone) axes += `<line x1="${padL}" x2="${W}" y1="${y(ftp())}" y2="${y(ftp())}" class="ftp"/>`;
       for (let i = 0; i <= 4; i++) {
         const tt = (T * i) / 4;
         axes += `<text x="${x(tt)}" y="${H - 4}" text-anchor="${i === 0 ? 'start' : i === 4 ? 'end' : 'middle'}">${clock(tt)}</text>`;
       }
     }
-    return `<svg class="pchart${big ? ' big' : ''}${sel != null && segs[sel] ? ' has-sel' : ''}" viewBox="0 0 ${W} ${H}"${big ? '' : ' preserveAspectRatio="none"'} role="img" aria-label="Power profile">${axes}${shapes}</svg>`;
+    return `<svg class="pchart${big ? ' big' : ''}${sel != null && segs[sel] ? ' has-sel' : ''}" viewBox="0 0 ${W} ${H}"${big ? '' : ' preserveAspectRatio="none"'} role="img" aria-label="${byZone ? 'Zone' : 'Power'} profile">${axes}${shapes}</svg>`;
   }
   function clock(sec) {
     sec = Math.round(sec);
@@ -1874,7 +1886,10 @@
   // Load + intensity line and mini chart for a planned workout
   function plannedMiniHTML(w, wk, extra) {
     const m = workoutMetrics(w);
-    if (!m) return '';
+    if (!m) {
+      const rs = runSegs(w);
+      return rs.length ? `<div class="mini">${extra ? `<div class="mini-meta"><span>Planned</span>${extra}</div>` : ''}${powerChartSVG(rs, false, null, true)}</div>` : '';
+    }
     const ev = icuEventFor(w, wk);
     const load = ev && isNum(ev.icu_training_load) ? ev.icu_training_load : m.load;
     const IF = ev && isNum(ev.icu_intensity) ? ev.icu_intensity / 100 : m.IF;
@@ -2065,7 +2080,7 @@
     const toggle = hasDone ? numToggleHTML(idx, mode) : '';
     if (mode === 'done') return doneStatsHTML(r, toggle);
     const m = workoutMetrics(w);
-    if (!m) return toggle ? `<div class="section" style="margin-top:0"><h3 class="h-toggle"><span>Planned</span>${toggle}</h3><div class="card">${esc(durationLabel(w) || 'No planned numbers')}</div></div>` : '';
+    if (!m) return runStatsHTML(w, ds, idx, toggle) || (toggle ? `<div class="section" style="margin-top:0"><h3 class="h-toggle"><span>Planned</span>${toggle}</h3><div class="card">${esc(durationLabel(w) || 'No planned numbers')}</div></div>` : '');
     const ev = icuEventFor(w, wk);
     const doc = obj(ev && ev.workout_doc);
     const pick = (a, b) => (isNum(a) ? a : b);
@@ -2100,6 +2115,35 @@
         <details class="explain"><summary>What do these mean?</summary>
           <p><b>Load</b>: how hard the session is (an hour all-out ≈ 100). <b>Intensity</b>: normalized power as % of your FTP. <b>Normalized</b>: what the ride "feels like" in watts, with hard bits counting extra. <b>Variability</b>: normalized ÷ average; 1.00 is perfectly steady. <b>Work</b>: total energy you put into the pedals. The dashed line in the chart is your FTP.</p>
         </details>
+      </div></div>`;
+  }
+
+  // Runs have no watts: the chart shows each block's zone, with the same tap/slide as the bike chart
+  function runStatsHTML(w, ds, idx, toggle) {
+    const segs = runSegs(w);
+    const T = segs.reduce((t, s) => t + s.sec, 0);
+    if (!T) return '';
+    const stat = (v, l) => `<div class="stat"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`;
+    const zsec = {};
+    segs.forEach((s) => { const z = txt(s.z) || 'Z1'; zsec[z] = (zsec[z] || 0) + s.sec; });
+    const zrows = Object.keys(zsec).sort().map((z) => {
+      const pct = (zsec[z] / T) * 100;
+      return `<div class="zrow">${zoneChip(z)}<div class="zbar"><i class="${zoneClass(z)}" style="width:${pct}%"></i></div><span>${esc(hm(zsec[z]))}</span><span class="muted">${esc(num(pct, 1))}%</span></div>`;
+    }).join('');
+    const pkey = `pw-${ds}-${idx}`;
+    const bi = Number(state.sel[pkey]), b = segs[bi];
+    let blockInfo = '<span class="muted">Tap or slide along the chart to see each block.</span>';
+    if (state.sel[pkey] != null && b) {
+      const from = segs.slice(0, bi).reduce((t, s) => t + s.sec, 0);
+      blockInfo = `<b>Block ${bi + 1} of ${segs.length}</b> · ${esc(clock(from))}–${esc(clock(from + b.sec))} · ${esc(fmtDur(b.sec))} ${zoneChip(b.z || 'Z1')}${b.t ? `<div style="margin-top:4px">${esc(b.t)}</div>` : ''}`;
+    }
+    const run = segs.filter((s) => (txt(s.z) || 'Z1') !== 'Z1').reduce((t, s) => t + s.sec, 0);
+    return `<div class="section" style="margin-top:0"><h3 class="h-toggle"><span>Planned</span>${toggle}</h3>
+      <div class="card">
+        <div class="stats">${stat(hm(T), 'Duration')}${stat(hm(run), 'Above Z1')}${stat(String(segs.length), 'Blocks')}</div>
+        <div class="pchart-wrap">${powerChartSVG(segs, true, pkey, true)}</div>
+        <div class="pblock small">${blockInfo}</div>
+        ${zrows ? `<div class="zrows">${zrows}</div>` : ''}
       </div></div>`;
   }
 
@@ -2276,7 +2320,7 @@
   // Full-screen detail: o.grid (value scale with grid lines), o.tip(point) (value bubble on the picked point),
   // o.xs (real x positions, e.g. days or log seconds), o.bands ([from, to, colour, name] shaded value ranges).
   function chartSVG(pts, o) {
-    const W = 340, H = o.h || 150, pl = o.grid ? 30 : 6, pr = 6, pt = o.tip ? 24 : 18, pb = o.labels ? 20 : 6;
+    const W = chartW(340), H = chartH(o.h || 150), pl = o.grid ? 30 : 6, pr = 6, pt = o.tip ? 24 : 18, pb = o.labels ? 20 : 6;
     const n = pts.length;
     const vals = pts.flatMap((p) => [p.v, p.v2]).filter(isNum);
     const peak = Math.max(o.floor || 0, ...vals);
