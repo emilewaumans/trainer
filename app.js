@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.18.0';
+  const APP_VERSION = '1.21.0';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -657,11 +657,11 @@
   const stepKey = (v) => txt(v).replace(/[^A-Za-z0-9_-]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
 
   // Follow-up questions of a workout: the coach's "checks" list, or (without one) three fuel questions.
-  // "checks": [] means no questions. Answers are always Done / Half / Didn't.
+  // "checks": [] means no questions. Answers are Done / Half / Didn't, or the coach's own "answers": [...] list.
   function workoutChecks(w) {
     if (Array.isArray(w.checks)) {
       return w.checks.map(obj).filter((q) => stepKey(q.id) && txt(q.ask))
-        .map((q) => ({ id: stepKey(q.id), ask: txt(q.ask), when: txt(q.when) === 'before' ? 'before' : 'after', text: txt(q.text) }));
+        .map((q) => ({ id: stepKey(q.id), ask: txt(q.ask), when: txt(q.when) === 'before' ? 'before' : 'after', text: txt(q.text), answers: arr(q.answers).map(txt).filter(Boolean) }));
     }
     const f = obj(w.fuel), out = [];
     if (txt(f.before)) out.push({ id: 'fuel_before', ask: 'Did you eat before the session?', when: 'before', text: txt(f.before) });
@@ -734,7 +734,7 @@
   function xpOf(c) {
     c = obj(c);
     const st = obj(c.steps);
-    let xp = Object.values(st).reduce((t, v) => t + (SCORE[v] || 0), 0);
+    let xp = Object.values(st).reduce((t, v) => t + stepXp(v), 0);
     if (!st.morning && (c.sleep_h || c.legs || c.stress)) xp += 10;
     if (!st.session && (c.rpe || c.duration_min)) xp += 10;
     if (!st.wrap && c.notes) xp += 10;
@@ -755,10 +755,22 @@
 
   const ANSWERS = [['done', '✓ Done'], ['half', '½ Half'], ['no', "✕ Didn't"]];
   const ANSWER_WORD = { done: 'Done', half: 'Half', no: "Didn't" };
+  // A coach's own answer is saved as "ans:<exact text>", so the coach gets the words back unchanged
+  const isCustom = (v) => typeof v === 'string' && v.startsWith('ans:');
+  const answerWord = (v) => (isCustom(v) ? v.slice(4) : ANSWER_WORD[v] || '');
+  const stepXp = (v) => (isCustom(v) ? 10 : SCORE[v] || 0);
+  // colour of a custom answer by its place in the list: first = good, last of 3+ = warning, others = in between
+  const toneAt = (i, n) => (i <= 0 ? 'done' : n >= 3 && i === n - 1 ? 'no' : 'half');
+  const toneOf = (s) => {
+    if (!isCustom(s.status)) return s.status || '';
+    const list = arr(obj(s.q).answers), i = list.indexOf(s.status.slice(4));
+    return i < 0 ? 'done' : toneAt(i, list.length);
+  };
+  const checkOptions = (s) => (arr(obj(s.q).answers).length ? s.q.answers.map((a, i, all) => ['ans:' + a, esc(a), toneAt(i, all.length)]) : ANSWERS);
 
   function answerButtons(step, options) {
-    return `<div class="answers answers-${options.length}">${options.map(([v, label]) =>
-      `<button class="ans ans-${v}${step.status === v ? ' sel' : ''}" data-action="flow" data-step="${esc(step.id)}" data-value="${v}">${label}</button>`).join('')}</div>`;
+    return `<div class="answers answers-${options.length}">${options.map(([v, label, tone]) =>
+      `<button class="ans ans-${tone || v}${step.status === v ? ' sel' : ''}" data-action="flow" data-step="${esc(step.id)}" data-value="${esc(v)}">${label}</button>`).join('')}</div>`;
   }
 
   function stepper(name, value, step, placeholder, unit) {
@@ -778,7 +790,7 @@
     }
     if (s.kind === 'check') {
       return `${s.q.text ? `<div class="q-text">${esc(s.q.text)}</div>` : ''}
-        ${answerButtons(s, ANSWERS)}`;
+        ${answerButtons(s, checkOptions(s))}`;
     }
     if (s.kind === 'rest') {
       const w = s.x.w;
@@ -808,7 +820,7 @@
     }
     if (s.kind === 'morning') {
       return `<form data-flow-form="morning" autocomplete="off">
-        <div class="field"><span class="lbl">How long did you sleep?</span>${stepper('sleep_h', c.sleep_h, 0.5, 7.5, 'hours')}</div>
+        ${sleepFieldHTML(ds, c)}
         <div class="field"><span class="lbl">How do your legs feel?</span>${seg('legs', ['1', '2', '3', '4', '5'], c.legs)}
           <div class="seg-hint"><span>1 = dead</span><span>5 = fresh</span></div></div>
         <div class="field"><span class="lbl">Stress level?</span>${seg('stress', ['1', '2', '3', '4', '5'], c.stress)}
@@ -1132,7 +1144,7 @@
       const n = steps.indexOf(cur) + 1;
       const openLeft = steps.filter((s) => !s.status && s !== cur).length;
       html += `<div class="quest-card" id="questCard">
-        <div class="q-count">Step ${n} of ${steps.length}${cur.status ? ` · <span class="st-label st-${cur.status}">${{ done: 'done', half: 'half done', no: 'skipped' }[cur.status]}</span>` : ''}</div>
+        <div class="q-count">Step ${n} of ${steps.length}${cur.status ? ` · <span class="st-label st-${toneOf(cur)}">${isCustom(cur.status) ? esc(answerWord(cur.status)) : { done: 'done', half: 'half done', no: 'skipped' }[cur.status]}</span>` : ''}</div>
         <div class="q-head"><span class="q-icon">${cur.icon}</span><h3>${esc(cur.title)}</h3></div>
         ${cur.kind !== 'meal' || !cur.meal.label ? `<div class="q-sub">${esc(cur.sub)}</div>` : ''}
         ${questCardBody(cur, ds, c)}
@@ -1155,7 +1167,7 @@
     return `<button class="btn route-toggle${open ? ' open' : ''}" data-action="route-toggle" aria-expanded="${open}">
         <span>${open ? 'Hide the list' : `See all ${steps.length} steps`} <small>${done} of ${steps.length} done</small></span><span class="rt-chev">›</span></button>
       ${open ? `<div class="route route-in">${steps.map((s, i) => `
-        <button class="route-item st-${s.status || 'open'}${cur && s.id === cur.id ? ' current' : ''}" data-action="flow-focus" data-step="${esc(s.id)}">
+        <button class="route-item st-${toneOf(s) || 'open'}${cur && s.id === cur.id ? ' current' : ''}" data-action="flow-focus" data-step="${esc(s.id)}">
           <span class="ri-mark">${marks[s.status] || i + 1}</span>
           <span class="ri-icon">${s.icon}</span>
           <span class="ri-text"><b>${esc(s.title)}</b>${s.sub ? `<small>${esc(s.sub)}</small>` : ''}</span>
@@ -1195,7 +1207,7 @@
     const old = document.querySelector('.cel');
     if (old) old.remove();
     const steps = dayFlow(ds);
-    const done = steps.filter((s) => s.status === 'done').length;
+    const done = steps.filter((s) => toneOf(s) === 'done').length;
     const xp = xpOf(getCheckins()[ds]);
     const total = Object.values(getCheckins()).reduce((t, x) => t + xpOf(x), 0);
     const lvl = levelOf(total);
@@ -1269,8 +1281,8 @@
     const answered = steps.filter((s) => s.status).length;
     const complete = steps.length && answered === steps.length;
     const streak = ds === today() ? streakDays() : null;
-    const line = (s) => `<li class="sm-${s.status || 'open'}"><span class="sm-mark">${SUM_MARK[s.status] || ''}</span>
-      <span class="sm-txt">${esc(s.title)}${s.kind === 'check' ? `<small>${esc(s.sub)}</small>` : ''}</span>${o.xp ? `<b class="sm-xp">${s.status ? '+' + (SCORE[s.status] || 0) : ''}</b>` : ''}</li>`;
+    const line = (s) => `<li class="sm-${toneOf(s) || 'open'}"><span class="sm-mark">${SUM_MARK[toneOf(s)] || ''}</span>
+      <span class="sm-txt">${esc(s.title)}${s.kind === 'check' ? `<small>${esc(s.sub)}</small>` : ''}</span>${o.xp ? `<b class="sm-xp">${s.status ? '+' + stepXp(s.status) : ''}</b>` : ''}</li>`;
     // a long list stays short: the first 4, the rest behind "+N more" (not on the XP pages)
     const list = (title, xs, cls, fold) => {
       if (!xs.length) return '';
@@ -1288,7 +1300,7 @@
         ${streak != null ? `<div class="sm-f"><b>${streak}</b><span>day streak</span></div>` : ''}
       </div>
       ${list('What went well', steps.filter((s) => s.status === 'done'), 'sm-good', true)}
-      ${list('What could go better', steps.filter((s) => s.status === 'half' || s.status === 'no'), 'sm-better')}
+      ${list('What could go better', steps.filter((s) => toneOf(s) === 'half' || toneOf(s) === 'no'), 'sm-better')}
       ${list('Still open', steps.filter((s) => !s.status), 'sm-open')}
     </div>`;
   }
@@ -1307,6 +1319,7 @@
     // Finished rides come from Intervals.icu: say so when that link is missing or failing
     if (!icuCfg()) html += `<a class="card warn small tap" href="#settings/icu">Your finished sessions can't show yet: connect Intervals.icu in Settings ›</a>`;
     else if (icu.error) html += `<a class="card warn small tap" href="#settings/icu">Intervals.icu: ${esc(icu.error)}. Check the key in Settings ›</a>`;
+    html += safe(() => athleteCardHTML(), 'you as an athlete');
     html += safe(() => todaySessionsHTML(t), "today's session");
     html += safe(() => questHTML(t), "today's steps");
 
@@ -2167,7 +2180,7 @@
 
   const LS_HIST = 'trainer.history';
   const HIST_FIELDS = 'id,start_date_local,type,name,moving_time,distance,total_elevation_gain,icu_training_load,average_heartrate,icu_average_watts,icu_rolling_ftp,icu_pm_ftp,icu_ftp,icu_zone_times,icu_hr_zone_times';
-  const HIST_V = 3; // bump when the saved history needs new fields
+  const HIST_V = 4; // bump when the saved history needs new fields
   const hist = { data: lsGet(LS_HIST, null), loading: false, error: '' };
 
   // Every activity of the last 10 years and the daily fitness numbers, from Intervals.icu.
@@ -2182,7 +2195,7 @@
       const newest = today(), oldest = iso(addDays(parseDate(newest), -3653));
       Promise.all([
         icuGet(`/activities?oldest=${oldest}&newest=${newest}T23:59:59&fields=${HIST_FIELDS}`),
-        icuGet(`/wellness?oldest=${oldest}&newest=${newest}&fields=id,ctl,atl`),
+        icuGet(`/wellness?oldest=${oldest}&newest=${newest}&fields=id,ctl,atl,hrv,restingHR,sleepSecs,sleepScore,readiness`),
         icuGet('/sport-settings').catch(() => []),
       ]).then(([acts, well, sports]) => {
         const rs = arr(sports).map(obj), sp = rs.find((x) => arr(x.types).includes('Ride')) || rs[0] || {};
@@ -2199,7 +2212,7 @@
             hz: arr(a.icu_hr_zone_times).length ? arr(a.icu_hr_zone_times).map((v) => (isNum(v) ? v : 0)) : null,
           })),
           zones: { pNames: arr(sp.power_zone_names), pLim: arr(sp.power_zones), hNames: arr(sp.hr_zone_names), hLim: arr(sp.hr_zones), ssMin: sp.sweet_spot_min, ssMax: sp.sweet_spot_max },
-          well: arr(well).map(obj).filter((w) => normDate(txt(w.id)) && isNum(w.ctl)).map((w) => [txt(w.id), r1(w.ctl), r1(w.atl)])
+          well: arr(well).map(obj).filter((w) => normDate(txt(w.id)) && isNum(w.ctl)).map((w) => [txt(w.id), r1(w.ctl), r1(w.atl), r1(w.hrv), r1(w.restingHR), isNum(w.sleepSecs) ? w.sleepSecs : null, r1(w.sleepScore), r1(w.readiness)])
             .sort((a, b) => (a[0] < b[0] ? -1 : 1)),
         };
         lsSet(LS_HIST, hist.data);
@@ -2209,7 +2222,7 @@
         hist.failedAt = Date.now();
       }).finally(() => {
         hist.loading = false;
-        if (state.route === 'me') render(true);
+        if (state.route === 'me' || state.route === 'today') render(true);
       });
     }
     return hist.data;
@@ -2287,7 +2300,9 @@
       const tb = o.tickBase || 1, raw = (top - lo) / 5 / tb, mag = 10 ** Math.floor(Math.log10(raw || 1)); // tickBase 3600: steps in whole hours
       const st = ([1, 2, 2.5, 5, 10].map((m) => m * mag).find((m) => m >= raw) || mag * 10) * tb;
       const tick = o.tick || ((v) => String(Math.round(v * 100) / 100));
-      for (let v = Math.ceil(lo / st) * st; v <= top + 1e-9; v += st) {
+      const tv = o.ticks ? o.ticks.filter((v) => v >= lo && v <= top) : [];
+      if (!o.ticks) for (let v = Math.ceil(lo / st) * st; v <= top + 1e-9; v += st) tv.push(v);
+      for (const v of tv) {
         g += `<line class="mg${Math.abs(v) < 1e-9 ? ' zero' : ''}" x1="${pl}" x2="${W - pr}" y1="${f1(Y(v))}" y2="${f1(Y(v))}"/><text class="ml" x="${pl - 4}" y="${f1(Y(v) + 3)}" text-anchor="end">${esc(tick(v))}</text>`;
       }
     } else {
@@ -2392,7 +2407,7 @@
       const cls = `lg-day${ds === today() ? ' today' : ''}${state.sel.log === ds ? ' sel' : ''}`;
       return da.length ? selDayBtn('log', ds, '#day/' + ds, cls, body) : `<div class="${cls}">${body}</div>`;
     }).join('');
-    const pick = days.includes(state.sel.log) ? `<div class="cal-sum"><div class="cs-head"><b>${esc(fmtLong(state.sel.log))}</b><a class="btn small" href="#day/${state.sel.log}">Open ›</a></div>
+    const pick = days.includes(state.sel.log) ? `<div class="cal-sum"><div class="cs-head"><b>${esc(fmtLong(state.sel.log))}</b><span class="cs-acts"><a class="btn small" href="#day/${state.sel.log}">Open ›</a>${closeX('log')}</span></div>
       ${wk.filter((a) => a.ds === state.sel.log).map(meActLine).join('')}</div>` : '';
     return `<div class="lg-week go-target" id="go-log-${mon}"><div class="lg-head"><b>${esc(fmtDate(mon, { day: 'numeric', month: 'short' }))} – ${esc(fmtDate(days[6], { day: 'numeric', month: 'short' }))}</b>
       <span>${tot ? esc(fmtDur(tot)) : 'No training'}${wk.length ? ` · ${wk.length} ${wk.length === 1 ? 'activity' : 'activities'}` : ''}</span></div>
@@ -2493,6 +2508,8 @@
     if (arg === 'history') return head('Me', 'Training history') + err + safe(() => meHistoryHTML(acts), 'the training history');
     // #me/history-2026-09-14: that one week, day by day
     if (arg.startsWith('history-')) return head('Me', 'Training history') + err + safe(() => meHistoryHTML(acts, normDate(arg.slice(8))), 'the training history');
+    if (arg === 'recovery') return head('Me', 'Recovery & sleep') + err + safe(() => meRecoveryHTML(acts), 'recovery and sleep');
+    if (arg === 'streak') return head('Me', 'Streak') + err + safe(() => meStreakHTML(acts), 'the streak history');
     if (arg === 'ftp') return head('Me', 'FTP') + err + safe(() => meFtpHTML(acts), 'the FTP graph');
     if (arg === 'power') return head('Me', 'Power curve') + safe(() => mePowerHTML(), 'the power curve');
     if (arg === 'zones') return head('Me', 'Time in zones') + err + safe(() => meZonesHTML(acts), 'the zones');
@@ -2514,15 +2531,16 @@
       const mon0 = mondayOf(parseDate(today()));
       const row = Array.from({ length: 12 }, (_, i) => iso(addDays(mon0, -7 * (11 - i)))).map((m, i) =>
         `<span class="stk${sk.per[m] ? ' on' : ''}${i === 11 ? ' now' : ''}" title="Week of ${esc(fmtDate(m))}: ${sk.per[m] || 0} activities">${ICON.flame}</span>`).join('');
-      return `<div class="section"><h3>Streak</h3><div class="card me-streak">
+      return `<div class="section"><h3><span>Streak</span><a class="h-link" href="#me/streak">History ›</a></h3><a class="card tap me-streak" href="#me/streak">
         <div class="me-stk-top"><span class="me-stk-ic${sk.weeks ? ' lit' : ''}">${ICON.flame}</span>
           <div><b>${sk.weeks} ${sk.weeks === 1 ? 'week' : 'weeks'}</b><small>${sk.count} ${sk.count === 1 ? 'activity' : 'activities'} in this streak${sk.weeks && !sk.thisWeek ? ' · train this week to keep it' : ''}</small></div></div>
-        <div class="stk-row">${row}</div><div class="muted small" style="margin-top:6px">Last 12 weeks: a lit flame is a week with at least one workout.</div></div></div>`;
+        <div class="stk-row">${row}</div><div class="muted small" style="margin-top:6px">Last 12 weeks: a lit flame is a week with at least one workout.</div></a></div>`;
     }, 'the streak');
     html += safe(() => {
       const lg = logWeeksHTML(acts, 4);
       return `<div class="section"><h3><span>Training log</span><a class="h-link" href="#me/log">Full log ›</a></h3><div class="card lg-card">${lg.html || '<div class="muted">No activities yet.</div>'}</div></div>`;
     }, 'the training log');
+    html += safe(() => meRecoveryCardHTML(), 'recovery and sleep');
     html += safe(() => meFitnessCardHTML(arr(d.well)), 'your fitness');
     html += safe(() => meFtpCardHTML(acts), 'your FTP');
     html += safe(() => mePowerCardHTML(), 'your power curve');
@@ -2629,8 +2647,8 @@
       <div class="me-key"><span><i class="k-fit"></i>Fitness</span><span><i class="k-set"></i>Fatigue</span></div></a></div>`;
   }
   // Intervals.icu's form zones
-  const FORM_ZONES = [[20, 999, 'rgba(250, 204, 21, 0.10)', 'Transition'], [5, 20, 'rgba(59, 130, 246, 0.13)', 'Fresh'], [-10, 5, 'rgba(148, 163, 184, 0.10)', 'Grey zone'],
-    [-30, -10, 'rgba(34, 197, 94, 0.14)', 'Optimal'], [-999, -30, 'rgba(239, 68, 68, 0.14)', 'High risk']];
+  const FORM_ZONES = [[20, 999, 'rgba(250, 204, 21, 0.10)', 'Transition', '#facc15'], [5, 20, 'rgba(59, 130, 246, 0.13)', 'Fresh', '#60a5fa'], [-10, 5, 'rgba(148, 163, 184, 0.10)', 'Grey zone', '#94a3b8'],
+    [-30, -10, 'rgba(34, 197, 94, 0.14)', 'Optimal', '#4ade80'], [-999, -30, 'rgba(239, 68, 68, 0.14)', 'High risk', '#f87171']];
   const formZone = (f) => FORM_ZONES.find(([a, b]) => f >= a && f < b) || FORM_ZONES[2];
 
   // FTP over time: the line is Intervals.icu's eFTP (estimated from your rides), the dashed line the FTP you set,
@@ -2746,23 +2764,25 @@
       <div class="card me-card me-fit">
         <div class="me-fit-top"><div><b class="me-big">${esc(num(last[1], 0))}</b><span class="muted small">fitness today</span></div>
           <div class="me-change ${diff >= 0 ? 'up' : 'down'}">${esc(signed(diff))}${first[1] > 0 ? ` (${esc(signed((diff / first[1]) * 100))}%)` : ''}<small>in ${esc(R[0] === 'all' ? 'all time' : R[1])}</small></div></div>
-        <div class="me-stats">${meStat(isNum(last[2]) ? num(last[2], 0) : '–', 'Fatigue')}${meStat(fNow != null ? signed(fNow) : '–', fNow != null ? `Form · ${formZone(fNow)[3]}` : 'Form')}${meStat(rNow != null ? signed(rNow) : '–', 'Ramp (7 days)')}</div>
-        <div class="me-sub">Fitness and fatigue</div>
+        <div class="me-stats go-target" id="go-ramp">${meStat(isNum(last[2]) ? num(last[2], 0) : '–', 'Fatigue')}${meStat(fNow != null ? signed(fNow) : '–', fNow != null ? `Form · ${formZone(fNow)[3]}` : 'Form')}${meStat(rNow != null ? signed(rNow) : '–', 'Ramp (7 days)')}</div>
+        <div class="me-sub go-target" id="go-fatigue">Fitness and fatigue</div>
         ${chartSVG(pts, { id: 'mfit', type: 'line', h: 210, grid: true, key: 'fit', href, label: 'Fitness and fatigue', labels,
           tip: (p) => `${fmtDate(p.key, { day: 'numeric', month: 'short' })} · fitness ${num(p.v, 0)}${isNum(p.v2) ? ` · fatigue ${num(p.v2, 0)}` : ''}` })}
         <div class="me-key"><span><i class="k-fit"></i>Fitness</span><span><i class="k-set"></i>Fatigue</span>${short ? '<span><i class="k-dot"></i>A workout</span>' : ''}</div>
-        <div class="me-sub">Form</div>
-        ${chartSVG(fpts, { id: 'mform', type: 'line', h: 150, grid: true, area: false, min: Math.min(-40, ...fv) - 5, max: Math.max(25, ...fv) + 5, bands: FORM_ZONES,
+        <div class="me-sub go-target" id="go-form">Form</div>
+        ${chartSVG(fpts, { id: 'mform', type: 'line', h: 170, grid: true, area: false, min: Math.min(-40, ...fv) - 5, max: Math.max(25, ...fv) + 5, ticks: [-30, -10, 5, 20],
+          bands: FORM_ZONES.map(([a, b, c, nm]) => [a, b, c, `${nm} ${a < -900 ? 'below −30' : b > 900 ? 'above +20' : `${signed(a)} to ${signed(b)}`}`]),
           key: 'fit', href, label: 'Form', labels, tip: (p) => (isNum(p.v) ? `form ${signed(p.v)} · ${formZone(p.v)[3]}` : 'no form') })}
-        <div class="me-sub">Load per day</div>
+        <div class="me-sub go-target" id="go-load">Load per day</div>
         ${chartSVG(lpts, { id: 'mload', type: 'bar', h: 90, grid: true, key: 'fit', href, label: 'Load per day', labels })}
         <div class="muted small" style="margin-top:6px">Tap or slide along any graph to see a day; tap it again to open it.</div>
       </div>
       <div class="cal-sum"><div class="cs-head"><b>${esc(fmtLong(sk))}</b><a class="btn small" href="#day/${sk}">Open ›</a></div>
         <div class="me-stats">${meStat(num(sel[1], 0), 'Fitness')}${meStat(isNum(sel[2]) ? num(sel[2], 0) : '–', 'Fatigue')}${meStat(fSel != null ? signed(fSel) : '–', 'Form')}</div>
-        <div class="me-stats" style="margin-top:6px">${meStat(fSel != null ? formZone(fSel)[3] : '–', 'Form zone')}${meStat(rSel != null ? signed(rSel) : '–', 'Ramp (7 days)')}${meStat(String(Math.round(load[sk] || 0)), 'Load this day')}</div>
+        <div class="me-stats" style="margin-top:6px">${meStat(fSel != null ? `${formZone(fSel)[3]} (${signed(fSel)})` : '–', 'Form zone')}${meStat(rSel != null ? signed(rSel) : '–', 'Ramp (7 days)')}${meStat(String(Math.round(load[sk] || 0)), 'Load this day')}</div>
         ${day.map(meActLine).join('') || '<div class="muted small" style="margin-top:6px">No workout this day.</div>'}</div>
       <details class="card explain" style="margin-top:12px"><summary>What do these numbers mean?</summary>
+        <p><b>Form is not the same as fatigue.</b> Fatigue is how much training you did in the last week. Form is what is left when you take that fatigue away from your fitness: fitness − fatigue. Big fitness with little fatigue = fresh; lots of recent training = negative form.</p>
         <p><b>Load</b> is how hard one workout was (an hour all-out ≈ 100). <b>Fitness</b> is your load averaged over about 6 weeks: it rises slowly when you train regularly. <b>Fatigue</b> is the same over about 1 week: it reacts fast. <b>Form</b> = fitness − fatigue. <b>Ramp</b> is how much fitness changed in the last 7 days; 3–5 a week is a healthy build.</p>
         <p><b>Form zones</b>: <b>High risk</b> (below −30) you're overreaching, rest. <b>Optimal</b> (−30 to −10) you're building fitness. <b>Grey zone</b> (−10 to +5) normal training, not much effect. <b>Fresh</b> (+5 to +20) rested, good for a race or test. <b>Transition</b> (above +20) you're losing fitness from too little training.</p></details>`;
   }
@@ -2782,10 +2802,11 @@
     const stale = !c || c.day !== t || Date.now() - c.at > 30 * 60 * 1000;
     if (stale && !pcs.loading[m] && !(Date.now() - pcs.failedAt < 60 * 1000)) {
       pcs.loading[m] = true;
+      const roll = PC_ROLL.find((x) => x[0] === m);
       const [y, mo] = m.split('-').map(Number);
-      const end = iso(new Date(y, mo, 0));
+      const from = roll ? iso(addDays(parseDate(t), -(roll[2] - 1))) : `${m}-01`, end = roll ? t : iso(new Date(y, mo, 0));
       const best = `r.${rangeStart(['all', '', 0])}.${t}`;
-      icuGet(`/power-curves?type=Ride&curves=r.${m}-01.${end < t ? end : t},${best}`).then((d) => {
+      icuGet(`/power-curves?type=Ride&curves=r.${from}.${end < t ? end : t},${best}`).then((d) => {
         const list = arr(obj(d).list).map(obj);
         pcs.data[m] = { at: Date.now(), day: t, cur: list[0] || {}, best: list[1] || null, acts: obj(obj(d).activities) };
         pcs.error = '';
@@ -2800,8 +2821,10 @@
     const d = parseDate(today());
     return Array.from({ length: state.me.pcMonths || 6 }, (_, i) => iso(new Date(d.getFullYear(), d.getMonth() - i, 1)).slice(0, 7));
   }
-  const monthName = (m) => (m === thisMonth() ? 'This month' : parseDate(m + '-01').toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }));
-  const pcMonth = () => (/^\d{4}-\d{2}$/.test(state.me.pcmonth || '') ? state.me.pcmonth : thisMonth());
+  const monthName = (m) => ((PC_ROLL.find((x) => x[0] === m) || [])[1] || (m === thisMonth() ? 'This month' : parseDate(m + '-01').toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })));
+  // Intervals.icu's Power page uses rolling windows: your best of the last 42 days is your current curve
+  const PC_ROLL = [['42d', 'Last 42 days', 42], ['84d', 'Last 84 days', 84]];
+  const pcMonth = () => { const m = state.me.pcmonth || ''; return /^\d{4}-\d{2}$/.test(m) || PC_ROLL.some((x) => x[0] === m) ? m : '42d'; };
   // The points of a curve in watts or W/kg: at our standard durations, or (all) every duration Intervals.icu has
   function pcPoints(curve, wkg, fromSec, all) {
     const secs = arr(curve.secs), vals = arr(wkg ? curve.watts_per_kg : curve.values);
@@ -2835,7 +2858,7 @@
     const hasMap = isNum(mp.poIntercept) && isNum(mp.poSlope);
     const mode = state.me.pcmode === 'map' && !hasMap ? 'w' : state.me.pcmode || 'w';
     const modes = [['w', 'Watts'], ['wkg', 'W/kg']].concat(hasMap ? [['map', 'MAP']] : []);
-    const top = `<div class="me-ranges">${months.map((k) => `<button type="button" class="${k === m ? 'on' : ''}" data-action="me-pcmonth" data-m="${k}">${esc(k === thisMonth() ? 'This month' : monthYr(k + '-01'))}</button>`).join('')}<button type="button" data-action="me-pcmore">More…</button></div>`
+    const top = `<div class="me-ranges">${PC_ROLL.map(([k, l]) => `<button type="button" class="${k === m ? 'on' : ''}" data-action="me-pcmonth" data-m="${k}">${l}</button>`).join('')}${months.map((k) => `<button type="button" class="${k === m ? 'on' : ''}" data-action="me-pcmonth" data-m="${k}">${esc(k === thisMonth() ? 'This month' : monthYr(k + '-01'))}</button>`).join('')}<button type="button" data-action="me-pcmore">More…</button></div>`
       + `<div class="me-seg">${modes.map(([k, l]) => `<button type="button" class="${k === mode ? 'on' : ''}" data-action="me-pcmode" data-m="${k}">${l}</button>`).join('')}</div>`;
     if (!c) return top + `<div class="card ${pcs.error ? 'warn' : 'muted'}">${pcs.error ? `Intervals.icu: ${esc(pcs.error)}` : 'Loading your power curve from Intervals.icu…'}</div>`;
     const cur = c.cur, wkg = mode !== 'w';
@@ -2887,7 +2910,7 @@
         ${models.map((x) => `<div class="pm-row"><b>${esc(PC_MODELS[x.type] || x.type)}</b><span class="muted small">CP ${Math.round(x.criticalPower)} W${isNum(x.wPrime) ? ` · W′ ${num(x.wPrime / 1000, 1)} kJ` : ''}${isNum(x.pMax) ? ` · Pmax ${Math.round(x.pMax)} W` : ''}${isNum(x.ftp) ? ` · eFTP ${Math.round(x.ftp)} W` : ''}</span></div>`).join('')}
         ${isNum(cur.vo2max_5m) ? `<div class="me-stats" style="margin-top:8px">${meStat(num(cur.vo2max_5m, 1), 'VO2max estimate (from 5 min)')}</div>` : ''}</div></div>` : ''}
       <details class="card explain" style="margin-top:12px"><summary>What is the power curve?</summary>
-        <p>For every duration (5 seconds, 1 minute, 20 minutes…) it shows the highest average power you held in this month. The time axis is stretched like on Intervals.icu, so short sprints and long rides both get room. <b>W/kg</b> divides by your weight, which is what matters on climbs. <b>CP</b> (critical power) is about the power you can hold for a long time, close to FTP. <b>W′</b> is your battery above CP. <b>Pmax</b> is your top sprint power. <b>MAP</b> shows W/kg against time with a fitted line: how quickly your power drops as efforts get longer.</p></details>`;
+        <p>For every duration (5 seconds, 1 minute, 20 minutes…) it shows the highest average power you held in the chosen period. <b>Last 42 days</b> is your current curve, the same window Intervals.icu uses on its Power page (and the same six weeks your fitness is built on); <b>last 84 days</b> and the months let you look back. The time axis is stretched like on Intervals.icu, so short sprints and long rides both get room. <b>W/kg</b> divides by your weight, which is what matters on climbs. <b>CP</b> (critical power) is about the power you can hold for a long time, close to FTP. <b>W′</b> is your battery above CP. <b>Pmax</b> is your top sprint power. <b>MAP</b> shows W/kg against time with a fitted line: how quickly your power drops as efforts get longer.</p></details>`;
   }
 
   /* Time in zones (Intervals.icu "Totals"): heart rate, power and combined */
@@ -2951,6 +2974,219 @@
       </div>
       <details class="card explain" style="margin-top:12px"><summary>What are zones?</summary>
         <p>Zones split your effort into levels, from very easy (Z1) to all-out (Z7). <b>Power</b> zones are % of your FTP, <b>heart rate</b> zones are based on your threshold heart rate (LTHR). <b>Combined</b> uses power when a ride has a power meter and heart rate otherwise, so every workout counts once. <b>Sweet spot</b> (about 84–97% of FTP) sits across Z3 and Z4: hard enough to build FTP, easy enough to do a lot of. Most good plans keep roughly 80% of the time easy (Z1–Z2).</p></details>`;
+  }
+
+  // Full streak history (#me/streak): every week since your first activity, lit when you trained.
+  // Tap a week once for a summary, again to open that week.
+  function meStreakHTML(acts) {
+    if (!acts.length) return '<div class="card muted">No activities yet.</div>';
+    const sk = weekStreak(acts);
+    const now = iso(mondayOf(parseDate(today())));
+    const weeks = [];
+    for (let m = mondayOf(parseDate(acts[0].ds)); iso(m) <= now; m = addDays(m, 7)) weeks.push(iso(m));
+    // longest run of lit weeks (this week only breaks a run once it's over)
+    let run = 0, best = { n: 0, from: '', to: '' }, start = '';
+    weeks.forEach((m) => {
+      if (sk.per[m]) { if (!run) start = m; run++; if (run > best.n) best = { n: run, from: start, to: m }; } else if (m !== now) run = 0;
+    });
+    const lit = weeks.filter((m) => sk.per[m]).length;
+    // the weeks of the streak you're on now
+    const cur = new Set();
+    for (let m = parseDate(sk.thisWeek ? now : iso(addDays(parseDate(now), -7))); sk.per[iso(m)]; m = addDays(m, -7)) cur.add(iso(m));
+    const sel = weeks.includes(state.sel.stk) ? state.sel.stk : '';
+    const short = (m) => fmtDate(m, { day: 'numeric', month: 'short', year: 'numeric' });
+    const years = [...new Set(weeks.map((m) => m.slice(0, 4)))].reverse();
+    const yearHTML = (y) => {
+      const ws = weeks.filter((m) => m.slice(0, 4) === y);
+      const cells = ws.map((m) => selDayBtn('stk', m, '#me/history-' + m, `stk${sk.per[m] ? ' on' : ''}${cur.has(m) ? ' run' : ''}${m === now ? ' now' : ''}${m === sel ? ' sel' : ''}`, ICON.flame)).join('');
+      const wa = sel && sel.slice(0, 4) === y ? acts.filter((a) => a.ds >= sel && a.ds <= weekEnd(sel)) : null;
+      return `<div class="stk-year"><div class="cs-head"><b>${y}</b><span class="muted small">${ws.filter((m) => sk.per[m]).length} of ${ws.length} weeks</span></div>
+        <div class="stk-grid">${cells}</div>
+        ${wa ? `<div class="cal-sum"><div class="cs-head"><b>Week of ${esc(short(sel))}</b><span class="cs-acts"><a class="btn small" href="#me/history-${sel}">Open ›</a>${closeX('stk')}</span></div>
+          <div class="muted small" style="margin-bottom:6px">${wa.length ? `${wa.length} ${wa.length === 1 ? 'activity' : 'activities'} · ${esc(fmtDur(sumOf(wa, (a) => a.sec)) || '0 min')}` : 'No workouts this week: the streak breaks here.'}</div>
+          ${wa.map(meActLine).join('')}</div>` : ''}</div>`;
+    };
+    return `<div class="card me-streak">
+        <div class="me-stk-top"><span class="me-stk-ic${sk.weeks ? ' lit' : ''}">${ICON.flame}</span>
+          <div><b>${sk.weeks} ${sk.weeks === 1 ? 'week' : 'weeks'}</b><small>your streak now${sk.weeks && !sk.thisWeek ? ' · train this week to keep it' : ''}</small></div></div>
+        <div class="me-stats" style="margin-top:12px">${meStat(`${best.n} ${best.n === 1 ? 'week' : 'weeks'}`, 'Longest streak')}${meStat(`${lit} of ${weeks.length}`, 'Weeks trained')}${meStat(`${Math.round((lit / weeks.length) * 100)}%`, 'Of all weeks')}</div>
+        ${best.n ? `<div class="muted small">Longest: ${esc(short(best.from))} – ${esc(fmtDate(weekEnd(best.to), { day: 'numeric', month: 'short', year: 'numeric' }))}</div>` : ''}
+      </div>
+      <div class="card" style="margin-top:12px">${years.map(yearHTML).join('')}
+        <div class="muted small" style="margin-top:8px">Every flame is one week (Monday to Sunday), oldest top left. Lit = at least one workout. Tap a week to see it; tap it again to open it.</div></div>`;
+  }
+
+  // The × that closes a calendar summary again
+  const closeX = (key) => `<button type="button" class="cs-x" data-action="sel-clear" data-key="${key}" aria-label="Close">×</button>`;
+
+  // Today: where you are as an athlete. Every number links to the graph it comes from.
+  const FORM_ADVICE = {
+    'High risk': 'You are very tired. Keep today easy or rest, and sleep well.',
+    Optimal: 'You are carrying good training load: this is where fitness grows. Do the plan and recover well.',
+    'Grey zone': 'Not tired, not fresh: a normal training day. The plan as written is fine.',
+    Fresh: 'Rested and ready. A good day for a hard session, a race or a test.',
+    Transition: 'Very fresh, but fitness is slowly dropping. Time to train a bit more.',
+  };
+  function athleteCardHTML() {
+    if (!icuCfg()) return '';
+    const well = arr(obj(icuHistory()).well);
+    const t = today(), now = fitAt(well, t);
+    if (!now) return '';
+    const form = isNum(now[2]) ? now[1] - now[2] : null;
+    const z = form != null ? formZone(form) : null;
+    const wb = fitAt(well, iso(addDays(parseDate(t), -7)));
+    const ramp = wb ? now[1] - wb[1] : null;
+    const fd = ftpDays(meActs(), '');
+    const eftp = fd.length ? fd[fd.length - 1].eftp : null;
+    const tile = (href, v, l) => `<a class="me-stat ath-tile" href="${href}"><b>${esc(v)}</b><span>${esc(l)} ›</span></a>`;
+    const rc = recoveryCheck(t), w = rc.d;
+    const hard = workoutsOn(t).filter((x) => HARD_TYPES.includes(txt(x.w.type)) && !workoutAnswer(t, x.i));
+    const tired = rc.flags.length || (form != null && form < -30);
+    const why = rc.flags.length ? rc.flags.join(', ') : 'your form is in the high-risk zone';
+    return `<div class="section"><h3>You as an athlete</h3><div class="card ath-card">
+      ${z ? `<a class="ath-form" href="#me/fitness/form" style="--fz:${z[4]}"><span class="ath-zone">${esc(z[3])}</span><span class="ath-fv">Form ${esc(signed(form))} ›</span></a>
+        <p class="ath-tip">${esc(FORM_ADVICE[z[3]])}</p>` : ''}
+      ${rc.flags.length ? `<p class="ath-warn">But ${esc(rc.flags.join(', '))}: listen to your body and keep it easier than planned.</p>` : ''}
+      ${tired && hard.length ? hard.map((x) => `<a class="ath-plan" href="#workout/${x.i}">${ICON.flame}<span><b>${esc(txt(x.w.title) || typeInfo(txt(x.w.type)).label)}</b> is planned today, but ${esc(why)}. Consider an easy ride instead, or move it to a fresher day ›</span></a>`).join('') : ''}
+      <div class="me-stats">${tile('#me/fitness/fitness', num(now[1], 0), 'Fitness')}${tile('#me/fitness/fatigue', isNum(now[2]) ? num(now[2], 0) : '–', 'Fatigue')}${isNum(eftp) ? tile('#me/ftp', `${Math.round(eftp)} W`, 'eFTP') : ''}${ramp != null ? tile('#me/fitness/ramp', signed(ramp), 'Ramp') : ''}</div>
+      ${hasWatch(w) ? `<div class="me-stats">${isNum(w.ready) ? `<a class="me-stat ath-tile" href="#me/recovery/recovery" style="--rc:${recColor(w.ready)}"><b class="rec-v">${Math.round(w.ready)}%</b><span>Recovery ›</span></a>` : ''}${isNum(w.hrv) ? tile('#me/recovery/hrv', `${Math.round(w.hrv)} ms`, `HRV${rc.hr ? ' · ' + vsNormal(w.hrv, rc.hr) : ''}`) : ''}${isNum(w.rhr) ? tile('#me/recovery/rhr', String(Math.round(w.rhr)), 'Resting HR') : ''}${isNum(w.sleep) && w.sleep > 0 ? tile('#me/recovery/sleep', fmtDur(w.sleep), 'Sleep') : ''}</div>` : ''}
+    </div></div>`;
+  }
+
+  // Sleep comes from your watch (WHOOP, Garmin…) through Intervals.icu when it's there; otherwise we ask
+  function sleepFieldHTML(ds, c) {
+    safeVal(() => icuWeek(mondayOf(parseDate(ds)))); // ask for this week's numbers; the saved history fills in meanwhile
+    const w = wellOn(ds), wl = { sleepSecs: w.sleep, sleepScore: w.sscore, hrv: w.hrv, restingHR: w.rhr, readiness: w.ready };
+    if (!isNum(wl.sleepSecs) || wl.sleepSecs <= 0) return `<div class="field"><span class="lbl">How long did you sleep?</span>${stepper('sleep_h', c.sleep_h, 0.5, 7.5, 'hours')}</div>`;
+    const bits = [isNum(wl.sleepScore) ? `sleep score ${num(wl.sleepScore, 0)}` : '', isNum(wl.hrv) ? `HRV ${num(wl.hrv, 0)} ms` : '',
+      isNum(wl.restingHR) ? `resting HR ${num(wl.restingHR, 0)}` : '', isNum(wl.readiness) ? `recovery ${num(wl.readiness, 0)}%` : ''].filter(Boolean);
+    return `<div class="field"><span class="lbl">Sleep <small>(from your watch, via Intervals.icu)</small></span>
+      <div class="sleep-auto"><span class="wl-ic wl-sleep">${ICON.moon}</span><b>${esc(fmtDur(wl.sleepSecs))}</b>${bits.length ? `<span class="muted small">${esc(bits.join(' · '))}</span>` : ''}</div>
+      <input type="hidden" name="sleep_h" value="${Math.round((wl.sleepSecs / 3600) * 4) / 4}"></div>`;
+  }
+
+  /* Recovery & sleep: HRV, resting HR, sleep and recovery from your watch (WHOOP, Garmin…) through Intervals.icu */
+  const WI = { hrv: 3, rhr: 4, sleep: 5, sscore: 6, ready: 7 }; // positions in the saved wellness rows
+  const HARD_TYPES = ['vo2_intervals', 'benchmark_test', 'long_ride_intervals'];
+  const mean = (v) => v.reduce((a, b) => a + b, 0) / v.length;
+  // Your normal range: average ± 1 standard deviation of the 60 days before `ds` (needs 14 values), the usual HRV-app method
+  function normalRange(well, ds, k) {
+    const from = iso(addDays(parseDate(ds), -60));
+    const v = well.filter((w) => w[0] >= from && w[0] < ds && isNum(w[k])).map((w) => w[k]);
+    if (v.length < 14) return null;
+    const m = mean(v), sd = Math.sqrt(mean(v.map((x) => (x - m) ** 2)));
+    return { lo: m - sd, hi: m + sd, mean: m };
+  }
+  const avg7 = (well, ds, k) => {
+    const from = iso(addDays(parseDate(ds), -6));
+    const v = well.filter((w) => w[0] >= from && w[0] <= ds && isNum(w[k])).map((w) => w[k]);
+    return v.length ? mean(v) : null;
+  };
+  const vsNormal = (v, r) => (!r || !isNum(v) ? '' : v < r.lo ? 'below normal' : v > r.hi ? 'above normal' : 'normal');
+  // One day's watch numbers: this week's fresh download first, else the saved history
+  function wellOn(ds) {
+    const h = arr(obj(hist.data).well).find((w) => w[0] === ds) || [];
+    const f = obj(obj(safeVal(() => icuDay(icu.cache[iso(mondayOf(parseDate(ds)))], ds))).wellness);
+    const pick = (k, fk) => (isNum(f[fk]) ? f[fk] : isNum(h[WI[k]]) ? h[WI[k]] : null);
+    return { hrv: pick('hrv', 'hrv'), rhr: pick('rhr', 'restingHR'), sleep: pick('sleep', 'sleepSecs'), sscore: pick('sscore', 'sleepScore'), ready: pick('ready', 'readiness') };
+  }
+  const hasWatch = (d) => ['hrv', 'rhr', 'sleep', 'ready'].some((k) => isNum(d[k]));
+  // How a day's recovery compares with your normal: used by the Today card, the plan warning and the coach copy
+  function recoveryCheck(ds) {
+    const well = arr(obj(hist.data).well);
+    const d = wellOn(ds);
+    const hr = normalRange(well, ds, WI.hrv), rr = normalRange(well, ds, WI.rhr);
+    const flags = [];
+    if (hr && isNum(d.hrv) && d.hrv < hr.lo) flags.push(`your HRV (${Math.round(d.hrv)} ms) is below your normal`);
+    if (rr && isNum(d.rhr) && d.rhr > rr.hi) flags.push(`your resting heart rate (${Math.round(d.rhr)}) is above your normal`);
+    if (isNum(d.sleep) && d.sleep > 0 && d.sleep < 6 * 3600) flags.push(`you slept only ${fmtDur(d.sleep)}`);
+    if (isNum(d.ready) && d.ready < 34) flags.push(`your recovery is low (${Math.round(d.ready)}%)`);
+    return { d, hr, rr, flags };
+  }
+  // For the coach copy: one line with what the watch measured
+  function watchLine(ds) {
+    const { d, hr, rr } = recoveryCheck(ds);
+    const bits = [];
+    if (isNum(d.sleep) && d.sleep > 0) bits.push(`sleep ${fmtDur(d.sleep)}${isNum(d.sscore) ? ` (score ${Math.round(d.sscore)})` : ''}`);
+    if (isNum(d.hrv)) bits.push(`HRV ${Math.round(d.hrv)} ms${hr ? ` (${vsNormal(d.hrv, hr)})` : ''}`);
+    if (isNum(d.rhr)) bits.push(`resting HR ${Math.round(d.rhr)}${rr ? ` (${vsNormal(d.rhr, rr)})` : ''}`);
+    if (isNum(d.ready)) bits.push(`recovery ${Math.round(d.ready)}%`);
+    return bits.length ? 'Watch: ' + bits.join(', ') : '';
+  }
+  const REC_BANDS = [[0, 34, 'rgba(239, 68, 68, 0.13)', 'Low (red)'], [34, 67, 'rgba(250, 204, 21, 0.10)', 'Medium (yellow)'], [67, 101, 'rgba(34, 197, 94, 0.13)', 'High (green)']];
+  const recColor = (v) => (v < 34 ? '#f87171' : v < 67 ? '#facc15' : '#4ade80');
+  const NO_WATCH = 'No data from your watch yet. In Intervals.icu go to <b>Settings → Connections → WHOOP</b>, tick sleep, HRV, resting HR and recovery, and connect. Your history comes along, and it shows here.';
+
+  function meRecoveryCardHTML() {
+    const well = arr(obj(hist.data).well);
+    const last = [...well].reverse().find((w) => [WI.hrv, WI.rhr, WI.sleep, WI.ready].some((k) => isNum(w[k])));
+    const head = '<h3><span>Recovery &amp; sleep</span><a class="h-link" href="#me/recovery">More ›</a></h3>';
+    if (!last) return `<div class="section">${head}<a class="card tap muted small" href="#me/recovery">${NO_WATCH}</a></div>`;
+    const ds = last[0], c = recoveryCheck(ds), d = c.d;
+    const from = iso(addDays(parseDate(today()), -29));
+    const list = well.filter((w) => w[0] >= from);
+    const useHrv = list.some((w) => isNum(w[WI.hrv]));
+    const k = useHrv ? WI.hrv : WI.sleep;
+    const pts = list.map((w) => ({ key: w[0], v: isNum(w[k]) ? (useHrv ? w[k] : w[k] / 3600) : null, v2: useHrv ? avg7(well, w[0], k) : null }));
+    const vals = pts.flatMap((p) => [p.v, p.v2]).filter(isNum);
+    const n = pts.length;
+    const lbl = (i) => fmtDate(pts[i].key, { day: 'numeric', month: 'short' });
+    return `<div class="section">${head}<a class="card tap me-card" href="#me/recovery">
+      <div class="me-ttl">${ds === today() ? 'Last night' : esc(fmtLong(ds))}</div>
+      <div class="me-stats">${isNum(d.ready) ? meStat(`${Math.round(d.ready)}%`, 'Recovery') : ''}${isNum(d.hrv) ? meStat(`${Math.round(d.hrv)} ms`, `HRV${c.hr ? ' · ' + vsNormal(d.hrv, c.hr) : ''}`) : ''}${isNum(d.rhr) ? meStat(String(Math.round(d.rhr)), 'Resting HR') : ''}${isNum(d.sleep) ? meStat(fmtDur(d.sleep) || '–', 'Sleep') : ''}</div>
+      ${vals.length ? chartSVG(pts, { id: 'mrecp', type: useHrv ? 'line' : 'bar', h: 130, min: useHrv ? Math.floor(Math.min(...vals) * 0.85) : 0, fmt: (v) => (useHrv ? `${Math.round(v)} ms` : `${num(v, 1)} h`),
+        bands: useHrv && c.hr ? [[c.hr.lo, c.hr.hi, 'rgba(34, 197, 94, 0.12)', 'Normal']] : null, labels: [[0, lbl(0)], [n - 1, lbl(n - 1)]] }) : ''}
+      <div class="me-key">${useHrv ? '<span><i class="k-fit"></i>HRV</span><span><i class="k-set"></i>7-day average</span>' : '<span><i class="k-fit"></i>Sleep per night</span>'}</div></a></div>`;
+  }
+
+  // Full screen (#me/recovery): recovery, HRV, resting HR and sleep, each with your normal range; slide along any graph
+  function meRecoveryHTML(acts) {
+    const R = rangeOf(state.me.rrange, '1m');
+    const well = arr(obj(hist.data).well);
+    const t = today(), start = R[2] ? rangeStart(R) : well.length ? well[0][0] : t;
+    const list = well.filter((w) => w[0] >= start && w[0] <= t);
+    const has = (k) => list.some((w) => isNum(w[k]));
+    const ranges = rangeBtns(R, 'rrange');
+    if (![WI.hrv, WI.rhr, WI.sleep, WI.ready].some(has)) return ranges + `<div class="card muted">${NO_WATCH}</div>`;
+    const withData = list.filter((w) => [WI.hrv, WI.rhr, WI.sleep, WI.ready].some((k) => isNum(w[k])));
+    if (!list.some((w) => w[0] === state.sel.rec)) state.sel.rec = withData[withData.length - 1][0];
+    const sk = state.sel.rec;
+    const n = list.length;
+    const lbl = (i) => (R[2] && R[2] <= 182 ? fmtDate(list[i][0], { day: 'numeric', month: 'short' }) : monthYr(list[i][0]));
+    const labels = xLabels(n, 4, lbl);
+    const href = (p) => '#day/' + p.key;
+    const day = (k) => `${fmtDate(k, { day: 'numeric', month: 'short' })}`;
+    const chart = (k, id, label, unit, o) => {
+      const pts = list.map((w) => ({ key: w[0], v: isNum(w[k]) ? w[k] : null, v2: o.avg ? avg7(well, w[0], k) : null, sel: w[0] === sk }));
+      const vals = pts.flatMap((p) => [p.v, p.v2]).filter(isNum);
+      const r = o.normal ? normalRange(well, t, k) : null;
+      return chartSVG(pts, { id, type: 'line', h: 170, grid: true, area: false, key: 'rec', href, label, labels, dots: n <= 45,
+        min: o.min != null ? o.min : Math.floor(Math.min(...vals, r ? r.lo : Infinity) * 0.92), max: o.max,
+        bands: o.bands || (r ? [[r.lo, r.hi, 'rgba(34, 197, 94, 0.12)', `Your normal ${Math.round(r.lo)}–${Math.round(r.hi)}`]] : null),
+        tip: (p) => `${day(p.key)} · ${isNum(p.v) ? `${Math.round(p.v)}${unit}` : 'no data'}${isNum(p.v2) ? ` · 7-day ${Math.round(p.v2)}${unit}` : ''}` });
+    };
+    const spts = list.map((w) => ({ key: w[0], v: isNum(w[WI.sleep]) ? w[WI.sleep] / 3600 : 0, sel: w[0] === sk }));
+    const c = recoveryCheck(sk), d = c.d;
+    const avgSleep = avg7(well, sk, WI.sleep);
+    const key = (a, b) => `<div class="me-key"><span><i class="k-fit"></i>${a}</span>${b ? `<span><i class="k-set"></i>${b}</span>` : ''}</div>`;
+    return `${ranges}
+      <div class="cal-sum"><div class="cs-head"><b>${esc(fmtLong(sk))}</b><a class="btn small" href="#day/${sk}">Open ›</a></div>
+        <div class="me-stats">${meStat(isNum(d.ready) ? `${Math.round(d.ready)}%` : '–', 'Recovery')}${meStat(isNum(d.hrv) ? `${Math.round(d.hrv)} ms` : '–', `HRV${c.hr && isNum(d.hrv) ? ' · ' + vsNormal(d.hrv, c.hr) : ''}`)}${meStat(isNum(d.rhr) ? String(Math.round(d.rhr)) : '–', `Resting HR${c.rr && isNum(d.rhr) ? ' · ' + vsNormal(d.rhr, c.rr) : ''}`)}</div>
+        <div class="me-stats">${meStat(isNum(d.sleep) && d.sleep > 0 ? fmtDur(d.sleep) : '–', 'Sleep')}${meStat(isNum(d.sscore) ? String(Math.round(d.sscore)) : '–', 'Sleep score')}${meStat(isNum(avgSleep) ? fmtDur(avgSleep) : '–', 'Sleep, 7-day average')}</div>
+        ${c.flags.length ? `<div class="ath-warn">Heads up: ${esc(c.flags.join(', '))}.</div>` : ''}</div>
+      <div class="card me-card">
+        ${has(WI.ready) ? `<div class="me-sub go-target" id="go-recovery">Recovery</div>${chart(WI.ready, 'mrec', 'Recovery', '%', { min: 0, max: 100, bands: REC_BANDS })}` : ''}
+        ${has(WI.hrv) ? `<div class="me-sub go-target" id="go-hrv">HRV (heart rate variability)</div>${chart(WI.hrv, 'mhrv', 'HRV', ' ms', { avg: true, normal: true })}${key('HRV each morning', '7-day average')}` : ''}
+        ${has(WI.rhr) ? `<div class="me-sub go-target" id="go-rhr">Resting heart rate</div>${chart(WI.rhr, 'mrhr', 'Resting heart rate', ' bpm', { avg: true, normal: true })}${key('Resting HR', '7-day average')}` : ''}
+        ${has(WI.sleep) ? `<div class="me-sub go-target" id="go-sleep">Sleep per night</div>${chartSVG(spts, { id: 'mslp', type: 'bar', h: 150, grid: true, key: 'rec', href, label: 'Sleep', labels, tick: (v) => `${Math.round(v * 10) / 10} h`,
+          bands: [[7, 9, 'rgba(34, 197, 94, 0.10)', '7–9 h']], tip: (p) => `${day(p.key)} · ${p.v ? fmtDur(p.v * 3600) : 'no data'}` })}` : ''}
+        ${has(WI.sscore) ? `<div class="me-sub">Sleep score</div>${chart(WI.sscore, 'msls', 'Sleep score', '', { min: 0, max: 100 })}` : ''}
+        <div class="muted small" style="margin-top:6px">Tap or slide along any graph to see a day; tap it again to open it.</div>
+      </div>
+      <details class="card explain" style="margin-top:12px"><summary>What do these numbers mean?</summary>
+        <p><b>Recovery</b> (WHOOP, 0–100%) is how ready your body is today, mostly from HRV, resting heart rate and sleep. Green (67%+) is ready for hard work, yellow is OK, red (below 34%) means take it easy.</p>
+        <p><b>HRV</b> is the small variation between heartbeats, measured in your sleep. Higher than your normal usually means recovered; a few days below your normal is an early sign of fatigue, illness or stress. Only compare it with yourself, never with other people. <b>Resting heart rate</b> works the other way round: higher than normal is a warning sign.</p>
+        <p><b>Your normal</b> (green band) is your average ± one standard deviation over the last 60 days, so it moves with you as you get fitter.</p></details>`;
   }
 
   /* ---------------- screen: More ---------------- */
@@ -3290,7 +3526,7 @@
     const lines = [];
     const doneMap = { yes: 'Done', partly: 'Half', no: "Didn't" };
     // Every answered step of the day (workouts, their questions and meals), in the day's order
-    const answered = ds && state.plan ? (safeVal(() => dayFlow(ds)) || []).filter((s) => ['workout', 'check', 'meal'].includes(s.kind) && ANSWER_WORD[s.status]) : [];
+    const answered = ds && state.plan ? (safeVal(() => dayFlow(ds)) || []).filter((s) => ['workout', 'check', 'meal'].includes(s.kind) && answerWord(s.status)) : [];
     // "Session done" only for old check-ins, from before each workout had its own answer
     if (!answered.some((s) => s.kind === 'workout') && (c.done || c.what)) lines.push(`Session done: ${doneMap[c.done] || '–'}${c.what ? ' — ' + c.what : ''}`);
     const perf = [];
@@ -3304,10 +3540,12 @@
     if (c.sleep_h) feel.push(`sleep ${c.sleep_h} h`);
     if (c.stress) feel.push(`stress ${c.stress}/5`);
     if (feel.length) lines.push(feel.join(', '));
+    const wl = ds ? safeVal(() => watchLine(ds)) : '';
+    if (wl) lines.push(wl);
     if (c.fuelled) lines.push(`Fuelled as planned: ${ANSWER_WORD[c.fuelled] || c.fuelled}`);
     answered.forEach((s) => {
       const what = s.kind === 'check' ? `${s.title} (${txt(s.x.w.title) || 'workout'})` : s.kind === 'meal' ? `Meal · ${s.title}` : `Workout · ${s.title}`;
-      lines.push(`${what}: ${ANSWER_WORD[s.status]}`);
+      lines.push(`${what}: ${answerWord(s.status)}`);
     });
     const meals = answered.length ? [] : Object.entries(obj(c.meal_log));
     if (meals.length) {
@@ -3690,9 +3928,9 @@
 
   function parseRoute() {
     const h = decodeURIComponent(location.hash.replace(/^#/, '')) || 'today';
-    let [name, arg] = h.split('/');
+    let [name, arg, sub] = h.split('/');
     if (name === 'more') name = 'settings'; // the More tab moved behind the gear
-    return { name: TITLES[name] ? name : 'today', arg: arg || '' };
+    return { name: TITLES[name] ? name : 'today', arg: arg || '', sub: sub || '' };
   }
 
   function render(keepScroll) {
@@ -3701,6 +3939,9 @@
     let html;
     // #settings/icu goes all the way: the key form opens by itself
     if (r.name === 'settings' && r.arg === 'icu' && !keepScroll) state.open.icu = true;
+    // from the Today card straight to a spot on the fitness page: show today there
+    if (r.name === 'me' && r.arg === 'fitness' && r.sub && !keepScroll) state.sel.fit = '';
+    if (r.name === 'me' && r.arg === 'recovery' && r.sub && !keepScroll) state.sel.rec = '';
     try {
       switch (r.name) {
         case 'agenda': html = viewAgenda(); break;
@@ -3741,7 +3982,7 @@
     } else if (r.name === 'day' || r.name === 'meals') {
       title = fmtDate(r.arg) || TITLES[r.name];
     } else if (r.name === 'me' && r.arg) {
-      title = r.arg.startsWith('log') ? 'Training log' : { history: 'Training history', fitness: 'Fitness', ftp: 'FTP', power: 'Power curve', zones: 'Time in zones', profile: 'Edit profile' }[r.arg] || (r.arg.startsWith('history-') ? 'Training history' : 'Me');
+      title = r.arg.startsWith('log') ? 'Training log' : { history: 'Training history', fitness: 'Fitness', ftp: 'FTP', streak: 'Streak', recovery: 'Recovery & sleep', power: 'Power curve', zones: 'Time in zones', profile: 'Edit profile' }[r.arg] || (r.arg.startsWith('history-') ? 'Training history' : 'Me');
     }
     $('#title').textContent = title;
     document.title = title + ' · Trainer';
@@ -3755,7 +3996,7 @@
     if (!keepScroll) window.scrollTo(0, 0);
     hudCompact(true);
     // A link like #settings/icu goes all the way to that spot: scroll there and put the cursor in the first empty field
-    const target = r.arg && !keepScroll && document.getElementById(r.arg.startsWith('step-') ? 'questCard' : 'go-' + r.arg);
+    const target = r.arg && !keepScroll && document.getElementById(r.arg.startsWith('step-') ? 'questCard' : 'go-' + (r.sub || r.arg));
     if (target) goTo(target);
     // the long XP chart opens at the chosen day (or today, on the right)
     const xs = document.querySelector('.xp-scroll');
@@ -3843,6 +4084,7 @@
       const ds = today();
       const step = dayFlow(ds).find((s) => s.id === el.dataset.step);
       if (!step) return;
+      if (isCustom(el.dataset.value) && !arr(obj(step.q).answers).includes(el.dataset.value.slice(4))) return;
       answerStep(ds, step, el.dataset.value);
       afterAnswer(ds, step.id);
     } else if (action === 'flow-focus') {
@@ -3872,6 +4114,9 @@
       const k = el.dataset.key, ds = el.dataset.date;
       if (state.sel[k] === ds && el.dataset.href) location.hash = el.dataset.href;
       else { state.sel[k] = ds; render(true); }
+    } else if (action === 'sel-clear') {
+      state.sel[el.dataset.key] = '';
+      render(true);
     } else if (action === 'celebrate') {
       celebrate(el.dataset.date || today());
     } else if (action === 'open-panel' || action === 'close-panel') {
@@ -3888,7 +4133,7 @@
       state.me.metric = el.dataset.metric;
       render(true);
     } else if (action === 'me-rng') {
-      const f = el.dataset.field, sel = { range: 'hist', frange: 'fit', ftprange: 'ftp' }[f];
+      const f = el.dataset.field, sel = { range: 'hist', frange: 'fit', ftprange: 'ftp', rrange: 'rec' }[f];
       state.me[f] = el.dataset.r;
       if (sel) state.sel[sel] = '';
       if (f === 'range' && location.hash !== '#me/history') location.hash = '#me/history'; // leave the one-week view

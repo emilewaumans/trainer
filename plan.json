@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-07",
+  "updated": "2026-10-09",
   "athlete": {
     "name": "Emile",
     "ftp_w": 275,
@@ -131,7 +131,7 @@
       "fuel": {
         "before": "As soon as you wake (30-45 min before the ride): 1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach.",
         "during_carbs_g_per_h": 30,
-        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Banana milk is a good first drink."
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Ready-made banana milk or a glass of milk is a good first drink."
       }
     },
     {
@@ -163,7 +163,7 @@
       "fuel": {
         "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
         "during_carbs_g_per_h": 0,
-        "after": "25-40 g protein within 2 hours, banana milk or yoghurt works."
+        "after": "25-40 g protein within 2 hours, ready-made banana milk, milk or yoghurt works."
       }
     },
     {
@@ -220,12 +220,35 @@
           "target": "Walk and stretch calves and hips"
         }
       ],
-      "cue": "Easy means you could run it again tomorrow. Same effort as your run on 4 October or easier. Calf pinching? Walk it out and stop.",
+      "cue": "Easy means you could run it again tomorrow. Same effort as your run on 4 October or easier. Calf pinching? Walk it out and stop. If the same calf pain shows up in three runs in a row, see a physiotherapist before adding minutes. Change one thing at a time: minutes, pace, shoes or route, never two in one week.",
       "fuel": {
-        "before": "Breakfast 1-2 hours before: bread or oats with a banana.",
+        "before": "Breakfast 1-2 hours before: bread with a banana.",
         "during_carbs_g_per_h": 0,
         "after": "Family lunch: a palm-sized portion of protein, a big portion of pasta, potatoes or rice, plus vegetables."
-      }
+      },
+      "time": "10:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Sunday morning, about 10:30, in daylight, 2 hours after breakfast."
+        },
+        {
+          "label": "Fallback",
+          "text": "Sunday afternoon, about 15:00, in daylight."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-11-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
     },
     {
       "date": "2026-10-12",
@@ -294,10 +317,43 @@
       ],
       "cue": "Same Kickr setup as your last two tests, so the number compares. Slept badly or ill? Move it to Thursday 15 Oct. Even pacing wins: a fast first minute ruins the rest.",
       "fuel": {
-        "before": "Carb breakfast 2-3 h before (oats + banana + bread with Nutella). Banana or a gel 30 min before. Fresh legs matter: no kettlebell the day before.",
+        "before": "Eat breakfast about 2 hours before (see meals). Then 30-45 min before the start: 1 banana or a gel with water Don't ride on an empty stomach.",
         "during_carbs_g_per_h": 40,
-        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Banana milk is a good first drink."
-      }
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Ready-made banana milk or a glass of milk is a good first drink."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr, finished before class (class starts 13:45)."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight after class, about 19:00, on the Kickr. Eat a snack at school first. Not at the weekend."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-13-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-ride fuel? (1 banana or a gel with water)"
+        },
+        {
+          "id": "2026-10-13-fuel-during",
+          "when": "after",
+          "ask": "Did you take the planned fuel during the session? (1 bottle (500 ml) of isotonic drink (about 40 g carbs), plus water)"
+        },
+        {
+          "id": "2026-10-13-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
     },
     {
       "date": "2026-10-14",
@@ -340,10 +396,43 @@
       ],
       "cue": "Boring is right. If power creeps above 190 W, ease off. Rate your left calf 0-10 afterwards: above 4, or a changed pedal stroke, means stop and ease off.",
       "fuel": {
-        "before": "As soon as you wake (30-45 min before the ride): 1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach.",
+        "before": "Eat breakfast about 2 hours before (see meals). Then 30-45 min before the start: 1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach. Don't ride on an empty stomach.",
         "during_carbs_g_per_h": 30,
-        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Banana milk is a good first drink."
-      }
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Ready-made banana milk or a glass of milk is a good first drink."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr, finished before class (class starts 13:45)."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight after class, about 19:00, shortened to 60 min. Eat a snack at school first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-15-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-ride fuel? (1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach)"
+        },
+        {
+          "id": "2026-10-15-fuel-during",
+          "when": "after",
+          "ask": "Did you take the planned fuel during the session? (1 bottle (500 ml) of isotonic drink per hour (about 30 g carbs), plus water)"
+        },
+        {
+          "id": "2026-10-15-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
     },
     {
       "date": "2026-10-15",
@@ -351,31 +440,53 @@
       "title": "Kettlebell, 20 min (technique)",
       "duration_min": 20,
       "zone": "Z1-Z2",
-      "purpose": "Build kettlebell technique first. Strength for durability, with the habit before the load.",
+      "purpose": "Technique first, and measure where you start. The single-leg number tells me how to load the next sessions. Strength helps running economy and late-ride power; it does not raise VO2max.",
       "steps": [
         {
           "min": 4,
           "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles, cat-cow"
         },
         {
-          "min": 10,
-          "target": "Two-hand swing with the 16 kg bell: 5 sets of 10, rest 60 s. The hips do the work, arms just hang on"
+          "min": 6,
+          "target": "Two-hand swing with the 16 kg bell: 4 sets of 10, rest 45 s. The hips do the work, arms just hang on"
         },
         {
-          "min": 5,
-          "target": "Goblet squat: 3 sets of 8, slow on the way down"
+          "min": 6,
+          "target": "Single-leg test: rear-foot split squat, rear foot on a chair, holding the 16 kg bell at your chest. 3 seconds down. Do 1 set per leg and stop when you have about 2 clean reps left. Write down the reps per leg"
+        },
+        {
+          "min": 3,
+          "target": "Slow calf raise, one leg at a time on a step edge: 3 s up, 3 s down, 2 sets of 10 per leg, bodyweight"
         },
         {
           "min": 1,
-          "target": "Plank: 2 x 30 s"
+          "target": "Plank 2 x 30 s"
         }
       ],
-      "cue": "Swings are a hip hinge, not a squat. Back flat. If your lower back complains, stop and tell me.",
+      "cue": "Swings are a hip hinge, not a squat; back flat. Tell me both single-leg numbers in your next check-in. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
       "fuel": {
         "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
         "during_carbs_g_per_h": 0,
-        "after": "25-40 g protein within 2 hours, banana milk or yoghurt works."
-      }
+        "after": "25-40 g protein within 2 hours, ready-made banana milk, milk or yoghurt works."
+      },
+      "time": "11:15",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Right after the ride, before you shower."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight, about 20:00."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-15-kb-quality",
+          "when": "after",
+          "ask": "Did you stop every set with 1-3 clean reps left?"
+        }
+      ]
     },
     {
       "date": "2026-10-16",
@@ -407,7 +518,25 @@
         "before": "Banana + bread with Nutella (or a bar) 60-90 min before the pool.",
         "during_carbs_g_per_h": 0,
         "after": "Dinner at home with protein and carbs within 2 hours."
-      }
+      },
+      "time": "19:00",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Friday evening at the pool in Bornem. Only the order matters: snack first, dinner after."
+        },
+        {
+          "label": "Fallback",
+          "text": "Skip it. No make-up."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-16-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-swim snack 60-90 min before? (banana + bread with Nutella, or a bar)"
+        }
+      ]
     },
     {
       "date": "2026-10-17",
@@ -448,12 +577,35 @@
           "target": "Walk and stretch calves and hips"
         }
       ],
-      "cue": "Easy means you could run it again tomorrow. Same effort as your run on 4 October or easier. Calf pinching? Walk it out and stop.",
+      "cue": "Easy means you could run it again tomorrow. Same effort as your run on 4 October or easier. Calf pinching? Walk it out and stop. If the same calf pain shows up in three runs in a row, see a physiotherapist before adding minutes. Change one thing at a time: minutes, pace, shoes or route, never two in one week.",
       "fuel": {
-        "before": "Breakfast 1-2 hours before: bread or oats with a banana.",
+        "before": "Breakfast 1-2 hours before: bread with a banana.",
         "during_carbs_g_per_h": 0,
         "after": "Family lunch: a palm-sized portion of protein, a big portion of pasta, potatoes or rice, plus vegetables."
-      }
+      },
+      "time": "10:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Sunday morning, about 10:30, in daylight, 2 hours after breakfast."
+        },
+        {
+          "label": "Fallback",
+          "text": "Sunday afternoon, about 15:00, in daylight."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-18-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
     },
     {
       "date": "2026-10-19",
@@ -525,10 +677,43 @@
       ],
       "cue": "Rep 1 on target, the middle on feel, the last set strong and empty. New to 30/15s: 2 sets only. Power more than 10% under target: end the set. Rate your left calf 0-10 afterwards: above 4, or a changed pedal stroke, means stop and ease off.",
       "fuel": {
-        "before": "Carb breakfast 2-3 h before (oats + banana). Banana or a gel 30-45 min before. No hard session on an empty stomach.",
+        "before": "Eat breakfast about 2 hours before (see meals). Then 30-45 min before the start: 1 banana or a gel with water Don't ride on an empty stomach.",
         "during_carbs_g_per_h": 40,
-        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Banana milk is a good first drink."
-      }
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Ready-made banana milk or a glass of milk is a good first drink."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr, finished before class (class starts 13:45)."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight after class, about 19:00, on the Kickr. Eat a snack at school first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-20-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-ride fuel? (1 banana or a gel with water)"
+        },
+        {
+          "id": "2026-10-20-fuel-during",
+          "when": "after",
+          "ask": "Did you take the planned fuel during the session? (1 bottle (500 ml) of isotonic drink (about 40 g carbs), plus water)"
+        },
+        {
+          "id": "2026-10-20-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
     },
     {
       "date": "2026-10-20",
@@ -536,35 +721,53 @@
       "title": "Kettlebell, 27 min (build)",
       "duration_min": 27,
       "zone": "Z1-Z2",
-      "purpose": "Build strength capacity with the 16 kg bell: more sets and slower reps instead of more weight.",
+      "purpose": "Build strength with the 16 kg bell using one-leg work, tempo and pauses instead of more weight. One leg at a time makes a light bell feel heavy and trains the same muscles you use on the bike and in running.",
       "steps": [
         {
           "min": 5,
           "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles, cat-cow"
         },
         {
-          "min": 8,
-          "target": "Two-hand swing: 6 sets of 10, rest 45 s"
+          "min": 6,
+          "target": "Two-hand swing 16 kg: 4 sets of 10, rest 45 s"
         },
         {
-          "min": 6,
-          "target": "Goblet squat: 3 sets of 10"
+          "min": 8,
+          "target": "Rear-foot split squat holding the bell at your chest: 3 sets per leg, 3 s lowering. Use your test reps from 15 Oct minus 2 per set"
         },
         {
           "min": 5,
-          "target": "One-arm row: 3 sets of 8 per side"
+          "target": "Single-leg Romanian deadlift with the 16 kg bell: 3 sets of 8 per leg, slow"
         },
         {
           "min": 3,
-          "target": "Plank 2 x 40 s and side plank 2 x 25 s per side"
+          "target": "Slow calf raise, one leg, holding the bell in the same-side hand: 3 sets of 12 per leg (3 s up, 3 s down). Finish with plank 2 x 30 s"
         }
       ],
-      "cue": "Stop every set with 2 clean reps left. Technique over numbers.",
+      "cue": "Stop every set with 1-3 clean reps left. When all sets feel clean with 3 reps left, add 1-2 reps next time before anything else. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
       "fuel": {
         "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
         "during_carbs_g_per_h": 0,
-        "after": "25-40 g protein within 2 hours, banana milk or yoghurt works."
-      }
+        "after": "25-40 g protein within 2 hours, ready-made banana milk, milk or yoghurt works."
+      },
+      "time": "11:05",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Right after the ride, before you shower."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight, about 20:00."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-20-kb-quality",
+          "when": "after",
+          "ask": "Did you stop every set with 1-3 clean reps left?"
+        }
+      ]
     },
     {
       "date": "2026-10-21",
@@ -650,12 +853,35 @@
           "target": "Walk and stretch calves and hips"
         }
       ],
-      "cue": "Easy means you could run it again tomorrow. Same effort as your run on 4 October or easier. Calf pinching? Walk it out and stop.",
+      "cue": "Easy means you could run it again tomorrow. Same effort as your run on 4 October or easier. Calf pinching? Walk it out and stop. If the same calf pain shows up in three runs in a row, see a physiotherapist before adding minutes. Change one thing at a time: minutes, pace, shoes or route, never two in one week.",
       "fuel": {
-        "before": "Breakfast 1-2 hours before: bread or oats with a banana.",
+        "before": "Breakfast 1-2 hours before: bread with a banana.",
         "during_carbs_g_per_h": 0,
         "after": "Family lunch: a palm-sized portion of protein, a big portion of pasta, potatoes or rice, plus vegetables."
-      }
+      },
+      "time": "10:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Sunday morning, about 10:30, in daylight, 2 hours after breakfast."
+        },
+        {
+          "label": "Fallback",
+          "text": "Sunday afternoon, about 15:00, in daylight."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-25-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
     },
     {
       "date": "2026-10-26",
@@ -720,10 +946,43 @@
       ],
       "cue": "Rep 1 on target, reps 2-3 on feel, rep 4 strong and empty. Can't hold the target by rep 2? Rest 5 min and do 3 reps. Rate your left calf 0-10 afterwards: above 4, or a changed pedal stroke, means stop and ease off.",
       "fuel": {
-        "before": "Carb breakfast 2-3 h before (oats + banana). Banana or a gel 30-45 min before.",
+        "before": "Eat breakfast about 2 hours before (see meals). Then 30-45 min before the start: 1 banana or a gel with water Don't ride on an empty stomach.",
         "during_carbs_g_per_h": 40,
-        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Banana milk is a good first drink."
-      }
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Ready-made banana milk or a glass of milk is a good first drink."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr, finished before class (class starts 13:45)."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight after class, about 19:00, on the Kickr. Eat a snack at school first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-27-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-ride fuel? (1 banana or a gel with water)"
+        },
+        {
+          "id": "2026-10-27-fuel-during",
+          "when": "after",
+          "ask": "Did you take the planned fuel during the session? (1 bottle (500 ml) of isotonic drink (about 40 g carbs), plus water)"
+        },
+        {
+          "id": "2026-10-27-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
     },
     {
       "date": "2026-10-27",
@@ -731,35 +990,53 @@
       "title": "Kettlebell, 27 min (build)",
       "duration_min": 27,
       "zone": "Z1-Z2",
-      "purpose": "Build strength capacity with the 16 kg bell: more sets and slower reps instead of more weight.",
+      "purpose": "Progress the one-leg strength with one more set and a pause. Strength work is placed after the ride, so the hard bike work stays fresh.",
       "steps": [
         {
           "min": 5,
           "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles, cat-cow"
         },
         {
-          "min": 8,
-          "target": "Two-hand swing: 6 sets of 10, rest 45 s"
+          "min": 6,
+          "target": "Two-hand swing 16 kg: 5 sets of 10, rest 45 s"
         },
         {
-          "min": 6,
-          "target": "Goblet squat: 3 sets of 10"
+          "min": 8,
+          "target": "Rear-foot split squat with the bell: 4 sets per leg, 3 s lowering, 1 s pause at the bottom. Reps as on 20 Oct, plus 1-2 if all sets were clean"
         },
         {
           "min": 5,
-          "target": "One-arm row: 3 sets of 8 per side"
+          "target": "Single-leg Romanian deadlift 16 kg: 3 sets of 8-10 per leg, slow"
         },
         {
           "min": 3,
-          "target": "Plank 2 x 40 s and side plank 2 x 25 s per side"
+          "target": "Slow calf raise, one leg, holding the bell: 3 sets of 12 per leg (3 s up, 3 s down, 1 s pause at the top). Finish with plank 2 x 40 s"
         }
       ],
-      "cue": "Stop every set with 2 clean reps left. Technique over numbers.",
+      "cue": "Stop every set with 1-3 clean reps left. Technique over numbers. A heavy leg day before a hard ride is the one thing to avoid; today it comes after the intervals. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
       "fuel": {
         "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
         "during_carbs_g_per_h": 0,
-        "after": "25-40 g protein within 2 hours, banana milk or yoghurt works."
-      }
+        "after": "25-40 g protein within 2 hours, ready-made banana milk, milk or yoghurt works."
+      },
+      "time": "11:00",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Right after the ride, before you shower."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight, about 20:00."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-27-kb-quality",
+          "when": "after",
+          "ask": "Did you stop every set with 1-3 clean reps left?"
+        }
+      ]
     },
     {
       "date": "2026-10-28",
@@ -782,7 +1059,7 @@
       "title": "Long ride 2.5 h with late tempo",
       "duration_min": 150,
       "zone": "Z2 + Z3",
-      "purpose": "Your first longer ride of the plan, with tempo near the end, when you are tired. This is the durability session.",
+      "purpose": "Your first longer ride of the plan, with tempo near the end, when you are tired. This is the durability session. Write down two numbers: total kJ at the end and the average watts of tempo block 1 vs block 2.",
       "steps": [
         {
           "min": 15,
@@ -816,12 +1093,45 @@
           "target": "Easy spin home, under 150 W"
         }
       ],
-      "cue": "Eat from minute 20 and every 20 minutes. Practise real food too: half a Nutella sandwich or a banana each hour. Cola is allowed in the last hour. Outdoors in daylight if it's dry, otherwise the same session on the Kickr. Rate your left calf 0-10 afterwards: above 4, or a changed pedal stroke, means stop and ease off.",
+      "cue": "Eat from minute 20 and every 20 minutes. Practise real food too: half a Nutella sandwich or a banana each hour. Cola is allowed in the last hour. Outdoors in daylight if it's dry, otherwise the same session on the Kickr. Rate your left calf 0-10 afterwards: above 4, or a changed pedal stroke, means stop and ease off. Total kJ divided by 75 gives kJ per kg; we use it to track durability over the season. A big drop between block 1 and block 2 is information, not failure.",
       "fuel": {
-        "before": "Breakfast 2-3 h before: oats with banana and bread with Nutella. A banana 30 min before.",
+        "before": "Eat breakfast about 2 hours before (see meals). Then 30-45 min before the start: 1 banana and water Don't ride on an empty stomach.",
         "during_carbs_g_per_h": 60,
-        "after": "Within 1 h: rice or potatoes with chicken and vegetables, plus banana milk."
-      }
+        "after": "Within 1 h: rice or potatoes with chicken and vegetables, plus a glass of milk."
+      },
+      "time": "09:00",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:00, on the Kickr, finished before class (class starts 13:45)."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight after class, about 19:00, shortened to 90 min with one tempo block. Eat a snack at school first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-29-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-ride fuel? (1 banana and water)"
+        },
+        {
+          "id": "2026-10-29-fuel-during",
+          "when": "after",
+          "ask": "Did you take the planned fuel during the session? (every hour 1 bottle of isotonic drink (about 40 g) + 1 gel or banana (about 25 g). Eat something every 20 minutes. Practise real food too: half a Nutella sandwich or a banana each hour. Cola is fine in the last hour)"
+        },
+        {
+          "id": "2026-10-29-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
     },
     {
       "date": "2026-10-29",
@@ -829,31 +1139,49 @@
       "title": "Kettlebell, 20 min (light)",
       "duration_min": 20,
       "zone": "Z1-Z2",
-      "purpose": "Keep the habit on a light week or after a long ride. No fatigue before the next key session.",
+      "purpose": "Keep the habit and the strength on a light or recovery week without adding fatigue before the next key session.",
       "steps": [
         {
           "min": 5,
           "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles"
         },
         {
-          "min": 7,
-          "target": "Two-hand swing: 4 sets of 10, rest 45 s"
-        },
-        {
           "min": 5,
-          "target": "Goblet squat: 2 sets of 10"
+          "target": "Two-hand swing 16 kg: 3 sets of 10, rest 45 s"
         },
         {
-          "min": 3,
-          "target": "Plank 2 x 30 s, side plank 2 x 20 s per side"
+          "min": 6,
+          "target": "Rear-foot split squat with the bell: 2 sets per leg, easy, 3 s lowering"
+        },
+        {
+          "min": 4,
+          "target": "Slow calf raise, one leg: 2 sets of 12 per leg. Then plank 2 x 30 s"
         }
       ],
-      "cue": "Easy day for the body. If your legs are heavy, do the warm-up and the plank only.",
+      "cue": "Easy day for the body. If your legs are heavy, do the warm-up, calf raises and plank only. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
       "fuel": {
         "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
         "during_carbs_g_per_h": 0,
-        "after": "25-40 g protein within 2 hours, banana milk or yoghurt works."
-      }
+        "after": "25-40 g protein within 2 hours, ready-made banana milk, milk or yoghurt works."
+      },
+      "time": "20:00",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Tonight, about 20:00, after dinner."
+        },
+        {
+          "label": "Fallback",
+          "text": "Skip it. No make-up."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-29-kb-quality",
+          "when": "after",
+          "ask": "Did you stop every set with 1-3 clean reps left?"
+        }
+      ]
     },
     {
       "date": "2026-10-30",
@@ -861,31 +1189,54 @@
       "title": "Swim, 35 min (technique)",
       "duration_min": 35,
       "zone": "Z1-Z2",
-      "purpose": "Second swim: five minutes longer than last time.",
+      "purpose": "Critical swim speed (CSS) test. The two times give your threshold pace, which sets every later main set. Swim speed is driven by how little energy each metre costs, so we measure first and then train around it.",
       "steps": [
         {
+          "min": 7,
+          "target": "Warm-up: 300 m easy, any stroke you like"
+        },
+        {
           "min": 6,
-          "target": "Warm-up: 200 m easy"
+          "target": "Drills: 4 x 50 m, 15 s rest. Kick on your side, then catch-up crawl"
         },
         {
-          "min": 9,
-          "target": "Drills: 4 x 50 m, 15 s rest. Kick on your side, catch-up crawl"
-        },
-        {
-          "min": 15,
-          "target": "Main: 5 x 100 m crawl, 30 s rest. Breathe every 3 strokes, count strokes"
+          "min": 17,
+          "target": "Pace test. 200 m at your best even pace (not a sprint). Then 5 min easy rest (swim 100 m easy). Then 400 m at your best even pace. Write down BOTH times"
         },
         {
           "min": 5,
-          "target": "Cool-down: 100 m easy"
+          "target": "Cool-down: 200 m easy"
         }
       ],
-      "cue": "Comfort first. Never go hard.",
+      "cue": "Go out controlled: the 200 m should feel hard but even, the 400 m the same pace or a touch slower. Send me both times; CSS = 200 m divided by (400 m time minus 200 m time). Pool CSS overestimates what you can hold for 1.9 km, so treat it as a ceiling. Changes smaller than about 0.07-0.12 m/s are test noise.",
       "fuel": {
         "before": "Banana + bread with Nutella (or a bar) 60-90 min before the pool.",
         "during_carbs_g_per_h": 0,
         "after": "Dinner at home with protein and carbs within 2 hours."
-      }
+      },
+      "time": "19:00",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Friday evening at the pool in Bornem. Only the order matters: snack first, dinner after."
+        },
+        {
+          "label": "Fallback",
+          "text": "Skip it. No make-up."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-30-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-swim snack 60-90 min before? (banana + bread with Nutella, or a bar)"
+        },
+        {
+          "id": "2026-10-30-times",
+          "when": "after",
+          "ask": "Did you write down your 200 m and 400 m times? (send them to me)"
+        }
+      ]
     },
     {
       "date": "2026-10-31",
@@ -926,12 +1277,35 @@
           "target": "Walk and stretch calves and hips"
         }
       ],
-      "cue": "Easy means you could run it again tomorrow. Same effort as your run on 4 October or easier. Calf pinching? Walk it out and stop.",
+      "cue": "Easy means you could run it again tomorrow. Same effort as your run on 4 October or easier. Calf pinching? Walk it out and stop. If the same calf pain shows up in three runs in a row, see a physiotherapist before adding minutes. Change one thing at a time: minutes, pace, shoes or route, never two in one week.",
       "fuel": {
-        "before": "Breakfast 1-2 hours before: bread or oats with a banana.",
+        "before": "Breakfast 1-2 hours before: bread with a banana.",
         "during_carbs_g_per_h": 0,
         "after": "Family lunch: a palm-sized portion of protein, a big portion of pasta, potatoes or rice, plus vegetables."
-      }
+      },
+      "time": "10:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Sunday morning, about 10:30, in daylight, 2 hours after breakfast."
+        },
+        {
+          "label": "Fallback",
+          "text": "Sunday afternoon, about 15:00, in daylight."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-11-01-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
     },
     {
       "date": "2026-11-02",
@@ -974,10 +1348,38 @@
       ],
       "cue": "Boring on purpose. This week is about freshness. Rate your left calf 0-10 afterwards: above 4, or a changed pedal stroke, means stop and ease off.",
       "fuel": {
-        "before": "As soon as you wake (30-45 min before the ride): 1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach.",
+        "before": "Eat breakfast about 2 hours before (see meals). Then 30-45 min before the start: 1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach. Don't ride on an empty stomach.",
         "during_carbs_g_per_h": 0,
-        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Banana milk is a good first drink."
-      }
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Ready-made banana milk or a glass of milk is a good first drink."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr, finished before class (class starts 13:45)."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight after class, about 19:00, on the Kickr. Eat a snack at school first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-11-03-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-ride fuel? (1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach)"
+        },
+        {
+          "id": "2026-11-03-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
     },
     {
       "date": "2026-11-03",
@@ -985,31 +1387,49 @@
       "title": "Kettlebell, 20 min (light)",
       "duration_min": 20,
       "zone": "Z1-Z2",
-      "purpose": "Keep the habit on a light week or after a long ride. No fatigue before the next key session.",
+      "purpose": "Keep the habit and the strength on a light or recovery week without adding fatigue before the next key session.",
       "steps": [
         {
           "min": 5,
           "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles"
         },
         {
-          "min": 7,
-          "target": "Two-hand swing: 4 sets of 10, rest 45 s"
-        },
-        {
           "min": 5,
-          "target": "Goblet squat: 2 sets of 10"
+          "target": "Two-hand swing 16 kg: 3 sets of 10, rest 45 s"
         },
         {
-          "min": 3,
-          "target": "Plank 2 x 30 s, side plank 2 x 20 s per side"
+          "min": 6,
+          "target": "Rear-foot split squat with the bell: 2 sets per leg, easy, 3 s lowering"
+        },
+        {
+          "min": 4,
+          "target": "Slow calf raise, one leg: 2 sets of 12 per leg. Then plank 2 x 30 s"
         }
       ],
-      "cue": "Easy day for the body. If your legs are heavy, do the warm-up and the plank only.",
+      "cue": "Easy day for the body. If your legs are heavy, do the warm-up, calf raises and plank only. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
       "fuel": {
         "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
         "during_carbs_g_per_h": 0,
-        "after": "25-40 g protein within 2 hours, banana milk or yoghurt works."
-      }
+        "after": "25-40 g protein within 2 hours, ready-made banana milk, milk or yoghurt works."
+      },
+      "time": "10:45",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Right after the ride, before you shower."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight, about 20:00."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-11-03-kb-quality",
+          "when": "after",
+          "ask": "Did you stop every set with 1-3 clean reps left?"
+        }
+      ]
     },
     {
       "date": "2026-11-04",
@@ -1078,10 +1498,43 @@
       ],
       "cue": "Same protocol and setup as 13 October: Kickr, same time of day, same breakfast. Slept badly or ill? Move it by a day.",
       "fuel": {
-        "before": "Carb breakfast 2-3 h before (oats + banana + bread with Nutella). Banana or a gel 30 min before. Fresh legs matter: no kettlebell the day before.",
+        "before": "Eat breakfast about 2 hours before (see meals). Then 30-45 min before the start: 1 banana or a gel with water Don't ride on an empty stomach.",
         "during_carbs_g_per_h": 40,
-        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Banana milk is a good first drink."
-      }
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Ready-made banana milk or a glass of milk is a good first drink."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr, finished before class (class starts 13:45)."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight after class, about 19:00, on the Kickr. Eat a snack at school first. Not at the weekend."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-11-05-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-ride fuel? (1 banana or a gel with water)"
+        },
+        {
+          "id": "2026-11-05-fuel-during",
+          "when": "after",
+          "ask": "Did you take the planned fuel during the session? (1 bottle (500 ml) of isotonic drink (about 40 g carbs), plus water)"
+        },
+        {
+          "id": "2026-11-05-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
     },
     {
       "date": "2026-11-06",
@@ -1089,7 +1542,7 @@
       "title": "Swim, 30 min (technique)",
       "duration_min": 30,
       "zone": "Z1-Z2",
-      "purpose": "Recovery-week swim: same as the first one.",
+      "purpose": "First main set built on your measured CSS. One swim a week keeps and slowly builds skill, so every session needs one clear job.",
       "steps": [
         {
           "min": 6,
@@ -1097,23 +1550,41 @@
         },
         {
           "min": 8,
-          "target": "Drills: 4 x 50 m, 15 s rest"
+          "target": "Drills: 4 x 50 m, 15 s rest. Kick on your side, catch-up crawl, count your strokes"
         },
         {
           "min": 12,
-          "target": "Main: 4 x 100 m crawl, 30 s rest"
+          "target": "Main: 4 x 100 m at your CSS pace from 30 Oct (if I have not sent it yet: steady, hard but even), 20 s rest. Then 2 x 25 m fast, 30 s rest"
         },
         {
           "min": 4,
           "target": "Cool-down: 100 m easy"
         }
       ],
-      "cue": "Easy and relaxed.",
+      "cue": "Hold the same pace on all four 100s. If you slow down by more than 3 s, stop after that one. Fast 25s are about clean form at speed, not about being exhausted.",
       "fuel": {
         "before": "Banana + bread with Nutella (or a bar) 60-90 min before the pool.",
         "during_carbs_g_per_h": 0,
         "after": "Dinner at home with protein and carbs within 2 hours."
-      }
+      },
+      "time": "19:00",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Friday evening at the pool in Bornem. Only the order matters: snack first, dinner after."
+        },
+        {
+          "label": "Fallback",
+          "text": "Skip it. No make-up."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-11-06-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-swim snack 60-90 min before? (banana + bread with Nutella, or a bar)"
+        }
+      ]
     },
     {
       "date": "2026-11-07",
@@ -1154,12 +1625,35 @@
           "target": "Walk and stretch calves and hips"
         }
       ],
-      "cue": "Easy means you could run it again tomorrow. Same effort as your run on 4 October or easier. Calf pinching? Walk it out and stop.",
+      "cue": "Easy means you could run it again tomorrow. Same effort as your run on 4 October or easier. Calf pinching? Walk it out and stop. If the same calf pain shows up in three runs in a row, see a physiotherapist before adding minutes. Change one thing at a time: minutes, pace, shoes or route, never two in one week.",
       "fuel": {
-        "before": "Breakfast 1-2 hours before: bread or oats with a banana.",
+        "before": "Breakfast 1-2 hours before: bread with a banana.",
         "during_carbs_g_per_h": 0,
         "after": "Family lunch: a palm-sized portion of protein, a big portion of pasta, potatoes or rice, plus vegetables."
-      }
+      },
+      "time": "10:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Sunday morning, about 10:30, in daylight, 2 hours after breakfast."
+        },
+        {
+          "label": "Fallback",
+          "text": "Sunday afternoon, about 15:00, in daylight."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-11-08-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
     }
   ],
   "nutrition": {
@@ -1192,9 +1686,9 @@
         "items": [
           "On waking (30-45 min before the ride): 1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach.",
           "During the ride: 1 bottle (500 ml) of isotonic drink per hour (about 30 g carbs), plus water.",
-          "Breakfast (after the ride): 100 g oats cooked in milk, 1 banana, 3 eggs with bacon bits",
+          "Breakfast (after the ride): 3 eggs (fried or scrambled) on 3 slices of bread, 1 banana, 1 glass of milk",
           "Lunch: 100 g (dry) pasta or rice, 200 g chicken, vegetables, 1 tbsp oil",
-          "Snack: 1 glass of banana milk, or 250 g yoghurt with 40 g chocolate cruesli",
+          "Snack: 1 glass of milk or ready-made banana milk, or 250 g yoghurt with 40 g chocolate cruesli",
           "Dinner: 400 g potatoes, 150 g meat or fish, vegetables"
         ]
       },
@@ -1202,313 +1696,876 @@
         "date": "2026-10-09",
         "day_type": "rest",
         "items": [
-          "Lunch on the way home: 2 sandwiches with chicken or cold cuts and a banana",
-          "Home meals (family cooks): protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables",
-          "Snacks: yoghurt, an apple or banana, a handful of nuts"
+          {
+            "id": "2026-10-09-breakfast",
+            "time": "08:00",
+            "meal": "Breakfast",
+            "text": "3 slices of bread with 2 fried eggs and cheese, 1 glass of milk"
+          },
+          {
+            "id": "2026-10-09-lunch",
+            "time": "13:15",
+            "meal": "Lunch (on the way home)",
+            "text": "2 sandwiches with chicken or cold cuts and a banana"
+          },
+          {
+            "id": "2026-10-09-snacks",
+            "time": "16:00",
+            "meal": "Snacks",
+            "text": "yoghurt, an apple or banana, bread with Nutella"
+          },
+          {
+            "id": "2026-10-09-home",
+            "time": "18:00",
+            "meal": "Meals at home (family cooks)",
+            "text": "protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables"
+          }
         ]
       },
       {
         "date": "2026-10-10",
         "day_type": "rest",
         "items": [
-          "Away from home: eat three real meals with protein; bring bananas, nuts and bread with Nutella as emergency fuel"
+          {
+            "id": "2026-10-10-away",
+            "time": "12:00",
+            "meal": "Away from home",
+            "text": "eat three real meals with protein; bring bananas, biscuits and bread with Nutella as emergency fuel"
+          }
         ]
       },
       {
         "date": "2026-10-11",
         "day_type": "easy",
         "items": [
-          "Before the run (1-2 h): bread or oats with a banana, and a glass of milk",
-          "After the run: family lunch with a palm-sized portion of protein, a big carb portion and vegetables",
-          "Snack: yoghurt or banana milk",
-          "Dinner: batch-cooked meal from the dorm freezer, reheated in the microwave, or what the family serves"
+          {
+            "id": "2026-10-11-breakfast",
+            "time": "08:30",
+            "meal": "Breakfast (2 hours before the run)",
+            "text": "bread with a banana, and a glass of milk. Add an egg or cheese if you are still hungry"
+          },
+          {
+            "id": "2026-10-11-lunch",
+            "time": "12:45",
+            "meal": "Lunch (after the run)",
+            "text": "family lunch with a palm-sized portion of protein, a big carb portion and vegetables"
+          },
+          {
+            "id": "2026-10-11-snack",
+            "time": "16:00",
+            "meal": "Snack",
+            "text": "yoghurt or ready-made banana milk"
+          },
+          {
+            "id": "2026-10-11-dinner",
+            "time": "18:30",
+            "meal": "Dinner",
+            "text": "batch-cooked meal from the dorm freezer, reheated in the microwave, or what the family serves"
+          }
         ]
       },
       {
         "date": "2026-10-12",
         "day_type": "rest",
         "items": [
-          "Breakfast: 3 slices of bread with 2 fried eggs and cheese, 1 glass of milk",
-          "Lunch: batch-cooked bolognese: 90 g (dry) pasta, 150 g mince, tomato sauce, spinach",
-          "Snack: 1 apple, a handful of nuts and 250 g yoghurt",
-          "Dinner: 150 g tuna or salmon, 350 g potatoes, green beans, 1 tbsp oil"
+          {
+            "id": "2026-10-12-breakfast",
+            "time": "07:30",
+            "meal": "Breakfast",
+            "text": "3 slices of bread with 2 fried eggs and cheese, 1 glass of milk"
+          },
+          {
+            "id": "2026-10-12-lunch",
+            "time": "11:30",
+            "meal": "Lunch (cook it before you leave for class)",
+            "text": "batch-cooked bolognese: 90 g (dry) pasta, 150 g mince, tomato sauce and broccoli"
+          },
+          {
+            "id": "2026-10-12-snack",
+            "time": "15:00",
+            "meal": "Snack (take it to school)",
+            "text": "1 apple, 250 g yoghurt and 1 slice of bread with Nutella"
+          },
+          {
+            "id": "2026-10-12-dinner",
+            "time": "18:30",
+            "meal": "Dinner",
+            "text": "150 g tuna or salmon, 350 g potatoes, green beans, 1 tbsp oil"
+          }
         ]
       },
       {
         "date": "2026-10-13",
         "day_type": "hard",
         "items": [
-          "Breakfast (2-3 h before): 100 g oats cooked in milk, 1 banana, 20 g nuts, 2 slices of bread with Nutella",
-          "30-45 min before: 1 banana or a gel with water",
-          "During the session: 1 bottle (500 ml) of isotonic drink (about 40 g carbs), plus water.",
-          "Within 1 h after: 400 ml banana milk and 2 slices of bread with cheese or cold cuts",
-          "Lunch: 120 g (dry) pasta with tomato sauce and 200 g chicken, vegetables",
-          "Snack: 250 g yoghurt, 40 g chocolate cruesli, 1 apple",
-          "Dinner: 400 g oven potatoes, 150 g meat or salmon, vegetables, 1 tbsp oil"
+          {
+            "id": "2026-10-13-breakfast",
+            "time": "07:15",
+            "meal": "Breakfast",
+            "text": "a bowl of cornflakes or muesli with cold milk, 1 banana, 3 slices of bread with Nutella"
+          },
+          {
+            "id": "2026-10-13-recovery",
+            "time": "10:50",
+            "meal": "Recovery snack",
+            "text": "400 ml ready-made banana milk or plain milk and 2 slices of bread with cheese or cold cuts"
+          },
+          {
+            "id": "2026-10-13-lunch",
+            "time": "12:15",
+            "meal": "Lunch",
+            "text": "120 g (dry) pasta with tomato sauce and 200 g chicken, vegetables"
+          },
+          {
+            "id": "2026-10-13-snack",
+            "time": "15:45",
+            "meal": "Snack (take it to school)",
+            "text": "250 g yoghurt, 40 g chocolate cruesli, 1 apple"
+          },
+          {
+            "id": "2026-10-13-dinner",
+            "time": "19:00",
+            "meal": "Dinner",
+            "text": "400 g oven potatoes, 150 g meat or salmon, vegetables, 1 tbsp oil"
+          }
         ]
       },
       {
         "date": "2026-10-14",
         "day_type": "rest",
         "items": [
-          "Breakfast: 3 eggs scrambled with bacon bits, 3 slices of bread, 1 apple",
-          "Lunch: 100 g (dry) pasta with tomato sauce, 150 g chicken, a big portion of broccoli or green beans",
-          "Snack: 250 g high-protein yoghurt, 40 g chocolate cruesli, 1 banana",
-          "Dinner: 400 g oven potatoes, 150 g meat or salmon, carrot, pepper and salad with 1 tbsp oil"
+          {
+            "id": "2026-10-14-breakfast",
+            "time": "08:00",
+            "meal": "Breakfast",
+            "text": "3 eggs scrambled, 3 slices of bread, 1 apple, 1 glass of milk"
+          },
+          {
+            "id": "2026-10-14-lunch",
+            "time": "12:45",
+            "meal": "Lunch (packed, eat it at school)",
+            "text": "4 slices of bread with cold cuts and cheese, 1 apple, 1 glass of milk or a yoghurt"
+          },
+          {
+            "id": "2026-10-14-snack",
+            "time": "16:15",
+            "meal": "Snack",
+            "text": "250 g high-protein yoghurt, 40 g chocolate cruesli, 1 banana"
+          },
+          {
+            "id": "2026-10-14-dinner",
+            "time": "19:00",
+            "meal": "Dinner",
+            "text": "400 g oven potatoes, 150 g meat or salmon, carrots and broccoli with 1 tbsp oil"
+          }
         ]
       },
       {
         "date": "2026-10-15",
         "day_type": "easy",
         "items": [
-          "On waking (30-45 min before the ride): 1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach.",
-          "During the ride: 1 bottle (500 ml) of isotonic drink per hour (about 30 g carbs), plus water.",
-          "Breakfast (after the ride): 250 g yoghurt with 60 g chocolate cruesli and 1 banana, 2 slices of bread with cheese",
-          "Lunch: 100 g (dry) pasta with tuna, tomato sauce and broccoli",
-          "Snack: 1 sandwich with Nutella and a glass of milk",
-          "Dinner: 400 g potatoes, 150 g chicken, vegetables and salad"
+          {
+            "id": "2026-10-15-breakfast",
+            "time": "07:15",
+            "meal": "Breakfast",
+            "text": "250 g yoghurt with 60 g chocolate cruesli and 1 banana, 2 slices of bread with cheese"
+          },
+          {
+            "id": "2026-10-15-recovery",
+            "time": "11:05",
+            "meal": "Recovery snack",
+            "text": "1 glass of milk or ready-made banana milk and 1 sandwich with cold cuts"
+          },
+          {
+            "id": "2026-10-15-lunch",
+            "time": "12:15",
+            "meal": "Lunch",
+            "text": "100 g (dry) pasta with tuna, tomato sauce and broccoli"
+          },
+          {
+            "id": "2026-10-15-snack",
+            "time": "15:45",
+            "meal": "Snack (take it to school)",
+            "text": "1 sandwich with Nutella and a glass of milk"
+          },
+          {
+            "id": "2026-10-15-dinner",
+            "time": "19:00",
+            "meal": "Dinner",
+            "text": "400 g potatoes, 150 g chicken and vegetables"
+          }
         ]
       },
       {
         "date": "2026-10-16",
         "day_type": "easy",
         "items": [
-          "Lunch on the way home: 2 sandwiches with chicken or cold cuts and a banana",
-          "60-90 min before the swim: banana + bread with Nutella, or a bar",
-          "After the swim: dinner at home with a palm-sized portion of protein and a big carb portion",
-          "Snack: yoghurt or a glass of banana milk"
+          {
+            "id": "2026-10-16-breakfast",
+            "time": "08:00",
+            "meal": "Breakfast",
+            "text": "3 slices of bread with 2 fried eggs and cheese, 1 glass of milk"
+          },
+          {
+            "id": "2026-10-16-lunch",
+            "time": "13:15",
+            "meal": "Lunch (on the way home)",
+            "text": "2 sandwiches with chicken or cold cuts and a banana"
+          },
+          {
+            "id": "2026-10-16-snack",
+            "time": "16:30",
+            "meal": "Snack",
+            "text": "yoghurt or a glass of milk"
+          },
+          {
+            "id": "2026-10-16-dinner",
+            "time": "20:30",
+            "meal": "Dinner (after the swim, at home)",
+            "text": "a palm-sized portion of protein and a big carb portion, plus vegetables"
+          }
         ]
       },
       {
         "date": "2026-10-17",
         "day_type": "rest",
         "items": [
-          "Home meals (family cooks): protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables",
-          "Snacks: yoghurt, an apple or banana, a handful of nuts"
+          {
+            "id": "2026-10-17-home",
+            "time": "12:00",
+            "meal": "Meals at home (family cooks)",
+            "text": "protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables"
+          },
+          {
+            "id": "2026-10-17-snacks",
+            "time": "16:00",
+            "meal": "Snacks",
+            "text": "yoghurt, an apple or banana, bread with Nutella"
+          }
         ]
       },
       {
         "date": "2026-10-18",
         "day_type": "easy",
         "items": [
-          "Before the run (1-2 h): bread or oats with a banana, and a glass of milk",
-          "After the run: family lunch with a palm-sized portion of protein, a big carb portion and vegetables",
-          "Snack: yoghurt or banana milk",
-          "Dinner: batch-cooked meal from the dorm freezer, reheated in the microwave, or what the family serves"
+          {
+            "id": "2026-10-18-breakfast",
+            "time": "08:30",
+            "meal": "Breakfast (2 hours before the run)",
+            "text": "bread with a banana, and a glass of milk. Add an egg or cheese if you are still hungry"
+          },
+          {
+            "id": "2026-10-18-lunch",
+            "time": "12:45",
+            "meal": "Lunch (after the run)",
+            "text": "family lunch with a palm-sized portion of protein, a big carb portion and vegetables"
+          },
+          {
+            "id": "2026-10-18-snack",
+            "time": "16:00",
+            "meal": "Snack",
+            "text": "yoghurt or ready-made banana milk"
+          },
+          {
+            "id": "2026-10-18-dinner",
+            "time": "18:30",
+            "meal": "Dinner",
+            "text": "batch-cooked meal from the dorm freezer, reheated in the microwave, or what the family serves"
+          }
         ]
       },
       {
         "date": "2026-10-19",
         "day_type": "rest",
         "items": [
-          "Breakfast: 3 slices of bread with 2 fried eggs and cheese, 1 glass of milk",
-          "Lunch: batch-cooked bolognese: 90 g (dry) pasta, 150 g mince, tomato sauce, spinach",
-          "Snack: 1 apple, a handful of nuts and 250 g yoghurt",
-          "Dinner: 150 g tuna or salmon, 350 g potatoes, green beans, 1 tbsp oil"
+          {
+            "id": "2026-10-19-breakfast",
+            "time": "07:30",
+            "meal": "Breakfast",
+            "text": "3 slices of bread with 2 fried eggs and cheese, 1 glass of milk"
+          },
+          {
+            "id": "2026-10-19-lunch",
+            "time": "11:30",
+            "meal": "Lunch (cook it before you leave for class)",
+            "text": "batch-cooked bolognese: 90 g (dry) pasta, 150 g mince, tomato sauce and broccoli"
+          },
+          {
+            "id": "2026-10-19-snack",
+            "time": "15:00",
+            "meal": "Snack (take it to school)",
+            "text": "1 apple, 250 g yoghurt and 1 slice of bread with Nutella"
+          },
+          {
+            "id": "2026-10-19-dinner",
+            "time": "18:30",
+            "meal": "Dinner",
+            "text": "150 g tuna or salmon, 350 g potatoes, green beans, 1 tbsp oil"
+          }
         ]
       },
       {
         "date": "2026-10-20",
         "day_type": "hard",
         "items": [
-          "Breakfast (2-3 h before): 4 slices of bread with Nutella, 2 eggs, 1 banana, 1 glass of milk",
-          "30-45 min before: 1 banana or a gel with water",
-          "During the session: 1 bottle (500 ml) of isotonic drink (about 40 g carbs), plus water.",
-          "Within 1 h after: 400 ml banana milk and a sandwich with cold cuts",
-          "Lunch: 120 g (dry) rice with 200 g chicken and vegetables",
-          "Snack: 250 g yoghurt with 40 g chocolate cruesli and berries or an apple",
-          "Dinner: 100 g (dry) pasta with mince, tomato sauce, vegetables and cheese"
+          {
+            "id": "2026-10-20-breakfast",
+            "time": "07:15",
+            "meal": "Breakfast",
+            "text": "4 slices of bread with Nutella, 2 eggs, 1 banana, 1 glass of milk"
+          },
+          {
+            "id": "2026-10-20-recovery",
+            "time": "10:55",
+            "meal": "Recovery snack",
+            "text": "400 ml ready-made banana milk or plain milk and a sandwich with cold cuts"
+          },
+          {
+            "id": "2026-10-20-lunch",
+            "time": "12:15",
+            "meal": "Lunch",
+            "text": "120 g (dry) rice with 200 g chicken and vegetables"
+          },
+          {
+            "id": "2026-10-20-snack",
+            "time": "15:45",
+            "meal": "Snack (take it to school)",
+            "text": "250 g yoghurt with 40 g chocolate cruesli and berries or an apple"
+          },
+          {
+            "id": "2026-10-20-dinner",
+            "time": "19:00",
+            "meal": "Dinner",
+            "text": "100 g (dry) pasta with mince, tomato sauce, vegetables and cheese"
+          }
         ]
       },
       {
         "date": "2026-10-21",
         "day_type": "rest",
         "items": [
-          "Breakfast: 3 eggs scrambled with bacon bits, 3 slices of bread, 1 apple",
-          "Lunch: 100 g (dry) pasta with tomato sauce, 150 g chicken, a big portion of broccoli or green beans",
-          "Snack: 250 g high-protein yoghurt, 40 g chocolate cruesli, 1 banana",
-          "Dinner: 400 g oven potatoes, 150 g meat or salmon, carrot, pepper and salad with 1 tbsp oil"
+          {
+            "id": "2026-10-21-breakfast",
+            "time": "08:00",
+            "meal": "Breakfast",
+            "text": "3 eggs scrambled, 3 slices of bread, 1 apple, 1 glass of milk"
+          },
+          {
+            "id": "2026-10-21-lunch",
+            "time": "12:45",
+            "meal": "Lunch (packed, eat it at school)",
+            "text": "4 slices of bread with cold cuts and cheese, 1 apple, 1 glass of milk or a yoghurt"
+          },
+          {
+            "id": "2026-10-21-snack",
+            "time": "16:15",
+            "meal": "Snack",
+            "text": "250 g high-protein yoghurt, 40 g chocolate cruesli, 1 banana"
+          },
+          {
+            "id": "2026-10-21-dinner",
+            "time": "19:00",
+            "meal": "Dinner",
+            "text": "400 g oven potatoes, 150 g meat or salmon, carrots and broccoli with 1 tbsp oil"
+          }
         ]
       },
       {
         "date": "2026-10-22",
         "day_type": "rest",
         "items": [
-          "Breakfast: 80 g oats cooked in milk, 1 banana, 20 g nuts",
-          "Lunch: 4 slices of bread with cold cuts and cheese, tomato and cucumber, 1 apple",
-          "Snack: 250 g yoghurt with 20 g nuts, and 1 glass of milk",
-          "Dinner: 90 g (dry) rice, 150 g chicken stir-fried with 300 g pepper, broccoli and carrot"
+          {
+            "id": "2026-10-22-away",
+            "time": "12:00",
+            "meal": "Away from home",
+            "text": "eat three real meals with protein; bring bananas, biscuits and bread with Nutella as emergency fuel"
+          }
         ]
       },
       {
         "date": "2026-10-23",
         "day_type": "rest",
         "items": [
-          "Home meals (family cooks): protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables",
-          "Snacks: yoghurt, an apple or banana, a handful of nuts"
+          {
+            "id": "2026-10-23-home",
+            "time": "12:00",
+            "meal": "Meals at home (family cooks)",
+            "text": "protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables"
+          },
+          {
+            "id": "2026-10-23-snacks",
+            "time": "16:00",
+            "meal": "Snacks",
+            "text": "yoghurt, an apple or banana, bread with Nutella"
+          }
         ]
       },
       {
         "date": "2026-10-24",
         "day_type": "rest",
         "items": [
-          "Home meals (family cooks): protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables",
-          "Snacks: yoghurt, an apple or banana, a handful of nuts"
+          {
+            "id": "2026-10-24-home",
+            "time": "12:00",
+            "meal": "Meals at home (family cooks)",
+            "text": "protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables"
+          },
+          {
+            "id": "2026-10-24-snacks",
+            "time": "16:00",
+            "meal": "Snacks",
+            "text": "yoghurt, an apple or banana, bread with Nutella"
+          }
         ]
       },
       {
         "date": "2026-10-25",
         "day_type": "easy",
         "items": [
-          "Before the run (1-2 h): bread or oats with a banana, and a glass of milk",
-          "After the run: family lunch with a palm-sized portion of protein, a big carb portion and vegetables",
-          "Snack: yoghurt or banana milk",
-          "Dinner: batch-cooked meal from the dorm freezer, reheated in the microwave, or what the family serves"
+          {
+            "id": "2026-10-25-breakfast",
+            "time": "08:30",
+            "meal": "Breakfast (2 hours before the run)",
+            "text": "bread with a banana, and a glass of milk. Add an egg or cheese if you are still hungry"
+          },
+          {
+            "id": "2026-10-25-lunch",
+            "time": "12:45",
+            "meal": "Lunch (after the run)",
+            "text": "family lunch with a palm-sized portion of protein, a big carb portion and vegetables"
+          },
+          {
+            "id": "2026-10-25-snack",
+            "time": "16:00",
+            "meal": "Snack",
+            "text": "yoghurt or ready-made banana milk"
+          },
+          {
+            "id": "2026-10-25-dinner",
+            "time": "18:30",
+            "meal": "Dinner",
+            "text": "batch-cooked meal from the dorm freezer, reheated in the microwave, or what the family serves"
+          }
         ]
       },
       {
         "date": "2026-10-26",
         "day_type": "rest",
         "items": [
-          "Breakfast: 80 g oats cooked in milk, 1 banana, 20 g nuts",
-          "Lunch: 4 slices of bread with cold cuts and cheese, tomato and cucumber, 1 apple",
-          "Snack: 250 g yoghurt with 20 g nuts, and 1 glass of milk",
-          "Dinner: 90 g (dry) rice, 150 g chicken stir-fried with 300 g pepper, broccoli and carrot"
+          {
+            "id": "2026-10-26-breakfast",
+            "time": "07:30",
+            "meal": "Breakfast",
+            "text": "a bowl of cornflakes or muesli with cold milk, 1 banana, 2 slices of bread with cheese"
+          },
+          {
+            "id": "2026-10-26-lunch",
+            "time": "11:30",
+            "meal": "Lunch (cook it before you leave for class)",
+            "text": "4 slices of bread with cold cuts and cheese, 1 apple"
+          },
+          {
+            "id": "2026-10-26-snack",
+            "time": "15:00",
+            "meal": "Snack (take it to school)",
+            "text": "250 g yoghurt with 40 g chocolate cruesli, and 1 glass of milk"
+          },
+          {
+            "id": "2026-10-26-dinner",
+            "time": "18:30",
+            "meal": "Dinner",
+            "text": "90 g (dry) rice, 150 g chicken stir-fried with broccoli, green beans and carrots"
+          }
         ]
       },
       {
         "date": "2026-10-27",
         "day_type": "hard",
         "items": [
-          "Breakfast (2-3 h before): 100 g oats cooked in milk, 1 banana, 20 g nuts, 2 slices of bread with Nutella",
-          "30-45 min before: 1 banana or a gel with water",
-          "During the session: 1 bottle (500 ml) of isotonic drink (about 40 g carbs), plus water.",
-          "Within 1 h after: 400 ml banana milk and 2 slices of bread with cheese or cold cuts",
-          "Lunch: 120 g (dry) pasta with tomato sauce and 200 g chicken, vegetables",
-          "Snack: 250 g yoghurt, 40 g chocolate cruesli, 1 apple",
-          "Dinner: 400 g oven potatoes, 150 g meat or salmon, vegetables, 1 tbsp oil"
+          {
+            "id": "2026-10-27-breakfast",
+            "time": "07:15",
+            "meal": "Breakfast",
+            "text": "a bowl of cornflakes or muesli with cold milk, 1 banana, 3 slices of bread with Nutella"
+          },
+          {
+            "id": "2026-10-27-recovery",
+            "time": "10:50",
+            "meal": "Recovery snack",
+            "text": "400 ml ready-made banana milk or plain milk and 2 slices of bread with cheese or cold cuts"
+          },
+          {
+            "id": "2026-10-27-lunch",
+            "time": "12:15",
+            "meal": "Lunch",
+            "text": "120 g (dry) pasta with tomato sauce and 200 g chicken, vegetables"
+          },
+          {
+            "id": "2026-10-27-snack",
+            "time": "15:45",
+            "meal": "Snack (take it to school)",
+            "text": "250 g yoghurt, 40 g chocolate cruesli, 1 apple"
+          },
+          {
+            "id": "2026-10-27-dinner",
+            "time": "19:00",
+            "meal": "Dinner",
+            "text": "400 g oven potatoes, 150 g meat or salmon, vegetables, 1 tbsp oil"
+          }
         ]
       },
       {
         "date": "2026-10-28",
         "day_type": "rest",
         "items": [
-          "Breakfast: 3 slices of bread with 2 fried eggs and cheese, 1 glass of milk",
-          "Lunch: batch-cooked bolognese: 90 g (dry) pasta, 150 g mince, tomato sauce, spinach",
-          "Snack: 1 apple, a handful of nuts and 250 g yoghurt",
-          "Dinner: 150 g tuna or salmon, 350 g potatoes, green beans, 1 tbsp oil"
+          {
+            "id": "2026-10-28-breakfast",
+            "time": "08:00",
+            "meal": "Breakfast",
+            "text": "3 slices of bread with 2 fried eggs and cheese, 1 glass of milk"
+          },
+          {
+            "id": "2026-10-28-lunch",
+            "time": "12:45",
+            "meal": "Lunch (packed, eat it at school)",
+            "text": "4 slices of bread with cold cuts and cheese, 1 apple, 1 glass of milk or a yoghurt"
+          },
+          {
+            "id": "2026-10-28-snack",
+            "time": "16:15",
+            "meal": "Snack",
+            "text": "1 apple, 250 g yoghurt and 1 slice of bread with Nutella"
+          },
+          {
+            "id": "2026-10-28-dinner",
+            "time": "19:00",
+            "meal": "Dinner",
+            "text": "150 g tuna or salmon, 350 g potatoes, green beans, 1 tbsp oil"
+          }
         ]
       },
       {
         "date": "2026-10-29",
         "day_type": "long",
         "items": [
-          "Breakfast (2-3 h before): 100 g oats cooked in milk with 1 banana, 3 slices of bread with Nutella",
-          "30-45 min before: 1 banana and water",
-          "During the ride: every hour 1 bottle of isotonic drink (about 40 g) + 1 gel or banana (about 25 g). Eat something every 20 minutes. Practise real food too: half a Nutella sandwich or a banana each hour. Cola is fine in the last hour.",
-          "Within 1 h after: 100 g (dry) rice or 400 g potatoes, 200 g chicken, vegetables, plus 400 ml banana milk",
-          "Snack: 250 g yoghurt, 40 g chocolate cruesli, 1 banana",
-          "Dinner: batch pasta, 120 g (dry) with mince, tomato sauce, cheese and a salad"
+          {
+            "id": "2026-10-29-breakfast",
+            "time": "06:45",
+            "meal": "Breakfast",
+            "text": "a big bowl of cornflakes or muesli with cold milk, 1 banana, 3 slices of bread with Nutella"
+          },
+          {
+            "id": "2026-10-29-recovery",
+            "time": "11:35",
+            "meal": "Recovery snack",
+            "text": "400 ml ready-made banana milk or plain milk and 2 sandwiches with cold cuts"
+          },
+          {
+            "id": "2026-10-29-lunch",
+            "time": "12:30",
+            "meal": "Lunch",
+            "text": "100 g (dry) rice or 400 g potatoes, 200 g chicken, vegetables (batch-cooked: reheat it in the microwave, there is no time to cook before class)"
+          },
+          {
+            "id": "2026-10-29-snack",
+            "time": "15:45",
+            "meal": "Snack (take it to school)",
+            "text": "250 g yoghurt, 40 g chocolate cruesli, 1 banana"
+          },
+          {
+            "id": "2026-10-29-dinner",
+            "time": "19:00",
+            "meal": "Dinner",
+            "text": "batch pasta, 120 g (dry) with mince, tomato sauce, cheese"
+          }
         ]
       },
       {
         "date": "2026-10-30",
         "day_type": "easy",
         "items": [
-          "Lunch on the way home: 2 sandwiches with chicken or cold cuts and a banana",
-          "60-90 min before the swim: banana + bread with Nutella, or a bar",
-          "After the swim: dinner at home with a palm-sized portion of protein and a big carb portion",
-          "Snack: yoghurt or a glass of banana milk"
+          {
+            "id": "2026-10-30-breakfast",
+            "time": "08:00",
+            "meal": "Breakfast",
+            "text": "3 slices of bread with 2 fried eggs and cheese, 1 glass of milk"
+          },
+          {
+            "id": "2026-10-30-lunch",
+            "time": "13:15",
+            "meal": "Lunch (on the way home)",
+            "text": "2 sandwiches with chicken or cold cuts and a banana"
+          },
+          {
+            "id": "2026-10-30-snack",
+            "time": "16:30",
+            "meal": "Snack",
+            "text": "yoghurt or a glass of milk"
+          },
+          {
+            "id": "2026-10-30-dinner",
+            "time": "20:30",
+            "meal": "Dinner (after the swim, at home)",
+            "text": "a palm-sized portion of protein and a big carb portion, plus vegetables"
+          }
         ]
       },
       {
         "date": "2026-10-31",
         "day_type": "rest",
         "items": [
-          "Home meals (family cooks): protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables",
-          "Snacks: yoghurt, an apple or banana, a handful of nuts"
+          {
+            "id": "2026-10-31-home",
+            "time": "12:00",
+            "meal": "Meals at home (family cooks)",
+            "text": "protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables"
+          },
+          {
+            "id": "2026-10-31-snacks",
+            "time": "16:00",
+            "meal": "Snacks",
+            "text": "yoghurt, an apple or banana, bread with Nutella"
+          }
         ]
       },
       {
         "date": "2026-11-01",
         "day_type": "easy",
         "items": [
-          "Before the run (1-2 h): bread or oats with a banana, and a glass of milk",
-          "After the run: family lunch with a palm-sized portion of protein, a big carb portion and vegetables",
-          "Snack: yoghurt or banana milk",
-          "Dinner: batch-cooked meal from the dorm freezer, reheated in the microwave, or what the family serves"
+          {
+            "id": "2026-11-01-breakfast",
+            "time": "08:30",
+            "meal": "Breakfast (2 hours before the run)",
+            "text": "bread with a banana, and a glass of milk. Add an egg or cheese if you are still hungry"
+          },
+          {
+            "id": "2026-11-01-lunch",
+            "time": "12:45",
+            "meal": "Lunch (after the run)",
+            "text": "family lunch with a palm-sized portion of protein, a big carb portion and vegetables"
+          },
+          {
+            "id": "2026-11-01-snack",
+            "time": "16:00",
+            "meal": "Snack",
+            "text": "yoghurt or ready-made banana milk"
+          },
+          {
+            "id": "2026-11-01-dinner",
+            "time": "18:30",
+            "meal": "Dinner",
+            "text": "batch-cooked meal from the dorm freezer, reheated in the microwave, or what the family serves"
+          }
         ]
       },
       {
         "date": "2026-11-02",
         "day_type": "rest",
         "items": [
-          "Breakfast: 80 g oats cooked in milk, 1 banana, 20 g nuts",
-          "Lunch: 4 slices of bread with cold cuts and cheese, tomato and cucumber, 1 apple",
-          "Snack: 250 g yoghurt with 20 g nuts, and 1 glass of milk",
-          "Dinner: 90 g (dry) rice, 150 g chicken stir-fried with 300 g pepper, broccoli and carrot"
+          {
+            "id": "2026-11-02-breakfast",
+            "time": "07:30",
+            "meal": "Breakfast",
+            "text": "a bowl of cornflakes or muesli with cold milk, 1 banana, 2 slices of bread with cheese"
+          },
+          {
+            "id": "2026-11-02-lunch",
+            "time": "11:30",
+            "meal": "Lunch (cook it before you leave for class)",
+            "text": "4 slices of bread with cold cuts and cheese, 1 apple"
+          },
+          {
+            "id": "2026-11-02-snack",
+            "time": "15:00",
+            "meal": "Snack (take it to school)",
+            "text": "250 g yoghurt with 40 g chocolate cruesli, and 1 glass of milk"
+          },
+          {
+            "id": "2026-11-02-dinner",
+            "time": "18:30",
+            "meal": "Dinner",
+            "text": "90 g (dry) rice, 150 g chicken stir-fried with broccoli, green beans and carrots"
+          }
         ]
       },
       {
         "date": "2026-11-03",
         "day_type": "easy",
         "items": [
-          "On waking (30-45 min before the ride): 1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach.",
-          "Breakfast (after the ride): 250 g yoghurt with 60 g chocolate cruesli and 1 banana, 2 slices of bread with cheese",
-          "Lunch: 100 g (dry) pasta with tuna, tomato sauce and broccoli",
-          "Snack: 1 sandwich with Nutella and a glass of milk",
-          "Dinner: 400 g potatoes, 150 g chicken, vegetables and salad"
+          {
+            "id": "2026-11-03-breakfast",
+            "time": "07:15",
+            "meal": "Breakfast",
+            "text": "250 g yoghurt with 60 g chocolate cruesli and 1 banana, 2 slices of bread with cheese"
+          },
+          {
+            "id": "2026-11-03-recovery",
+            "time": "10:35",
+            "meal": "Recovery snack",
+            "text": "1 glass of milk or ready-made banana milk and 1 sandwich with cold cuts"
+          },
+          {
+            "id": "2026-11-03-lunch",
+            "time": "12:15",
+            "meal": "Lunch",
+            "text": "100 g (dry) pasta with tuna, tomato sauce and broccoli"
+          },
+          {
+            "id": "2026-11-03-snack",
+            "time": "15:45",
+            "meal": "Snack (take it to school)",
+            "text": "1 sandwich with Nutella and a glass of milk"
+          },
+          {
+            "id": "2026-11-03-dinner",
+            "time": "19:00",
+            "meal": "Dinner",
+            "text": "400 g potatoes, 150 g chicken and vegetables"
+          }
         ]
       },
       {
         "date": "2026-11-04",
         "day_type": "rest",
         "items": [
-          "Breakfast: 3 slices of bread with 2 fried eggs and cheese, 1 glass of milk",
-          "Lunch: batch-cooked bolognese: 90 g (dry) pasta, 150 g mince, tomato sauce, spinach",
-          "Snack: 1 apple, a handful of nuts and 250 g yoghurt",
-          "Dinner: 150 g tuna or salmon, 350 g potatoes, green beans, 1 tbsp oil"
+          {
+            "id": "2026-11-04-breakfast",
+            "time": "08:00",
+            "meal": "Breakfast",
+            "text": "3 slices of bread with 2 fried eggs and cheese, 1 glass of milk"
+          },
+          {
+            "id": "2026-11-04-lunch",
+            "time": "12:45",
+            "meal": "Lunch (packed, eat it at school)",
+            "text": "4 slices of bread with cold cuts and cheese, 1 apple, 1 glass of milk or a yoghurt"
+          },
+          {
+            "id": "2026-11-04-snack",
+            "time": "16:15",
+            "meal": "Snack",
+            "text": "1 apple, 250 g yoghurt and 1 slice of bread with Nutella"
+          },
+          {
+            "id": "2026-11-04-dinner",
+            "time": "19:00",
+            "meal": "Dinner",
+            "text": "150 g tuna or salmon, 350 g potatoes, green beans, 1 tbsp oil"
+          }
         ]
       },
       {
         "date": "2026-11-05",
         "day_type": "hard",
         "items": [
-          "Breakfast (2-3 h before): 4 slices of bread with Nutella, 2 eggs, 1 banana, 1 glass of milk",
-          "30-45 min before: 1 banana or a gel with water",
-          "During the session: 1 bottle (500 ml) of isotonic drink (about 40 g carbs), plus water.",
-          "Within 1 h after: 400 ml banana milk and a sandwich with cold cuts",
-          "Lunch: 120 g (dry) rice with 200 g chicken and vegetables",
-          "Snack: 250 g yoghurt with 40 g chocolate cruesli and berries or an apple",
-          "Dinner: 100 g (dry) pasta with mince, tomato sauce, vegetables and cheese"
+          {
+            "id": "2026-11-05-breakfast",
+            "time": "07:15",
+            "meal": "Breakfast",
+            "text": "4 slices of bread with Nutella, 2 eggs, 1 banana, 1 glass of milk"
+          },
+          {
+            "id": "2026-11-05-recovery",
+            "time": "10:50",
+            "meal": "Recovery snack",
+            "text": "400 ml ready-made banana milk or plain milk and a sandwich with cold cuts"
+          },
+          {
+            "id": "2026-11-05-lunch",
+            "time": "12:15",
+            "meal": "Lunch",
+            "text": "120 g (dry) rice with 200 g chicken and vegetables"
+          },
+          {
+            "id": "2026-11-05-snack",
+            "time": "15:45",
+            "meal": "Snack (take it to school)",
+            "text": "250 g yoghurt with 40 g chocolate cruesli and berries or an apple"
+          },
+          {
+            "id": "2026-11-05-dinner",
+            "time": "19:00",
+            "meal": "Dinner",
+            "text": "100 g (dry) pasta with mince, tomato sauce, vegetables and cheese"
+          }
         ]
       },
       {
         "date": "2026-11-06",
         "day_type": "easy",
         "items": [
-          "Lunch on the way home: 2 sandwiches with chicken or cold cuts and a banana",
-          "60-90 min before the swim: banana + bread with Nutella, or a bar",
-          "After the swim: dinner at home with a palm-sized portion of protein and a big carb portion",
-          "Snack: yoghurt or a glass of banana milk"
+          {
+            "id": "2026-11-06-breakfast",
+            "time": "08:00",
+            "meal": "Breakfast",
+            "text": "3 slices of bread with 2 fried eggs and cheese, 1 glass of milk"
+          },
+          {
+            "id": "2026-11-06-lunch",
+            "time": "13:15",
+            "meal": "Lunch (on the way home)",
+            "text": "2 sandwiches with chicken or cold cuts and a banana"
+          },
+          {
+            "id": "2026-11-06-snack",
+            "time": "16:30",
+            "meal": "Snack",
+            "text": "yoghurt or a glass of milk"
+          },
+          {
+            "id": "2026-11-06-dinner",
+            "time": "20:30",
+            "meal": "Dinner (after the swim, at home)",
+            "text": "a palm-sized portion of protein and a big carb portion, plus vegetables"
+          }
         ]
       },
       {
         "date": "2026-11-07",
         "day_type": "rest",
         "items": [
-          "Home meals (family cooks): protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables",
-          "Snacks: yoghurt, an apple or banana, a handful of nuts"
+          {
+            "id": "2026-11-07-home",
+            "time": "12:00",
+            "meal": "Meals at home (family cooks)",
+            "text": "protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables"
+          },
+          {
+            "id": "2026-11-07-snacks",
+            "time": "16:00",
+            "meal": "Snacks",
+            "text": "yoghurt, an apple or banana, bread with Nutella"
+          }
         ]
       },
       {
         "date": "2026-11-08",
         "day_type": "easy",
         "items": [
-          "Before the run (1-2 h): bread or oats with a banana, and a glass of milk",
-          "After the run: family lunch with a palm-sized portion of protein, a big carb portion and vegetables",
-          "Snack: yoghurt or banana milk",
-          "Dinner: batch-cooked meal from the dorm freezer, reheated in the microwave, or what the family serves"
+          {
+            "id": "2026-11-08-breakfast",
+            "time": "08:30",
+            "meal": "Breakfast (2 hours before the run)",
+            "text": "bread with a banana, and a glass of milk. Add an egg or cheese if you are still hungry"
+          },
+          {
+            "id": "2026-11-08-lunch",
+            "time": "12:45",
+            "meal": "Lunch (after the run)",
+            "text": "family lunch with a palm-sized portion of protein, a big carb portion and vegetables"
+          },
+          {
+            "id": "2026-11-08-snack",
+            "time": "16:00",
+            "meal": "Snack",
+            "text": "yoghurt or ready-made banana milk"
+          },
+          {
+            "id": "2026-11-08-dinner",
+            "time": "18:30",
+            "meal": "Dinner",
+            "text": "batch-cooked meal from the dorm freezer, reheated in the microwave, or what the family serves"
+          }
         ]
       }
     ],
@@ -1516,13 +2573,11 @@
       "Broccoli or cauliflower, 2 heads (fresh)",
       "Green beans, 500 g (fresh)",
       "Carrots, 1 kg",
-      "Peppers, 3",
-      "Tomatoes, 500 g",
-      "Cucumber, 2",
-      "Spinach or salad leaves, 2 bags",
+      "Ready-made banana milk, 2 litres (optional, a plain glass of milk works too)",
+      "Cornflakes or muesli, if you have none",
       "Frozen vegetables, 1 kg (optional, for batch cooking)",
       "High-protein yoghurt (skyr, quark or Greek), 1.5 kg (optional, only if your yoghurt is the sweetened kind)"
     ]
   },
-  "notes": "Plan from Thursday 8 Oct to Sunday 8 Nov. Your fixed training days are Tuesday, Thursday and Sunday, and Friday joins on 16 Oct (swim). Wednesday, Saturday and Monday are rest days. FTP test #1 is Tuesday 13 Oct (Thursday 15 Oct if you slept badly). Rate your left calf 0-10 after every ride: above 4, or a changed pedal stroke, means stop. On nights before 7-8 am sessions aim to be in bed by 23:30. Sunday travel back is by train. Calorie numbers are starting estimates for 75 kg and include what you eat on the bike. Send me the FTP test numbers so I can set your zones and interval watts."
+  "notes": "Plan from Thursday 8 Oct to Sunday 8 Nov. Your fixed training days are Tuesday, Thursday and Sunday, and Friday joins on 16 Oct (swim). Wednesday, Saturday and Monday are rest days. FTP test #1 is Tuesday 13 Oct (Thursday 15 Oct if you slept badly). Rate your left calf 0-10 after every ride: above 4, or a changed pedal stroke, means stop. On nights before 7-8 am sessions aim to be in bed by 23:30. Sunday travel back is by train. Calorie numbers are starting estimates for 75 kg and include what you eat on the bike. Send me the FTP test numbers so I can set your zones and interval watts. Class times (same every week): Mon 13:00-17:15, Tue 13:45-18:00, Wed 10:45-12:45 and 13:45-15:45, Thu 13:45-17:45, Fri 10:50-12:45. No class before 10:30, so mornings are free. Travel dorm-school is 30 min, showering and changing 1 hour. Workout times in this file are for ordering inside the app only, never for Wahoo. Evidence update 9 Oct 2026: strength uses one-leg work, slow reps and 1-3 reps left; swim gets a pace test on 30 Oct and a main set at your CSS on 6 Nov; the 29 Oct long ride logs kJ and tempo-block watts. The 3 weeks on + 1 week recovery pattern stays as the default, but the recovery week can be moved forward when sleep, mood or session quality drop. Aim for at least 7 h sleep (individual need varies). Fuel rides at 60 g carbs/h for up to 3 h; try more only in training and only if your stomach copes."
 }

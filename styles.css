@@ -1413,6 +1413,36 @@ svg.mchart:has(.mhit) { touch-action: pan-y; user-select: none; -webkit-user-sel
 .stk.on { color: #fb923c; }
 .stk.now { border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
 
+/* full streak history: one flame per week, a row of 13 weeks (a quarter) */
+.stk-year { padding: 10px 0; border-top: 1px solid var(--border); }
+.stk-year:first-child { border-top: 0; padding-top: 0; }
+.stk-grid { display: grid; grid-template-columns: repeat(13, 1fr); gap: 3px; }
+button.stk { appearance: none; border: 0; background: none; padding: 4px 0; border-radius: 8px; cursor: pointer; font: inherit; -webkit-tap-highlight-color: transparent; }
+.stk-grid .stk .ic { width: 18px; height: 18px; }
+.stk.run { color: #fdba74; }
+.stk.sel { background: rgba(255, 122, 61, 0.18); box-shadow: inset 0 0 0 1.5px var(--accent); }
+
+/* × that closes a calendar summary */
+.cs-acts { display: flex; align-items: center; gap: 6px; }
+.cs-x { appearance: none; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.05); color: var(--muted); font-size: 20px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
+
+/* Today: you as an athlete */
+.ath-form { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; text-decoration: none; color: inherit; }
+.ath-zone { font-size: 22px; font-weight: 900; letter-spacing: -0.02em; color: var(--fz); }
+.ath-fv { font-weight: 800; color: var(--fz); font-variant-numeric: tabular-nums; }
+.ath-tip { margin: 6px 0 4px; font-size: 14px; color: var(--muted); }
+a.ath-tile { display: block; padding: 8px 6px; border-radius: 12px; background: rgba(255, 255, 255, 0.04); text-decoration: none; color: inherit; text-align: center; }
+a.ath-tile:active { background: rgba(255, 122, 61, 0.14); }
+
+.ath-warn { margin: 6px 0 4px; padding: 8px 10px; border-radius: 10px; font-size: 13.5px; color: #fde68a; background: rgba(250, 204, 21, 0.10); }
+.ath-plan { display: flex; gap: 8px; align-items: flex-start; margin: 6px 0 4px; padding: 10px 12px; border-radius: 12px; font-size: 13.5px; color: #fecaca; background: rgba(239, 68, 68, 0.12); text-decoration: none; }
+.ath-plan .ic { flex: none; width: 18px; height: 18px; color: #f87171; margin-top: 1px; }
+.rec-v { color: var(--rc); }
+
+/* morning check-in: sleep that came from the watch */
+.sleep-auto { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 10px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.04); }
+.sleep-auto b { font-size: 17px; }
+
 /* training log */
 .lg-card { padding: 12px 12px 6px; }
 .lg-week { padding: 6px 0 10px; border-top: 1px solid var(--border); }
@@ -1516,3 +1546,27 @@ button.lg-day:active { transform: scale(0.94); }
 .me-key .k-set { background: repeating-linear-gradient(90deg, rgba(165, 180, 252, 0.8) 0 3px, transparent 3px 6px); }
 .me-key .k-test { width: 10px; height: 10px; border-radius: 50%; background: #fbbf24; }
 .me-big small { font-size: 18px; font-weight: 800; color: var(--muted); }
+
+/* ---------- Laptop / desktop (1000px+): sidebar instead of bottom tabs, wider content.
+   Phones never get this wide, so the iPhone layout above stays exactly the same. ---------- */
+@media (min-width: 1000px) {
+  :root { --side-w: 232px; }
+  .topbar { padding-left: calc(var(--side-w) + 16px); padding-right: 16px; }
+  .tabbar {
+    inset: calc(var(--topbar-h) + var(--safe-top)) auto 0 0; width: var(--side-w); height: auto;
+    grid-template-columns: 1fr; grid-auto-rows: 48px; align-content: start; gap: 4px;
+    padding: 16px 12px; border-top: 0; border-right: 1px solid var(--border);
+  }
+  .tabbar a { flex-direction: row; justify-content: flex-start; gap: 12px; padding: 0 12px; border-radius: 12px; font-size: 15px; color: var(--muted); }
+  .tabbar a svg { width: 24px; height: 24px; padding: 0; border-radius: 0; background: none; }
+  .tabbar a.active { background: var(--accent-soft); color: var(--accent); }
+  .tabbar a.active svg { background: none; }
+  .view { max-width: 780px; padding: calc(var(--topbar-h) + 28px) 32px 48px; }
+  body { padding-left: var(--side-w); }
+}
+@media (min-width: 1000px) and (hover: hover) {
+  .tabbar a:not(.active):hover { background: var(--surface-2); color: var(--text); }
+  a.card { transition: border-color 0.15s, background-color 0.15s; }
+  a.card:hover { border-color: rgba(255, 122, 61, 0.45); }
+  .btn:hover, .topbar-btn:hover { filter: brightness(1.12); }
+}
