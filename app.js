@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.22.0';
+  const APP_VERSION = '1.23.0';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -16,6 +16,7 @@
     shop: 'trainer.shopping',
     goalSeen: 'trainer.goalSeen',
     celebrated: 'trainer.celebrated', // last day the "day complete" animation was shown
+    seenActs: 'trainer.seenActs',     // activity ids whose "new activity" animation was shown
   };
 
   const state = {
@@ -185,6 +186,7 @@
     bottle: svgIcon('<path d="M9.5 2.5h5M10 2.5v3l-2 2.5v12A1.5 1.5 0 0 0 9.5 21.5h5a1.5 1.5 0 0 0 1.5-1.5V8l-2-2.5v-3M8 12h8"/>'),
     apple: svgIcon('<path d="M12 7.5c-1.5-1-5.5-1.5-6.5 2.5-1 4 1.5 10 4 10 1 0 1.5-.5 2.5-.5s1.5.5 2.5.5c2.5 0 5-6 4-10-1-4-5-3.5-6.5-2.5z"/><path d="M12 7.5c0-2 1-3.5 2.5-4.5"/>'),
     flag: svgIcon('<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>'),
+    mountain: svgIcon('<path d="M2.5 19.5 9.5 7l4.5 7.5 2.5-3.5 5 8.5z"/>'),
     copy: svgIcon('<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/>'),
     check: svgIcon('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
     clock: svgIcon('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M10 2.5h4"/>'),
@@ -1262,11 +1264,152 @@
       clearTimeout(timer);
       document.removeEventListener('keydown', onKey);
       el.classList.add('out');
-      setTimeout(() => el.remove(), 260);
+      setTimeout(() => { el.remove(); nextActCel(); }, 260); // a new activity waiting? show it now
     }
     const onKey = (e) => { if (e.key === 'Escape') close(); };
     document.addEventListener('keydown', onKey);
     el.addEventListener('click', (e) => { e.stopPropagation(); show(cur + 1); });
+    requestAnimationFrame(() => { el.classList.add('in'); show(0); });
+  }
+
+  /* ---------- New activity: full-screen stats, like Strava after a ride ---------- */
+
+  // Activities from Intervals.icu that have not had their animation yet (newest 3 days only)
+  const actQueue = [];
+  function checkNewActs() {
+    const acts = Object.values(icu.cache).flatMap((c) => c.activities);
+    const seen = lsGet(LS.seenActs, null);
+    // first time: everything already there counts as seen, so old rides don't replay
+    if (!Array.isArray(seen)) return lsSet(LS.seenActs, acts.map((a) => txt(a.id)).filter(Boolean).slice(-300));
+    const t = parseDate(today());
+    // a Sunday ride is in last week's data: load that week too early in the week
+    if ((t.getDay() + 6) % 7 < 2) icuWeek(addDays(mondayOf(t), -7));
+    const from = iso(addDays(t, -2));
+    acts.filter((a) => a.id && !seen.includes(txt(a.id)) && actSec(a) > 0 && txt(a.start_date_local).slice(0, 10) >= from
+      && !actQueue.some((q) => q.id === a.id))
+      .sort((a, b) => txt(a.start_date_local).localeCompare(txt(b.start_date_local)))
+      .forEach((a) => actQueue.push(a));
+    nextActCel();
+  }
+  function nextActCel() {
+    if (!actQueue.length || document.querySelector('.cel')) return;
+    const a = actQueue.shift();
+    lsSet(LS.seenActs, lsGet(LS.seenActs, []).concat(txt(a.id)).slice(-300));
+    actCelebrate(a);
+  }
+  function findAct(id) {
+    return Object.values(icu.cache).flatMap((c) => c.activities).concat(arr(state.fileActs)).find((a) => txt(a.id) === id) || null;
+  }
+
+  // The stats of one activity, one after another (about 1.5 s each). A tap finishes the current
+  // number and moves on; after the last one everything stays as a summary with two buttons.
+  const STAT_MS = 1500, COUNT_MS = 900;
+  function actCelebrate(a) {
+    const old = document.querySelector('.cel');
+    if (old) old.remove();
+    const ds = txt(a.start_date_local).slice(0, 10);
+    const sp = sportOfActivity(a.type), si = sportInfo(sp);
+    const row = safeVal(() => matchDay(ds, icuDay(icu.cache[iso(mondayOf(parseDate(ds)))], ds)).rows.find((r) => r.a && r.a.id === a.id)) || null;
+    const href = row ? `#workout/${row.x.i}` : `#day/${ds}`;
+    const pos = (v) => isNum(v) && v > 0;
+    // value, decimals, how the number is written while counting, unit, label, small extra line
+    const stats = [];
+    const add = (cls, icon, v, o) => stats.push(Object.assign({ cls, icon, v, d: 0 }, o));
+    const pace = (sec) => `${Math.floor(sec / 60)}:${String(Math.round(sec % 60)).padStart(2, '0')}`;
+    if (row && isNum(row.score)) add('as-score', ICON.medal, row.score, { unit: '/ 100', lbl: `Follow score · ${scoreWord(row.score)}`, ring: true });
+    add('as-time', ICON.clock, actSec(a), { fmt: (v) => hm(v), lbl: 'Moving time' });
+    if (pos(a.distance)) add('as-dist', ICON.flag, a.distance / 1000, { d: 1, unit: 'km', lbl: 'Distance' });
+    if (pos(a.total_elevation_gain)) add('as-elev', ICON.mountain, a.total_elevation_gain, { unit: 'm', lbl: 'Climbed' });
+    if (sp === 'Ride' && pos(a.icu_average_watts)) {
+      add('as-power', ICON.bolt, a.icu_average_watts, { unit: 'W', lbl: 'Avg power', sub: pos(a.icu_weighted_avg_watts) ? `Normalized ${Math.round(a.icu_weighted_avg_watts)} W` : '' });
+    } else if ((sp === 'Run' || sp === 'Swim') && pos(a.pace)) {
+      const per = sp === 'Swim' ? 100 : 1000; // seconds per km (run) or per 100 m (swim)
+      add('as-power', ICON.bolt, per / a.pace, { fmt: pace, unit: sp === 'Swim' ? '/100 m' : '/km', lbl: 'Avg pace' });
+    }
+    if (pos(a.average_heartrate)) add('as-hr', ICON.heart, a.average_heartrate, { unit: 'bpm', lbl: 'Avg heart rate', sub: pos(a.max_heartrate) ? `Max ${Math.round(a.max_heartrate)} bpm` : '' });
+    if (pos(a.icu_training_load)) add('as-load', ICON.load, a.icu_training_load, { lbl: 'Training load' });
+    if (pos(a.icu_joules)) add('as-kj', ICON.flame, a.icu_joules / 1000, { unit: 'kJ', lbl: 'Energy', sub: pos(a.calories) ? `${Math.round(a.calories)} kcal` : '' });
+    else if (pos(a.calories)) add('as-kj', ICON.flame, a.calories, { unit: 'kcal', lbl: 'Energy' });
+    const bests = arr(a.icu_achievements).map(obj).map((x) => {
+      if (x.type === 'FTP_UP') return `FTP up to ${Math.round(x.watts)} W`;
+      if (isNum(x.watts) && isNum(x.secs)) return `Best ${x.secs >= 60 ? Math.round(x.secs / 60) + ' min' : x.secs + ' s'} power: ${Math.round(x.watts)} W`;
+      return txt(x.message) || txt(x.type).replace(/_/g, ' ').toLowerCase();
+    }).filter(Boolean);
+    if (bests.length) add('as-best', ICON.trophy, bests.length, { lbl: bests.length === 1 ? 'New best' : 'New bests', best: bests });
+
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const el = document.createElement('div');
+    el.className = 'cel acel';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-label', `New ${si.label.toLowerCase()}: ${txt(a.name)}`);
+    const shown = (s, v) => (s.fmt ? s.fmt(v) : num(v, s.d));
+    el.innerHTML = `<button type="button" class="acel-x" aria-label="Close">${'×'}</button>
+      <div class="acel-head"><i class="si" style="--sc:${si.color}">${si.icon}</i><div><div class="cel-title">${esc(txt(a.name) || 'New ' + si.label.toLowerCase())}</div>
+        <div class="acel-date">${esc(fmtDate(ds, { weekday: 'long', day: 'numeric', month: 'long' }))}</div></div></div>
+      <div class="acel-grid">${stats.map((s, k) => `<div class="cel-stat acel-stat ${s.cls}">
+        <span class="cel-ic">${s.ring ? scoreRing(0, 46) : s.icon}</span>
+        <div class="cel-num"><b data-k="${k}">${esc(shown(s, 0))}</b>${s.unit ? `<span>${esc(s.unit)}</span>` : ''}</div>
+        <div class="cel-lbl">${esc(s.lbl)}${s.sub ? `<small>${esc(s.sub)}</small>` : ''}</div>
+        ${s.best ? `<ul class="acel-best">${s.best.map((b) => `<li>${esc(b)}</li>`).join('')}</ul>` : ''}</div>`).join('')}</div>
+      <div class="cel-dots">${stats.map(() => '<i></i>').join('')}</div>
+      <div class="cel-hint">Tap to skip</div>
+      <div class="acel-btns"><a class="btn primary" href="${href}" data-acel="open">Open workout ›</a><button type="button" class="btn" data-acel="close">Close</button></div>`;
+    document.body.appendChild(el);
+    const cards = [...el.querySelectorAll('.acel-stat')];
+    const setRing = (card, v) => { const r = card.querySelector('.ring'); if (r) r.outerHTML = scoreRing(Math.round(v), 46); };
+    function final(k) {
+      const b = cards[k].querySelector('.cel-num b');
+      cancelAnimationFrame(b._raf);
+      b.textContent = shown(stats[k], stats[k].v);
+      if (stats[k].ring) setRing(cards[k], stats[k].v);
+    }
+    function count(k) {
+      const s = stats[k], b = cards[k].querySelector('.cel-num b');
+      if (reduce) return final(k);
+      const t0 = performance.now();
+      const tick = (now) => {
+        const p = Math.min(1, (now - t0) / COUNT_MS), v = s.v * (1 - Math.pow(1 - p, 3));
+        b.textContent = shown(s, v);
+        if (s.ring) setRing(cards[k], v);
+        if (p < 1) b._raf = requestAnimationFrame(tick); else final(k);
+      };
+      b._raf = requestAnimationFrame(tick);
+    }
+    let cur = -1, timer = 0;
+    function show(n) {
+      clearTimeout(timer);
+      if (cur >= 0 && cur < cards.length) final(cur);
+      if (n >= cards.length) return finish();
+      cards.forEach((c, k) => { c.classList.toggle('on', k <= n); c.classList.toggle('now', k === n); });
+      el.querySelectorAll('.cel-dots i').forEach((d, k) => d.classList.toggle('on', k <= n));
+      cur = n;
+      count(n);
+      if (stats[n].best && !reduce) el.insertAdjacentHTML('afterbegin', `<div class="confetti" aria-hidden="true">${Array.from({ length: 14 }, (_, i) => `<span style="--i:${i}"></span>`).join('')}</div>`);
+      cards[n].scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+      timer = setTimeout(() => show(n + 1), STAT_MS);
+    }
+    // the summary: every stat stays, the buttons appear, taps no longer skip
+    function finish() {
+      cur = cards.length;
+      cards.forEach((c, k) => { c.classList.add('on'); c.classList.remove('now'); final(k); });
+      el.querySelectorAll('.cel-dots i').forEach((d) => d.classList.add('on'));
+      el.classList.add('done');
+      el.querySelector('.acel-btns').scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+    }
+    function close() {
+      clearTimeout(timer);
+      document.removeEventListener('keydown', onKey);
+      el.classList.add('out');
+      setTimeout(() => { el.remove(); nextActCel(); }, 260);
+    }
+    const onKey = (e) => { if (e.key === 'Escape') close(); };
+    document.addEventListener('keydown', onKey);
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const btn = e.target.closest('[data-acel], .acel-x');
+      if (btn) { if (btn.dataset.acel !== 'open') e.preventDefault(); return close(); }
+      if (!el.classList.contains('done')) show(cur + 1);
+    });
     requestAnimationFrame(() => { el.classList.add('in'); show(0); });
   }
 
@@ -1569,6 +1712,7 @@
         delete icu.failed[key];
         if (weather !== undefined) { icu.weather = weather; icu.weatherAt = Date.now(); }
         icu.error = '';
+        safeVal(checkNewActs);
       }).catch((e) => {
         icu.error = e.message || 'Could not reach Intervals.icu';
         icu.failed[key] = Date.now();
@@ -2178,6 +2322,7 @@
         ${ds ? `<a class="chip" href="#day/${ds}">${ICON.calendar} ${esc(fmtDate(ds))}${relDay(ds) ? ' · ' + relDay(ds) : ''}</a>` : ''}
         ${dur ? `<span class="chip">${ICON.clock} ${esc(dur)}</span>` : ''}
         ${zoneChip(w.zone)}
+        ${safe(() => { const r = ds && matchFor({ w, i: +idx }, icuWeek(mondayOf(parseDate(ds)))); return r && r.a && r.a.id ? `<button type="button" class="chip chip-btn" data-action="actcel" data-id="${esc(txt(r.a.id))}">${ICON.medal} Replay</button>` : ''; }, 'the replay button')}
       </div>
     </div>`;
 
@@ -4161,6 +4306,9 @@
     } else if (action === 'sel-clear') {
       state.sel[el.dataset.key] = '';
       render(true);
+    } else if (action === 'actcel') {
+      const a = findAct(el.dataset.id);
+      if (a) actCelebrate(a);
     } else if (action === 'celebrate') {
       celebrate(el.dataset.date || today());
     } else if (action === 'open-panel' || action === 'close-panel') {

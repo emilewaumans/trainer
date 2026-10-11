@@ -1145,6 +1145,33 @@ a.mc-day:active { transform: scale(0.94); }
 .cel-dots i.on { background: var(--accent); }
 .cel-hint { margin-top: 10px; font-size: 12px; font-weight: 650; color: var(--faint); }
 
+/* ---------- New activity: full screen stats ---------- */
+.acel { justify-content: flex-start; overflow-y: auto; padding-top: calc(40px + var(--safe-top)); }
+.acel-x { position: absolute; top: calc(10px + var(--safe-top)); right: 12px; width: 40px; height: 40px; border: 0; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08); color: var(--text); font-size: 24px; line-height: 1; cursor: pointer; z-index: 2; }
+.acel-head { display: flex; align-items: center; gap: 14px; width: min(420px, 100%); }
+.acel-head .si .ic { width: 38px; height: 38px; }
+.acel .cel-title { font-size: 24px; line-height: 1.15; background: none; color: var(--text); }
+.acel-date { font-size: 13px; font-weight: 700; color: var(--muted); margin-top: 3px; }
+.acel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: min(420px, 100%); margin-top: 22px; }
+.acel-stat { grid-template-columns: 1fr; grid-template-rows: auto; row-gap: 6px; padding: 12px 14px; border-radius: 18px; }
+.acel-stat .cel-ic { grid-row: auto; width: 36px; height: 36px; border-radius: 12px; background: rgba(255, 162, 77, 0.12); color: var(--accent-2); }
+.acel-stat .cel-ic .ic { width: 20px; height: 20px; }
+.acel-stat .cel-num b { font-size: 30px; }
+.acel-stat .cel-num span { font-size: 14px; }
+.acel-stat .cel-lbl { margin-top: 0; }
+.acel-stat .cel-lbl small { display: block; font-size: 12px; font-weight: 650; color: var(--faint); margin-top: 2px; }
+.acel-stat.now .cel-num b { color: #fde68a; }
+.as-score, .as-best { grid-column: 1 / -1; }
+.as-score .cel-ic { width: auto; height: auto; background: none; justify-self: start; }
+.acel-btns .btn { white-space: nowrap; }
+.as-best .cel-ic { background: rgba(250, 204, 21, 0.14); color: #facc15; }
+.acel-best { margin: 2px 0 0; padding-left: 18px; font-size: 14px; font-weight: 700; color: #fde68a; }
+.acel-btns { display: flex; gap: 10px; margin-top: 18px; opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity 0.25s, transform 0.3s; }
+.acel.done .acel-btns { opacity: 1; transform: none; pointer-events: auto; }
+.acel.done .cel-hint { display: none; }
+.chip-btn { cursor: pointer; font: inherit; font-size: 12.5px; font-weight: 650; }
+
 /* ---------- The day in one card (Today when finished, Progress, XP history) ---------- */
 .day-sum-wrap { scroll-margin-top: calc(var(--topbar-h) + var(--safe-top) + 112px); }
 .day-sum { padding: 16px; }
@@ -1291,7 +1318,7 @@ button.mc-day:active { transform: scale(0.94); }
 .shop-cat + .shop-grid, .shop-grid + .shop-cat { margin-top: 8px; }
 
 @media (prefers-reduced-motion: reduce) {
-  .cel, .cel-title, .cel-stat, .cel-bar i, .cal-sum, .help-pop { transition: none !important; animation: none !important; }
+  .cel, .cel-title, .cel-stat, .cel-bar i, .acel-btns, .cal-sum, .help-pop { transition: none !important; animation: none !important; }
   .cel .confetti { display: none; }
 }
 
