@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.23.0';
+  const APP_VERSION = '1.23.1';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -1258,7 +1258,9 @@
       count(stats[n].querySelector('b'));
       const bar = stats[n].querySelector('.cel-bar i');
       if (bar) requestAnimationFrame(() => { bar.style.width = bar.dataset.to + '%'; });
-      timer = setTimeout(() => show(n + 1), 900);
+      // last stat: stay on screen until the user taps
+      if (n < 2) timer = setTimeout(() => show(n + 1), 900);
+      else el.querySelector('.cel-hint').textContent = 'Tap to close';
     }
     function close() {
       clearTimeout(timer);
