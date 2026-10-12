@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.25.1';
+  const APP_VERSION = '1.26.0';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -169,6 +169,7 @@
   // Line icons (drawn, not emoji). They take the text colour around them.
   const svgIcon = (body) => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
   const ICON = {
+    eye: svgIcon('<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'),
     bike: svgIcon('<circle cx="5.5" cy="16.5" r="3.8"/><circle cx="18.5" cy="16.5" r="3.8"/><path d="M5.5 16.5 9 9.5h6.5l3 7M9 9.5l3.2 7M12.2 16.5l3.3-7M7.5 7h3M15.5 9.5 14.6 6.5h2.4"/>'),
     run: svgIcon('<circle cx="15" cy="4.2" r="2"/><path d="M7 11.5 10.5 8h4l2.5 3.5 3 .5M10.5 8 9 14l3.5 3V22M9 14l-2.5 3.5H3"/>'),
     kettlebell: svgIcon('<path d="M8.6 10.2C7.6 5.2 9.4 3 12 3s4.4 2.2 3.4 7.2"/><circle cx="12" cy="15.2" r="6"/><path d="M9.5 15.2h5"/>'),
@@ -1034,8 +1035,7 @@
     if (!days.includes(state.sel.xp)) state.sel.xp = t;
     const sel = state.sel.xp;
 
-    let html = `<div class="page-head"><div class="eyebrow">Progress</div><h2>XP history</h2></div>`;
-    html += `<div class="prog-grid" style="margin-top:0">
+    let html = `<div class="prog-grid" style="margin-top:0">
       ${progTile(ICON.bolt, 'pt-xp', total, 'XP in total')}
       ${progTile(ICON.trophy, 'pt-best', best.xp, best.ds ? 'best day · ' + esc(fmtDate(best.ds, { day: 'numeric', month: 'short' })) : 'best day')}
       ${progTile(ICON.medal, 'pt-perfect', avg, 'XP per day (average)')}
@@ -1108,7 +1108,7 @@
     const maxes = last.map(dayMaxXp);
     const scale = Math.max(10, ...maxes, ...xps);
 
-    let html = `<div class="page-head"><div class="eyebrow">Progress</div><div class="head-row"><h2>Level ${lvl.level}</h2>
+    let html = `<div class="page-head"><div class="head-row"><h2>Level ${lvl.level}</h2>
       <button class="help-btn${state.xpHelp ? ' on' : ''}" data-action="xp-help" aria-expanded="${!!state.xpHelp}" aria-label="How to earn XP">?</button></div></div>`;
     if (state.xpHelp) html += xpRulesHTML(lvl);
     html += `<div class="card prog-hero">
@@ -1457,7 +1457,6 @@
     const bs = blockStatus(t);
     if (state.plan) safe(() => { autoMarkDone(t); return ''; }, 'marking done sessions');
     let html = (state.plan ? safe(() => hudHTML(t), 'the game bar') : '') + `<div class="page-head">
-      <div class="eyebrow">Today</div>
       <h2>${esc(fmtLong(t))}</h2>
       ${bs && bs.inBlock ? `<div class="chips"><span class="chip accent">${esc(txt(bs.b.name) || 'Block')} · week ${bs.week}${bs.weeks ? ' of ' + bs.weeks : ''}</span>${bs.light ? '<span class="chip light-badge">Light week</span>' : ''}</div>` : ''}
     </div>`;
@@ -1499,7 +1498,6 @@
     const t = today();
     const bs = blockStatus(t);
     let html = `<div class="page-head">
-      <div class="eyebrow">Day overview</div>
       <h2>${esc(fmtLong(t))}</h2>
       ${bs && bs.inBlock ? `<div class="chips"><span class="chip accent">${esc(txt(bs.b.name) || 'Block')} · week ${bs.week}${bs.weeks ? ' of ' + bs.weeks : ''}</span>${bs.light ? '<span class="chip light-badge">Light week</span>' : ''}</div>` : ''}
     </div>`;
@@ -2099,7 +2097,7 @@
   }
 
   function viewAgenda() {
-    if (!state.plan) return `<div class="page-head"><div class="eyebrow">Agenda</div><h2>Your week</h2></div>` + noPlanHTML();
+    if (!state.plan) return `<div class="page-head"><h2>Your week</h2></div>` + noPlanHTML();
     const bs = blockStatus(today());
     const b = obj(P().block);
     let html = safe(() => {
@@ -2114,7 +2112,7 @@
         });
       }
       const total = sec ? `<div class="week-total"><div class="v">${ICON.clock} ${esc(fmtDur(sec))}</div><div class="l">${sessions} session${sessions === 1 ? '' : 's'} planned</div></div>` : '';
-      return `<div class="page-head"><div class="eyebrow">Agenda</div><div class="head-row"><h2>Your week</h2>${total}</div></div>`;
+      return `<div class="page-head"><div class="head-row"><h2>Your week</h2>${total}</div></div>`;
     }, 'the week total');
 
     html += safe(() => {
@@ -2124,12 +2122,18 @@
       const sub = state.weekOffset === 0 ? 'This week' : state.weekOffset === 1 ? 'Next week' : state.weekOffset === -1 ? 'Last week' : '';
       const blockTxt = wbs && wbs.inBlock ? `${txt(wbs.b.name) || 'Block'} · week ${wbs.week}${wbs.light ? ' (light)' : ''}` : '';
       const wk = icuWeek(mon);
-      let rows = '';
+      let rows = '', strip = '';
       for (let i = 0; i < 7; i++) {
         const d = addDays(mon, i), ds = iso(d);
         const ws = workoutsOn(ds);
         const live = icuDay(wk, ds);
         const md = matchDay(ds, live);
+        // the week at a glance: which days have training
+        const train = ws.filter((x) => txt(x.w.type) !== 'rest');
+        const done = md.rows.length && md.rows.every((r) => r.status === 'done' || r.status === 'partly');
+        strip += `<a class="ws-day${ds === today() ? ' today' : ''}${train.length ? ' on' : ''}${done ? ' done' : ''}" href="#day/${ds}" aria-label="${esc(fmtDate(ds, { weekday: 'long' }))}: ${train.length ? esc(train.map((x) => txt(x.w.title) || typeInfo(txt(x.w.type)).label).join(', ')) : 'rest'}">
+          <span class="w">${DOW[i][0]}</span><span class="d">${d.getDate()}</span>
+          <span class="ws-ic">${train.length ? train.slice(0, 2).map((x) => { const t = typeInfo(txt(x.w.type)); return `<i class="${t.cls}">${t.icon}</i>`; }).join('') : '<i class="ws-rest"></i>'}</span></a>`;
         const items = ws.length
           ? ws.map((x) => sessionHTML(x.w, wk, md.rows.find((r) => r.x.i === x.i), x.i)).join('')
           : '<div class="item muted" style="font-weight:500">Nothing planned</div>';
@@ -2149,6 +2153,7 @@
         ${state.weekOffset !== 0 ? '<button class="btn small" data-action="week" data-dir="0" style="margin:0 auto 12px">Back to this week</button>' : ''}
         ${icu.error && icuCfg() ? `<a class="card warn small tap" href="#settings/icu">Intervals.icu: ${esc(icu.error)}. Check the key in Settings ›</a>` : ''}
         ${safe(() => weekSummaryHTML(mon, wk), 'the week summary')}
+        <div class="card week-strip">${strip}</div>
         ${rows}`;
     }, 'the week');
 
@@ -2171,8 +2176,7 @@
     ds = normDate(ds) || today();
     const rel = relDay(ds);
     const bs = blockStatus(ds);
-    let html = `<div class="page-head"><div class="eyebrow">${esc(rel || fmtDate(ds, { weekday: 'long' }))}</div>
-      <h2>${esc(fmtDate(ds, { day: 'numeric', month: 'long', year: 'numeric' }))}</h2>
+    let html = `<div class="page-head">${rel ? `<div class="eyebrow">${esc(rel)}</div>` : ''}
       ${bs && bs.inBlock ? `<div class="chips"><span class="chip accent">${esc(txt(bs.b.name) || 'Block')} · week ${bs.week}</span>${bs.light ? '<span class="chip light-badge">Light week</span>' : ''}</div>` : ''}
     </div>`;
     if (!state.plan) return html + noPlanHTML();
@@ -2330,7 +2334,6 @@
     const dur = durationLabel(w);
     let html = `<div class="page-head">
       <div class="eyebrow">${t.icon} ${esc(t.label)}</div>
-      <h2>${esc(txt(w.title) || t.label)}</h2>
       <div class="chips">
         ${ds ? `<a class="chip" href="#day/${ds}">${ICON.calendar} ${esc(fmtDate(ds))}${relDay(ds) ? ' · ' + relDay(ds) : ''}</a>` : ''}
         ${dur ? `<span class="chip">${ICON.clock} ${esc(dur)}</span>` : ''}
@@ -2656,8 +2659,7 @@
   function meProfileFormHTML() {
     const pr = profile(), name = profName();
     const pic = state.profPhoto != null ? state.profPhoto : pr.photo || '';
-    return `<div class="page-head"><div class="eyebrow">Me</div><h2>Edit profile</h2></div>
-      <form id="profForm" class="card" autocomplete="off">
+    return `<form id="profForm" class="card" autocomplete="off">
         <div class="prof-pick">${picHTML(pic, name, 'big')}
           <div class="stack"><label class="btn small" for="profPhoto">Choose photo</label>
           <button type="button" class="btn small" data-action="prof-photo-clear"${pic ? '' : ' hidden'}>Remove photo</button></div>
@@ -2694,7 +2696,7 @@
 
   function viewMe(arg) {
     if (arg === 'profile') return meProfileFormHTML();
-    const head = (eyebrow, title, extra) => `<div class="page-head me-head"><div class="eyebrow">${eyebrow}</div>${extra || ''}</div>`;
+    const head = (eyebrow, title, extra) => (extra ? `<div class="page-head me-head"><span></span>${extra}</div>` : '');
     if (!icuCfg()) {
       return head('Me', 'Your training') + safe(() => profileHeadHTML(meActs()), 'your profile') + `<a class="card warn tap" href="#settings/icu">Connect Intervals.icu to see your training history, streak and fitness here. Tap to add your key ›</a>`;
     }
@@ -2733,10 +2735,10 @@
       const mon0 = mondayOf(parseDate(today()));
       const row = Array.from({ length: 12 }, (_, i) => iso(addDays(mon0, -7 * (11 - i)))).map((m, i) =>
         `<span class="stk${sk.per[m] ? ' on' : ''}${i === 11 ? ' now' : ''}" title="Week of ${esc(fmtDate(m))}: ${sk.per[m] || 0} activities">${ICON.flame}</span>`).join('');
-      return `<div class="section"><h3><span>Streak</span><a class="h-link" href="#me/streak">History ›</a></h3><a class="card tap me-streak" href="#me/streak">
+      return `<div class="section"><h3><span>Streak</span><a class="h-link" href="#me/streak">History ›</a></h3><div class="info-wrap">${infoBtn('info-stk')}<a class="card tap me-streak" href="#me/streak">
         <div class="me-stk-top"><span class="me-stk-ic${sk.weeks ? ' lit' : ''}">${ICON.flame}</span>
           <div><b>${sk.weeks} ${sk.weeks === 1 ? 'week' : 'weeks'}</b><small>${sk.count} ${sk.count === 1 ? 'activity' : 'activities'} in this streak${sk.weeks && !sk.thisWeek ? ' · train this week to keep it' : ''}</small></div></div>
-        <div class="stk-row">${row}</div><div class="muted small" style="margin-top:6px">Last 12 weeks: a lit flame is a week with at least one workout.</div></a></div>`;
+        <div class="stk-row">${row}</div>${infoTxt('info-stk', 'Last 12 weeks: a lit flame is a week with at least one workout.')}</a></div></div>`;
     }, 'the streak');
     html += safe(() => {
       const lg = logWeeksHTML(acts, 4);
@@ -2749,6 +2751,10 @@
     html += safe(() => meZonesCardHTML(acts), 'your zones');
     return html;
   }
+
+  // The eye in a card's top-right corner shows or hides the explanation under it
+  const infoBtn = (k) => `<button type="button" class="info-eye${state.open[k] ? ' on' : ''}" data-action="${state.open[k] ? 'close' : 'open'}-panel" data-panel="${k}" aria-expanded="${!!state.open[k]}" aria-label="Explain this card">${ICON.eye}</button>`;
+  const infoTxt = (k, t) => (state.open[k] ? `<div class="muted small" style="margin-top:6px">${t}</div>` : '');
 
   function agoText(at) {
     const m = Math.round((Date.now() - at) / 60000);
@@ -2770,10 +2776,10 @@
     const title = sel === weeks[11] ? 'This week' : `Week of ${fmtDate(sel, { day: 'numeric', month: 'short' })}`;
     return `<div class="section" style="margin-top:0"><h3><span>Weekly training</span><a class="h-link" href="#me/history">History ›</a></h3>
       ${filters}
-      <div class="card me-card"><div class="me-ttl">${esc(title)} · ${wk.length} ${wk.length === 1 ? 'activity' : 'activities'}</div>${meTotalsHTML(wk)}
+      <div class="card me-card info-wrap">${infoBtn('info-mew')}<div class="me-ttl">${esc(title)} · ${wk.length} ${wk.length === 1 ? 'activity' : 'activities'}</div>${meTotalsHTML(wk)}
         ${chartSVG(pts, { id: 'mew', type: 'line', dots: true, fmt: M.short, key: 'mew', href: (p) => '#me/history-' + p.key, label: 'Last 12 weeks',
           labels: [[0, fmtDate(weeks[0], { day: 'numeric', month: 'short' }).toUpperCase()], [11, 'THIS WEEK']] })}
-        <div class="muted small" style="margin-top:6px">Tap or slide along the graph to see a week; tap it again to open that week.</div></div></div>`;
+        ${infoTxt('info-mew', 'Tap or slide along the graph to see a week; tap it again to open that week.')}</div></div>`;
   }
 
   // One set of period filters for every graph (history, fitness, FTP, power curve, zones)
@@ -3251,7 +3257,7 @@
       ${rc.flags.length ? `<p class="ath-warn">But ${esc(rc.flags.join(', '))}: listen to your body and keep it easier than planned.</p>` : ''}
       ${tired && hard.length ? hard.map((x) => `<a class="ath-plan" href="#workout/${x.i}">${ICON.flame}<span><b>${esc(txt(x.w.title) || typeInfo(txt(x.w.type)).label)}</b> is planned today, but ${esc(why)}. Consider an easy ride instead, or move it to a fresher day ›</span></a>`).join('') : ''}
       <div class="me-stats">${tile('#me/fitness/fitness', num(now[1], 0), 'Fitness')}${tile('#me/fitness/fatigue', isNum(now[2]) ? num(now[2], 0) : '–', 'Fatigue')}${isNum(eftp) ? tile('#me/ftp', `${Math.round(eftp)} W`, 'eFTP') : ''}${ramp != null ? tile('#me/fitness/ramp', signed(ramp), 'Ramp') : ''}</div>
-      ${hasWatch(w) ? `<div class="me-stats">${isNum(w.ready) ? `<a class="me-stat ath-tile" href="#me/recovery/recovery" style="--rc:${recColor(w.ready)}"><b class="rec-v">${Math.round(w.ready)}%</b><span>Recovery ›</span></a>` : ''}${isNum(w.hrv) ? tile('#me/recovery/hrv', `${Math.round(w.hrv)} ms`, `HRV${rc.hr ? ' · ' + vsNormal(w.hrv, rc.hr) : ''}`) : ''}${isNum(w.rhr) ? tile('#me/recovery/rhr', String(Math.round(w.rhr)), 'Resting HR') : ''}${isNum(w.sleep) && w.sleep > 0 ? tile('#me/recovery/sleep', fmtDur(w.sleep), 'Sleep') : ''}</div>` : ''}
+      ${hasWatch(w) ? `<div class="me-stats">${isNum(w.ready) ? `<a class="me-stat ath-tile" href="#me/recovery/recovery" style="--rc:${recColor(w.ready)}"><b class="rec-v">${Math.round(w.ready)}%</b><span>Recovery ›</span></a>` : ''}${isNum(w.hrv) ? tile('#me/recovery/hrv', `${Math.round(w.hrv)} ms`, `HRV${rc.hr ? ' · ' + vsNormal(w.hrv, rc.hr) : ''}`) : ''}${isNum(w.rhr) ? tile('#me/recovery/rhr', String(Math.round(w.rhr)), 'Resting HR') : ''}${isNum(w.sleep) && w.sleep > 0 ? tile('#me/recovery/sleep', `${Math.floor(w.sleep / 3600)}h ${Math.floor((w.sleep % 3600) / 60)}m`, 'Sleep') : ''}</div>` : ''}
     </div></div>`;
   }
 
@@ -3431,7 +3437,7 @@
   }
 
   function viewGoals() {
-    let html = `<div class="page-head"><div class="eyebrow">Goals</div><h2>What you're training for</h2></div>`;
+    let html = `<div class="page-head"><h2>What you're training for</h2></div>`;
     if (!state.plan) return html + noPlanHTML();
     html += safe(() => {
       const gs = goalsSorted();
@@ -3600,7 +3606,7 @@
     const ticks = shopTicks();
     const left = shop.filter((x) => !ticks[x.name]).length;
     const shopBtn = shop.length ? `<a class="icon-btn" href="#shopping" aria-label="Shopping list, ${left} to buy">${ICON.cart}${left ? `<span class="ib-badge">${left}</span>` : ''}</a>` : '';
-    let html = `<div class="page-head"><div class="eyebrow">Nutrition</div><div class="head-row"><h2>Food</h2>${shopBtn}</div></div>`;
+    let html = shopBtn ? `<div class="page-head me-head"><span></span>${shopBtn}</div>` : '';
     if (!state.plan) return html + noPlanHTML();
     const t = today();
     const todayType = txt(obj(mealsOn(t)[0]).day_type);
@@ -3689,7 +3695,7 @@
   // Everything you eat (or ate) on one day, full screen
   function viewMeals(arg) {
     const ds = normDate(arg) || today();
-    let html = `<div class="page-head"><div class="eyebrow">${esc(relDay(ds) || fmtDate(ds, { weekday: 'long' }))}</div><h2>${esc(fmtDate(ds, { day: 'numeric', month: 'long' }))}</h2></div>`;
+    let html = relDay(ds) ? `<div class="page-head"><div class="eyebrow">${esc(relDay(ds))}</div></div>` : '';
     if (!state.plan) return html + noPlanHTML();
     const ms = mealsOn(ds);
     if (!ms.length) return html + '<div class="empty">No meals planned for this day.</div>';
@@ -3708,7 +3714,7 @@
   }
 
   function viewShopping() {
-    let html = `<div class="page-head"><div class="eyebrow">Food</div><h2>Shopping list</h2></div>`;
+    let html = '';
     if (!state.plan) return html + noPlanHTML();
     return html + (safe(shoppingHTML, 'the shopping list') || '<div class="empty">Your coach hasn\'t added a shopping list yet.</div>');
   }
@@ -3782,7 +3788,7 @@
     if (normDate(dateArg)) return viewCheckinEdit(dateArg);
     const t = today();
     const all = getCheckins();
-    let html = `<div class="page-head"><div class="eyebrow">Check-in</div><h2>For your coach</h2></div>`;
+    let html = `<div class="page-head"><h2>For your coach</h2></div>`;
     html += safe(() => {
       if (!state.plan) return '';
       const open = openQuestions(t);
@@ -3963,10 +3969,11 @@
     const p = P();
     const imp = state.importedPlan;
     const repo = state.repoPlan;
-    let html = `<div class="page-head"><div class="eyebrow">Settings</div><h2>Settings</h2></div>`;
-    html += safe(moreRowsHTML, 'the menu');
+    let html = safe(moreRowsHTML, 'the menu');
 
-    html += `<div class="section" style="margin-top:0"><h3>Plan in use</h3><div class="card">
+    html += !state.open.plan
+      ? `<div class="section"><button class="btn more-btn" data-action="open-panel" data-panel="plan">Plan in use <span>${txt(p.version) ? `<small>v${esc(txt(p.version))}</small>` : ''}›</span></button></div>`
+      : `<div class="section"><h3><span>Plan in use</span><button class="btn small" data-action="close-panel" data-panel="plan">Close</button></h3><div class="card">
       ${state.plan ? `<dl class="kv">
         <dt>Source</dt><dd>${state.source === 'pasted' ? 'Pasted in the app' : 'Website (plan.json)'}</dd>
         <dt>Version</dt><dd>${esc(txt(p.version) || '–')}</dd>
@@ -4024,7 +4031,10 @@
           <div class="field"><label class="lbl" for="icuKey">${c ? 'New API key' : 'API key'}</label><input type="password" id="icuKey" name="key" autocapitalize="off" spellcheck="false" style="width:100%"></div>
           <button class="btn primary" type="submit">${c ? 'Save new key' : 'Connect'}</button>
         </form>`;
-    return `<div class="section go-target" id="go-icu"><h3>Intervals.icu</h3><div class="card">
+    if (!state.open.icuSec && !state.open.icu) {
+      return `<div class="section go-target" id="go-icu"><button class="btn more-btn" data-action="open-panel" data-panel="icuSec">Intervals.icu <span><small>${c ? (icu.error ? '⚠ Problem' : '✓ Connected') : 'Not connected'}</small>›</span></button></div>`;
+    }
+    return `<div class="section go-target" id="go-icu"><h3><span>Intervals.icu</span><button class="btn small" data-action="close-panel" data-panel="icuSec">Close</button></h3><div class="card">
       ${c ? `<dl class="kv"><dt>Status</dt><dd>${icu.error ? '⚠ ' + esc(icu.error) : '✓ Connected'}</dd><dt>Athlete id</dt><dd>${esc(c.athlete || '0')}</dd><dt>API key</dt><dd>saved on this device</dd></dl>
         <div class="btn-row" style="margin-top:12px"><button class="btn" data-action="icu-test">Test connection</button><button class="btn danger" data-action="icu-forget">Disconnect</button></div>
         ${icu.error || state.open.icu ? `<div style="margin-top:16px">${form}</div>` : '<button class="btn more-btn" data-action="open-panel" data-panel="icu" style="margin-top:10px">Change key <span>›</span></button>'}`
@@ -4206,7 +4216,8 @@
     const isTop = TOP_LEVEL.includes(r.name) && !(r.name === 'me' && r.arg);
     $('#backBtn').hidden = isTop;
     $('#overviewBtn').hidden = r.name !== 'today';
-    $('#gearBtn').classList.toggle('active', ['settings', 'goals', 'checkin'].includes(r.name));
+    $('#gearBtn').hidden = r.name === 'settings';
+    $('#gearBtn').classList.toggle('active', ['goals', 'checkin'].includes(r.name));
     const activeTab = { day: 'agenda', workout: 'agenda', overview: 'today', progress: 'today', xp: 'today', goals: 'settings', checkin: 'settings', meals: 'food', shopping: 'food' }[r.name] || r.name;
     document.querySelectorAll('.tabbar a').forEach((a) => a.classList.toggle('active', a.dataset.tab === activeTab));
     if (!keepScroll) window.scrollTo(0, 0);
@@ -4288,20 +4299,6 @@
   // a slide must not count as the second tap that opens the point
   document.addEventListener('click', (e) => { if (Date.now() - scrubEnd < 400) { e.preventDefault(); e.stopPropagation(); } }, true);
 
-  // Short buzz. Android: vibrate(). iPhone has no vibrate(), but Safari 18+ ticks when a switch toggles.
-  // shortcut: the iPhone trick is a known Safari quirk, not an official API; drop it if Safari adds vibrate()
-  let buzzSw = null;
-  function buzz(ms = 12) {
-    if (navigator.vibrate) { navigator.vibrate(ms); return; }
-    if (!buzzSw) {
-      buzzSw = document.createElement('label');
-      buzzSw.hidden = true;
-      buzzSw.innerHTML = '<input type="checkbox" switch>';
-      document.body.append(buzzSw);
-    }
-    buzzSw.click();
-  }
-
   // Pull down at the top of a page to reload the plan and the Intervals.icu numbers
   const PULL_AT = 70;
   const ptr = document.createElement('div');
@@ -4318,8 +4315,6 @@
     if (!pull) return;
     const dy = (e.touches[0].clientY - pull.y0) * 0.5; // resistance: the circle moves at half the finger's speed
     if (dy <= 0 || window.scrollY > 0) { ptr.style.cssText = ''; pull = dy < 0 ? null : pull; return; }
-    // Android ticks while you pull; iPhone only allows its tick on a real tap or release (see touchend)
-    if ((dy >= PULL_AT) !== (pull.dy >= PULL_AT) && navigator.vibrate) navigator.vibrate(12);
     pull.dy = dy;
     const d = Math.min(dy, PULL_AT * 1.4);
     ptr.classList.toggle('ready', dy >= PULL_AT);
@@ -4331,7 +4326,6 @@
     pull = null;
     ptr.classList.remove('ready');
     if (!go) { ptr.style.cssText = ''; return; }
-    buzz();
     pulling = true;
     ptr.style.cssText = `transform:translate(-50%, ${PULL_AT}px)`;
     ptr.classList.add('spin');
@@ -4399,6 +4393,7 @@
     } else if (action === 'open-panel' || action === 'close-panel') {
       state.open[el.dataset.panel] = action === 'open-panel';
       if (action === 'close-panel' && el.dataset.panel === 'import') { state.importText = ''; state.importMsg = ''; }
+      if (action === 'close-panel' && el.dataset.panel === 'icuSec') state.open.icu = false; // the key form closes with its section
       render(true);
     } else if (action === 'prof-photo-clear') {
       state.profPhoto = '';

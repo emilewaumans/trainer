@@ -1468,8 +1468,9 @@ button.stk { appearance: none; border: 0; background: none; padding: 4px 0; bord
 .ath-zone { font-size: 22px; font-weight: 900; letter-spacing: -0.02em; color: var(--fz); }
 .ath-fv { font-weight: 800; color: var(--fz); font-variant-numeric: tabular-nums; }
 .ath-tip { margin: 6px 0 4px; font-size: 14px; color: var(--muted); }
-a.ath-tile { display: block; padding: 8px 6px; border-radius: 12px; background: rgba(255, 255, 255, 0.04); text-decoration: none; color: inherit; text-align: center; }
+a.ath-tile { display: block; padding: 10px 4px; border-radius: 12px; background: rgba(255, 255, 255, 0.04); text-decoration: none; color: inherit; text-align: center; }
 a.ath-tile:active { background: rgba(255, 122, 61, 0.14); }
+.ath-tile b { font-size: clamp(14px, 4.1vw, 18px); }
 
 .ath-warn { margin: 6px 0 4px; padding: 8px 10px; border-radius: 10px; font-size: 13.5px; color: #fde68a; background: rgba(250, 204, 21, 0.10); }
 .ath-plan { display: flex; gap: 8px; align-items: flex-start; margin: 6px 0 4px; padding: 10px 12px; border-radius: 12px; font-size: 13.5px; color: #fecaca; background: rgba(239, 68, 68, 0.12); text-decoration: none; }
@@ -1627,3 +1628,27 @@ button.lg-day:active { transform: scale(0.94); }
 }
 @keyframes ptr-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .ptr.spin::after { animation-duration: 2s; } }
+.btn.more-btn span small { font-size: 14px; margin-right: 8px; vertical-align: 3px; }
+
+/* ---------- Agenda: the week at a glance ---------- */
+.week-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 8px; margin-bottom: 12px; }
+.ws-day { display: grid; justify-items: center; gap: 2px; padding: 6px 0 7px; border-radius: 10px; color: var(--muted); text-decoration: none; }
+.ws-day .w { font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.ws-day .d { font-size: 15px; font-weight: 750; color: var(--text); font-variant-numeric: tabular-nums; }
+.ws-day.today { background: var(--accent-soft); }
+.ws-day.today .w, .ws-day.today .d { color: var(--accent); }
+.ws-ic { display: flex; gap: 1px; height: 18px; align-items: center; }
+.ws-ic i { display: grid; color: var(--tcol); }
+.ws-ic svg { width: 16px; height: 16px; }
+.ws-ic .ws-rest { width: 4px; height: 4px; border-radius: 50%; background: var(--line, #2a2f37); }
+.ws-day.done .ws-ic::after { content: '✓'; font-size: 12px; font-weight: 800; color: #4ade80; margin-left: 2px; }
+.ws-day:active { background: var(--surface-2); }
+
+/* ---------- the eye in a card corner: shows the explanation ---------- */
+.info-wrap { position: relative; }
+.info-eye {
+  position: absolute; top: 6px; right: 6px; z-index: 1; width: 36px; height: 36px; display: grid; place-items: center;
+  border: 0; border-radius: 50%; background: none; color: var(--muted); padding: 0; cursor: pointer;
+}
+.info-eye svg { width: 18px; height: 18px; }
+.info-eye.on { color: var(--accent); background: var(--accent-soft); }
