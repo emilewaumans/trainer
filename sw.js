@@ -1,9 +1,11 @@
 /* ==========================================================
    Trainer — service worker (makes the app work offline)
-   Strategy: always try the internet first so you get the newest
-   plan and app; if there is no connection, use the saved copy.
+   Strategy: the app files open at once from the saved copy and are
+   refreshed in the background. A new release (new CACHE name) is
+   downloaded completely on install, then the page reloads quietly.
+   plan.json still tries the internet first (the app also keeps a copy).
    ========================================================== */
-const CACHE = 'trainer-v29';
+const CACHE = 'trainer-v31';
 const FILES = [
   './',
   './index.html',
@@ -17,7 +19,7 @@ const FILES = [
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
+  event.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES.map((f) => new Request(f, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (event) => {
@@ -43,13 +45,18 @@ self.addEventListener('fetch', (event) => {
   event.respondWith((async () => {
     const cache = await caches.open(CACHE);
     const key = url.origin + url.pathname; // ignore ?query so the cache stays small
+    // 'no-cache' = always ask the server if there is a newer version
+    const network = withTimeout(fetch(new Request(url.href, { cache: 'no-cache', credentials: 'same-origin' })), 5000)
+      .then((res) => { if (res && res.ok) cache.put(key, res.clone()); return res; });
+    const cached = await cache.match(key);
+    // app files: show the saved copy now, update it for next time
+    if (cached && !/\/(plan|activities)\.json$/.test(url.pathname)) {
+      event.waitUntil(network.catch(() => {}));
+      return cached;
+    }
     try {
-      // 'no-cache' = always ask the server if there is a newer version
-      const res = await withTimeout(fetch(new Request(url.href, { cache: 'no-cache', credentials: 'same-origin' })), 5000);
-      if (res && res.ok) cache.put(key, res.clone());
-      return res;
+      return await network;
     } catch (err) {
-      const cached = await cache.match(key);
       if (cached) return cached;
       if (req.mode === 'navigate') {
         const shell = (await cache.match(url.origin + url.pathname.replace(/[^/]*$/, ''))) || (await cache.match('./index.html'));

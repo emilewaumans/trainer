@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.23.1';
+  const APP_VERSION = '1.25.0';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -17,6 +17,8 @@
     goalSeen: 'trainer.goalSeen',
     celebrated: 'trainer.celebrated', // last day the "day complete" animation was shown
     seenActs: 'trainer.seenActs',     // activity ids whose "new activity" animation was shown
+    planCache: 'trainer.planCache',   // last plan.json from the website, so the app opens at once
+    icuWeeks: 'trainer.icuWeeks',     // this week + last week from Intervals.icu, shown while fresh numbers load
   };
 
   const state = {
@@ -1679,15 +1681,23 @@
   // The API key is stored only on this device (localStorage), never in the website files.
 
   const LS_ICU = 'trainer.intervals';
-  const icu = { cache: {}, loading: {}, failed: {}, error: '', weather: null, weatherAt: 0 };
+  const icu = { cache: obj(lsGet(LS.icuWeeks, {})), loading: {}, failed: {}, error: '', weather: null, weatherAt: 0 };
+  // Keep only this week and last week on the phone (small, and leaves room for check-ins)
+  function saveIcuWeeks() {
+    const keep = Object.keys(icu.cache).sort().slice(-2);
+    lsSet(LS.icuWeeks, Object.fromEntries(keep.map((k) => [k, icu.cache[k]])));
+  }
+  function forgetIcuWeeks() { icu.cache = {}; lsSet(LS.icuWeeks, null); }
   const icuCfg = () => { const c = obj(lsGet(LS_ICU, null)); return c.key ? c : null; };
 
   async function icuGet(url) {
     const c = icuCfg();
     if (!c) throw new Error('not connected');
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 20000); // bad signal: give up after 20 s
     const res = await fetch(`https://intervals.icu/api/v1/athlete/${encodeURIComponent(c.athlete || '0')}${url}`, {
-      headers: { Authorization: 'Basic ' + btoa('API_KEY:' + c.key) },
-    });
+      headers: { Authorization: 'Basic ' + btoa('API_KEY:' + c.key) }, signal: ctl.signal,
+    }).catch((e) => { throw new Error(e.name === 'AbortError' ? 'Intervals.icu is slow to answer' : 'Could not reach Intervals.icu'); })
+      .finally(() => clearTimeout(t));
     if (res.status === 401 || res.status === 403) throw new Error('Intervals.icu refused the API key');
     if (!res.ok) throw new Error('Intervals.icu answered ' + res.status);
     return res.json();
@@ -1711,6 +1721,7 @@
         Date.now() - icu.weatherAt > 30 * 60 * 1000 ? icuGet('/weather-forecast').catch(() => null) : Promise.resolve(undefined),
       ]).then(([wellness, events, activities, weather]) => {
         icu.cache[key] = { at: Date.now(), wellness: arr(wellness), events: arr(events), activities: arr(activities) };
+        if (key >= iso(addDays(mondayOf(parseDate(today())), -7))) saveIcuWeeks();
         delete icu.failed[key];
         if (weather !== undefined) { icu.weather = weather; icu.weatherAt = Date.now(); }
         icu.error = '';
@@ -1720,7 +1731,7 @@
         icu.failed[key] = Date.now();
       }).finally(() => {
         icu.loading[key] = false;
-        if (['agenda', 'day', 'workout', 'today', 'overview', 'progress'].includes(state.route)) render(true);
+        if (['agenda', 'day', 'workout', 'today', 'overview', 'progress'].includes(state.route)) softRender();
       });
     }
     return c || null;
@@ -2016,7 +2027,7 @@
       ${time}${load}
       ${sportRows ? `<div class="wk-sports2">${sportRows}</div>` : ''}
       ${fit}
-      ${wk ? '' : `<div class="muted small" style="margin-top:8px">${icuCfg() ? 'Loading from Intervals.icu…' : 'Connect Intervals.icu in <a href="#settings/icu">Settings</a> to see sleep, fitness and done rides.'}</div>`}
+      ${wk ? '' : `<div class="muted small" style="margin-top:8px">${icuCfg() ? skel(2) : 'Connect Intervals.icu in <a href="#settings/icu">Settings</a> to see sleep, fitness and done rides.'}</div>`}
       <details class="explain"><summary>What do these mean?</summary>
         <p><b>Load</b>: how hard the training is (an hour all-out ≈ 100). <b>Fitness</b>: your average load over 6 weeks. <b>Fatigue</b>: your average load over the last week. <b>Form</b> = fitness − fatigue: below −10 you're tired, above +5 you're fresh. <b>Ramp</b>: how fast fitness is rising per week.</p>
       </details>
@@ -2413,7 +2424,7 @@
         hist.failedAt = Date.now();
       }).finally(() => {
         hist.loading = false;
-        if (state.route === 'me' || state.route === 'today') render(true);
+        if (state.route === 'me' || state.route === 'today') softRender();
       });
     }
     return hist.data;
@@ -2692,7 +2703,7 @@
     if (!d) {
       return head('Me', 'Your training', refresh) + safe(() => profileHeadHTML(meActs()), 'your profile') + (hist.error
         ? `<a class="card warn tap" href="#settings/icu">Intervals.icu: ${esc(hist.error)}. Check the key in Settings ›</a>`
-        : '<div class="card muted">Loading your history from Intervals.icu…</div>');
+        : `<div class="card">${skel(4, true)}</div>`);
     }
     const acts = meActs();
     const err = hist.error ? `<div class="card warn small">Couldn't refresh (${esc(hist.error)}). Showing what was loaded ${esc(agoText(d.at))}.</div>` : '';
@@ -3002,7 +3013,7 @@
         pcs.data[m] = { at: Date.now(), day: t, cur: list[0] || {}, best: list[1] || null, acts: obj(obj(d).activities) };
         pcs.error = '';
       }).catch((e) => { pcs.error = e.message || 'Could not reach Intervals.icu'; pcs.failedAt = Date.now(); })
-        .finally(() => { pcs.loading[m] = false; if (state.route === 'me') render(true); });
+        .finally(() => { pcs.loading[m] = false; if (state.route === 'me') softRender(); });
     }
     return c;
   }
@@ -3025,7 +3036,7 @@
   function mePowerCardHTML() {
     const m = pcMonth(), c = icuCurve(m);
     const head = `<h3><span>Power curve</span><a class="h-link" href="#me/power">More ›</a></h3>`;
-    if (!c) return `<div class="section">${head}<div class="card muted">${pcs.error ? `Intervals.icu: ${esc(pcs.error)}` : 'Loading your power curve…'}</div></div>`;
+    if (!c) return `<div class="section">${head}<div class="card muted">${pcs.error ? `Intervals.icu: ${esc(pcs.error)}` : skel(0, true)}</div></div>`;
     const pts0 = pcPoints(c.cur, false);
     const at = (s) => (pts0.find((p) => p.s === s) || {}).v;
     const best = c.best ? pcPoints(c.best, false) : [];
@@ -3051,7 +3062,7 @@
     const modes = [['w', 'Watts'], ['wkg', 'W/kg']].concat(hasMap ? [['map', 'MAP']] : []);
     const top = `<div class="me-ranges">${PC_ROLL.map(([k, l]) => `<button type="button" class="${k === m ? 'on' : ''}" data-action="me-pcmonth" data-m="${k}">${l}</button>`).join('')}${months.map((k) => `<button type="button" class="${k === m ? 'on' : ''}" data-action="me-pcmonth" data-m="${k}">${esc(k === thisMonth() ? 'This month' : monthYr(k + '-01'))}</button>`).join('')}<button type="button" data-action="me-pcmore">More…</button></div>`
       + `<div class="me-seg">${modes.map(([k, l]) => `<button type="button" class="${k === mode ? 'on' : ''}" data-action="me-pcmode" data-m="${k}">${l}</button>`).join('')}</div>`;
-    if (!c) return top + `<div class="card ${pcs.error ? 'warn' : 'muted'}">${pcs.error ? `Intervals.icu: ${esc(pcs.error)}` : 'Loading your power curve from Intervals.icu…'}</div>`;
+    if (!c) return top + `<div class="card ${pcs.error ? 'warn' : 'muted'}">${pcs.error ? `Intervals.icu: ${esc(pcs.error)}` : skel(0, true)}</div>`;
     const cur = c.cur, wkg = mode !== 'w';
     const fit = (s) => mp.poIntercept + mp.poSlope * Math.log(s); // Intervals.icu's MAP line: W/kg = a + b·ln(seconds)
     const pts0 = pcPoints(cur, wkg, mode === 'map' ? arr(cur.secs)[mp.startIndex] : 0, true);
@@ -4026,7 +4037,7 @@
     const athlete = form.athlete.value.trim(), key = form.key.value.trim();
     if (!key) { toast('Paste your API key first'); return; }
     lsSet(LS_ICU, { athlete: athlete || '0', key });
-    icu.cache = {}; icu.weatherAt = 0;
+    forgetIcuWeeks(); icu.weatherAt = 0;
     try {
       const a = await icuGet('');
       icu.error = '';
@@ -4096,10 +4107,11 @@
         state.repoError = 'The plan.json on the website has an error (not valid JSON).';
       } else {
         state.repoPlan = r.data;
+        lsSet(LS.planCache, r.data);
       }
     } catch (e) {
-      state.repoPlan = null;
-      state.repoError = "Couldn't load plan.json (are you offline?).";
+      // no connection: keep the plan saved on the phone
+      if (!state.repoPlan) state.repoError = "Couldn't load plan.json (are you offline?).";
     }
     choosePlan();
     // activities.json is made on the laptop by fetch-activities.js. It is not on the
@@ -4123,6 +4135,19 @@
     if (name === 'more') name = 'settings'; // the More tab moved behind the gear
     return { name: TITLES[name] ? name : 'today', arg: arg || '', sub: sub || '' };
   }
+
+  // Redraw when background data arrives, but not while you are typing (then on leaving the field)
+  let renderLater = false;
+  function softRender() {
+    const a = document.activeElement;
+    if (a && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) { renderLater = true; return; }
+    renderLater = false;
+    render(true);
+  }
+  document.addEventListener('focusout', () => { if (renderLater) setTimeout(() => { if (renderLater) softRender(); }, 0); });
+
+  // Grey placeholder lines while numbers load (chart = a block for a graph)
+  const skel = (lines, chart) => `<div class="skel" aria-busy="true" aria-label="Loading">${chart ? '<i class="sk-chart"></i>' : ''}${Array.from({ length: lines }, () => '<i></i>').join('')}</div>`;
 
   function render(keepScroll) {
     const r = parseRoute();
@@ -4262,6 +4287,62 @@
   document.addEventListener('pointercancel', endScrub);
   // a slide must not count as the second tap that opens the point
   document.addEventListener('click', (e) => { if (Date.now() - scrubEnd < 400) { e.preventDefault(); e.stopPropagation(); } }, true);
+
+  // Short buzz. Android: vibrate(). iPhone has no vibrate(), but Safari 18+ ticks when a switch toggles.
+  // shortcut: the iPhone trick is a known Safari quirk, not an official API; drop it if Safari adds vibrate()
+  let buzzSw = null;
+  function buzz(ms = 12) {
+    if (navigator.vibrate) { navigator.vibrate(ms); return; }
+    if (!buzzSw) {
+      buzzSw = document.createElement('label');
+      buzzSw.hidden = true;
+      buzzSw.innerHTML = '<input type="checkbox" switch>';
+      document.body.append(buzzSw);
+    }
+    buzzSw.click();
+  }
+
+  // Pull down at the top of a page to reload the plan and the Intervals.icu numbers
+  const PULL_AT = 70;
+  const ptr = document.createElement('div');
+  ptr.className = 'ptr';
+  ptr.setAttribute('aria-hidden', 'true');
+  ptr.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg>';
+  document.body.append(ptr);
+  let pull = null, pulling = false;
+  document.addEventListener('touchstart', (e) => {
+    if (pulling || window.scrollY > 0 || e.touches.length > 1 || e.target.closest('.mhit')) return;
+    pull = { y0: e.touches[0].clientY, dy: 0 };
+  }, { passive: true });
+  document.addEventListener('touchmove', (e) => {
+    if (!pull) return;
+    const dy = (e.touches[0].clientY - pull.y0) * 0.5; // resistance: the circle moves at half the finger's speed
+    if (dy <= 0 || window.scrollY > 0) { ptr.style.cssText = ''; pull = dy < 0 ? null : pull; return; }
+    if ((dy >= PULL_AT) !== (pull.dy >= PULL_AT)) buzz(); // tick when crossing the line, both ways
+    pull.dy = dy;
+    const d = Math.min(dy, PULL_AT * 1.4);
+    ptr.classList.toggle('ready', dy >= PULL_AT);
+    ptr.style.cssText = `transition:none;opacity:${Math.min(1, dy / PULL_AT)};transform:translate(-50%, ${d}px) rotate(${Math.min(dy / PULL_AT, 1) * 180}deg)`;
+  }, { passive: true });
+  document.addEventListener('touchend', () => {
+    if (!pull) return;
+    const go = pull.dy >= PULL_AT;
+    pull = null;
+    ptr.classList.remove('ready');
+    if (!go) { ptr.style.cssText = ''; return; }
+    pulling = true;
+    ptr.style.cssText = `transform:translate(-50%, ${PULL_AT}px)`;
+    ptr.classList.add('spin');
+    Object.values(icu.cache).forEach((c) => { c.at = 0; }); // stale, but keep showing the old numbers until the new ones arrive
+    icu.failed = {};
+    icuHistory(true);
+    Promise.all([loadPlan(), new Promise((r) => setTimeout(r, 600))]).then(() => {
+      softRender();
+      ptr.classList.remove('spin');
+      ptr.style.cssText = '';
+      pulling = false;
+    });
+  });
 
   document.addEventListener('click', async (e) => {
     const el = e.target.closest('[data-action]');
@@ -4432,7 +4513,7 @@
       try {
         const a = await icuGet('');
         icu.error = '';
-        icu.cache = {}; icu.weatherAt = 0;
+        forgetIcuWeeks(); icu.weatherAt = 0;
         toast(`Connected as ${txt(a.name) || 'you'} ✓`);
       } catch (err) {
         icu.error = err.message;
@@ -4441,7 +4522,7 @@
       render(true);
     } else if (action === 'icu-forget') {
       lsSet(LS_ICU, null);
-      icu.cache = {}; icu.weather = null; icu.error = '';
+      forgetIcuWeeks(); icu.weather = null; icu.error = '';
       lsSet(LS_HIST, null); hist.data = null; // the saved history goes too
       toast('Intervals.icu disconnected on this device');
       render(true);
@@ -4524,7 +4605,7 @@
     if (document.visibilityState === 'visible') {
       refreshIfNewDay();
       // quietly check for a new plan when the app comes back to the front
-      loadPlan().then(() => { if (!document.activeElement || !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) render(true); });
+      loadPlan().then(softRender);
     }
   });
   setInterval(refreshIfNewDay, 60 * 1000);
@@ -4533,8 +4614,23 @@
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+    // A new version took over: reload now if the app just opened, otherwise when it goes to the background
+    const hadSW = !!navigator.serviceWorker.controller, t0 = Date.now();
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadSW) return;
+      if (Date.now() - t0 < 4000) location.reload();
+      else document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') location.reload(); });
+    });
   }
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 
-  loadPlan().then(() => render());
+  state.repoPlan = lsGet(LS.planCache, null);
+  const imp0 = lsGet(LS.imported, null);
+  state.importedPlan = imp0 && typeof imp0 === 'object' && !Array.isArray(imp0) ? imp0 : null;
+  choosePlan();
+  if (state.plan) { render(); loadPlan().then(softRender); }
+  else loadPlan().then(() => render());
+  // when the first screen is up: quietly get what the other tabs need
+  const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1500));
+  idle(() => safeVal(() => { icuWeek(mondayOf(parseDate(today()))); icuHistory(); }));
 })();
