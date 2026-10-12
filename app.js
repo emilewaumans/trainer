@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.25.0';
+  const APP_VERSION = '1.25.1';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -4318,7 +4318,8 @@
     if (!pull) return;
     const dy = (e.touches[0].clientY - pull.y0) * 0.5; // resistance: the circle moves at half the finger's speed
     if (dy <= 0 || window.scrollY > 0) { ptr.style.cssText = ''; pull = dy < 0 ? null : pull; return; }
-    if ((dy >= PULL_AT) !== (pull.dy >= PULL_AT)) buzz(); // tick when crossing the line, both ways
+    // Android ticks while you pull; iPhone only allows its tick on a real tap or release (see touchend)
+    if ((dy >= PULL_AT) !== (pull.dy >= PULL_AT) && navigator.vibrate) navigator.vibrate(12);
     pull.dy = dy;
     const d = Math.min(dy, PULL_AT * 1.4);
     ptr.classList.toggle('ready', dy >= PULL_AT);
@@ -4330,6 +4331,7 @@
     pull = null;
     ptr.classList.remove('ready');
     if (!go) { ptr.style.cssText = ''; return; }
+    buzz();
     pulling = true;
     ptr.style.cssText = `transform:translate(-50%, ${PULL_AT}px)`;
     ptr.classList.add('spin');
