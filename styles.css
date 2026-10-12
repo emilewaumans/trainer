@@ -1652,3 +1652,9 @@ button.lg-day:active { transform: scale(0.94); }
 }
 .info-eye svg { width: 18px; height: 18px; }
 .info-eye.on { color: var(--accent); background: var(--accent-soft); }
+
+/* Food: shopping list and Month buttons side by side in the section title */
+.h-btns { display: flex; gap: 8px; }
+/* "You as an athlete" tiles: every label on one line, so all tiles are the same size */
+.ath-tile span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ath-tile b.warn-v { color: #f59e0b; }

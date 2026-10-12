@@ -5,7 +5,7 @@
    downloaded completely on install, then the page reloads quietly.
    plan.json still tries the internet first (the app also keeps a copy).
    ========================================================== */
-const CACHE = 'trainer-v33';
+const CACHE = 'trainer-v34';
 const FILES = [
   './',
   './index.html',

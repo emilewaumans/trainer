@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.26.0';
+  const APP_VERSION = '1.26.1';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -2696,39 +2696,37 @@
 
   function viewMe(arg) {
     if (arg === 'profile') return meProfileFormHTML();
-    const head = (eyebrow, title, extra) => (extra ? `<div class="page-head me-head"><span></span>${extra}</div>` : '');
     if (!icuCfg()) {
-      return head('Me', 'Your training') + safe(() => profileHeadHTML(meActs()), 'your profile') + `<a class="card warn tap" href="#settings/icu">Connect Intervals.icu to see your training history, streak and fitness here. Tap to add your key ›</a>`;
+      return safe(() => profileHeadHTML(meActs()), 'your profile') + `<a class="card warn tap" href="#settings/icu">Connect Intervals.icu to see your training history, streak and fitness here. Tap to add your key ›</a>`;
     }
     const d = icuHistory();
-    const refresh = `<button class="icon-btn${hist.loading ? ' spin' : ''}" data-action="me-refresh" aria-label="Refresh from Intervals.icu">${ICON.refresh}</button>`;
     if (!d) {
-      return head('Me', 'Your training', refresh) + safe(() => profileHeadHTML(meActs()), 'your profile') + (hist.error
+      return safe(() => profileHeadHTML(meActs()), 'your profile') + (hist.error
         ? `<a class="card warn tap" href="#settings/icu">Intervals.icu: ${esc(hist.error)}. Check the key in Settings ›</a>`
         : `<div class="card">${skel(4, true)}</div>`);
     }
     const acts = meActs();
     const err = hist.error ? `<div class="card warn small">Couldn't refresh (${esc(hist.error)}). Showing what was loaded ${esc(agoText(d.at))}.</div>` : '';
-    if (arg === 'history') return head('Me', 'Training history') + err + safe(() => meHistoryHTML(acts), 'the training history');
+    if (arg === 'history') return err + safe(() => meHistoryHTML(acts), 'the training history');
     // #me/history-2026-09-14: that one week, day by day
-    if (arg.startsWith('history-')) return head('Me', 'Training history') + err + safe(() => meHistoryHTML(acts, normDate(arg.slice(8))), 'the training history');
-    if (arg === 'recovery') return head('Me', 'Recovery & sleep') + err + safe(() => meRecoveryHTML(acts), 'recovery and sleep');
-    if (arg === 'streak') return head('Me', 'Streak') + err + safe(() => meStreakHTML(acts), 'the streak history');
-    if (arg === 'ftp') return head('Me', 'FTP') + err + safe(() => meFtpHTML(acts), 'the FTP graph');
-    if (arg === 'power') return head('Me', 'Power curve') + safe(() => mePowerHTML(), 'the power curve');
-    if (arg === 'zones') return head('Me', 'Time in zones') + err + safe(() => meZonesHTML(acts), 'the zones');
-    if (arg === 'fitness') return head('Me', 'Fitness') + err + safe(() => meFitnessHTML(acts, arr(d.well)), 'the fitness graph');
+    if (arg.startsWith('history-')) return err + safe(() => meHistoryHTML(acts, normDate(arg.slice(8))), 'the training history');
+    if (arg === 'recovery') return err + safe(() => meRecoveryHTML(acts), 'recovery and sleep');
+    if (arg === 'streak') return err + safe(() => meStreakHTML(acts), 'the streak history');
+    if (arg === 'ftp') return err + safe(() => meFtpHTML(acts), 'the FTP graph');
+    if (arg === 'power') return safe(() => mePowerHTML(), 'the power curve');
+    if (arg === 'zones') return err + safe(() => meZonesHTML(acts), 'the zones');
+    if (arg === 'fitness') return err + safe(() => meFitnessHTML(acts, arr(d.well)), 'the fitness graph');
     if (arg && arg.startsWith('log')) {
       const want = normDate(arg.slice(4));
       if (want) state.me.logWeeks = Math.max(state.me.logWeeks, daysBetween(parseDate(want), mondayOf(parseDate(today()))) / 7 + 2);
       const lg = logWeeksHTML(acts, state.me.logWeeks);
-      return head('Me', 'Training log') + err + sportLegendHTML(SPORT_ORDER.filter((k) => acts.some((a) => a.sport === k))) +
+      return err + sportLegendHTML(SPORT_ORDER.filter((k) => acts.some((a) => a.sport === k))) +
         `<div class="card lg-card">${lg.html || '<div class="muted">No activities yet.</div>'}</div>` +
         (lg.more ? '<button class="btn" data-action="me-more">Load older weeks</button>' : '');
     }
 
-    let html = head('Me', '', refresh) + safe(() => profileHeadHTML(acts), 'your profile') + err;
-    html += `<div class="muted small me-upd">Updated ${esc(agoText(d.at))} from Intervals.icu</div>`;
+    let html = safe(() => profileHeadHTML(acts), 'your profile') + err;
+    html += `<div class="muted small me-upd">Updated ${esc(agoText(d.at))} from Intervals.icu · pull down to refresh</div>`;
     html += safe(() => meWeekCardHTML(acts), 'the weekly graph');
     html += safe(() => {
       const sk = weekStreak(acts);
@@ -3246,7 +3244,7 @@
     const ramp = wb ? now[1] - wb[1] : null;
     const fd = ftpDays(meActs(), '');
     const eftp = fd.length ? fd[fd.length - 1].eftp : null;
-    const tile = (href, v, l) => `<a class="me-stat ath-tile" href="${href}"><b>${esc(v)}</b><span>${esc(l)} ›</span></a>`;
+    const tile = (href, v, l, cls) => `<a class="me-stat ath-tile" href="${href}"><b${cls ? ` class="${cls}"` : ''}>${esc(v)}</b><span>${esc(l)} ›</span></a>`;
     const rc = recoveryCheck(t), w = rc.d;
     const hard = workoutsOn(t).filter((x) => HARD_TYPES.includes(txt(x.w.type)) && !workoutAnswer(t, x.i));
     const tired = rc.flags.length || (form != null && form < -30);
@@ -3257,7 +3255,7 @@
       ${rc.flags.length ? `<p class="ath-warn">But ${esc(rc.flags.join(', '))}: listen to your body and keep it easier than planned.</p>` : ''}
       ${tired && hard.length ? hard.map((x) => `<a class="ath-plan" href="#workout/${x.i}">${ICON.flame}<span><b>${esc(txt(x.w.title) || typeInfo(txt(x.w.type)).label)}</b> is planned today, but ${esc(why)}. Consider an easy ride instead, or move it to a fresher day ›</span></a>`).join('') : ''}
       <div class="me-stats">${tile('#me/fitness/fitness', num(now[1], 0), 'Fitness')}${tile('#me/fitness/fatigue', isNum(now[2]) ? num(now[2], 0) : '–', 'Fatigue')}${isNum(eftp) ? tile('#me/ftp', `${Math.round(eftp)} W`, 'eFTP') : ''}${ramp != null ? tile('#me/fitness/ramp', signed(ramp), 'Ramp') : ''}</div>
-      ${hasWatch(w) ? `<div class="me-stats">${isNum(w.ready) ? `<a class="me-stat ath-tile" href="#me/recovery/recovery" style="--rc:${recColor(w.ready)}"><b class="rec-v">${Math.round(w.ready)}%</b><span>Recovery ›</span></a>` : ''}${isNum(w.hrv) ? tile('#me/recovery/hrv', `${Math.round(w.hrv)} ms`, `HRV${rc.hr ? ' · ' + vsNormal(w.hrv, rc.hr) : ''}`) : ''}${isNum(w.rhr) ? tile('#me/recovery/rhr', String(Math.round(w.rhr)), 'Resting HR') : ''}${isNum(w.sleep) && w.sleep > 0 ? tile('#me/recovery/sleep', `${Math.floor(w.sleep / 3600)}h ${Math.floor((w.sleep % 3600) / 60)}m`, 'Sleep') : ''}</div>` : ''}
+      ${hasWatch(w) ? `<div class="me-stats">${isNum(w.ready) ? `<a class="me-stat ath-tile" href="#me/recovery/recovery" style="--rc:${recColor(w.ready)}"><b class="rec-v">${Math.round(w.ready)}%</b><span>Recovery ›</span></a>` : ''}${isNum(w.hrv) ? tile('#me/recovery/hrv', `${Math.round(w.hrv)} ms`, 'HRV', rc.hr && vsNormal(w.hrv, rc.hr) !== 'normal' ? 'warn-v' : '') : ''}${isNum(w.rhr) ? tile('#me/recovery/rhr', String(Math.round(w.rhr)), 'Resting HR') : ''}${isNum(w.sleep) && w.sleep > 0 ? tile('#me/recovery/sleep', `${Math.floor(w.sleep / 3600)}h ${Math.floor((w.sleep % 3600) / 60)}m`, 'Sleep') : ''}</div>` : ''}
     </div></div>`;
   }
 
@@ -3605,8 +3603,8 @@
     const shop = state.plan ? arr(nutrition().shopping_list).map(shopItemParts).filter((x) => x.name) : [];
     const ticks = shopTicks();
     const left = shop.filter((x) => !ticks[x.name]).length;
-    const shopBtn = shop.length ? `<a class="icon-btn" href="#shopping" aria-label="Shopping list, ${left} to buy">${ICON.cart}${left ? `<span class="ib-badge">${left}</span>` : ''}</a>` : '';
-    let html = shopBtn ? `<div class="page-head me-head"><span></span>${shopBtn}</div>` : '';
+    const shopBtn = shop.length ? `<a class="btn small" href="#shopping" aria-label="Shopping list, ${left} to buy">${ICON.cart}${left ? ` ${left}` : ''}</a>` : '';
+    let html = '';
     if (!state.plan) return html + noPlanHTML();
     const t = today();
     const todayType = txt(obj(mealsOn(t)[0]).day_type);
@@ -3615,8 +3613,8 @@
       if (!arr(nutrition().meals).length) return '';
       const ms = mealsOn(t);
       const cal = state.mealCal;
-      return `<div class="section" style="margin-top:0"><h3><span>Today's meals</span>
-          <button class="btn small${cal ? ' on' : ''}" data-action="meal-cal" aria-expanded="${!!cal}">${ICON.calendar} ${cal ? 'Hide month' : 'Month'}</button></h3>
+      return `<div class="section" style="margin-top:0"><h3><span>Today's meals</span><span class="h-btns">${shopBtn}
+          <button class="btn small${cal ? ' on' : ''}" data-action="meal-cal" aria-expanded="${!!cal}">${ICON.calendar} ${cal ? 'Hide month' : 'Month'}</button></span></h3>
         ${cal ? safe(mealCalHTML, 'the meal calendar') : ''}
         ${ms.length ? ms.map((m) => mealCard(m, true)).join('') : '<div class="card muted">No meals planned for today.</div>'}</div>`;
     }, 'the meal plan');
@@ -4424,9 +4422,6 @@
       render(true);
     } else if (action === 'me-more') {
       state.me.logWeeks += 12;
-      render(true);
-    } else if (action === 'me-refresh') {
-      icuHistory(true);
       render(true);
     } else if (action === 'xp-help') {
       state.xpHelp = !state.xpHelp;
