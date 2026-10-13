@@ -56,7 +56,7 @@
       "id": "g1",
       "title": "FTP test #1 (baseline)",
       "date": "2026-10-13",
-      "metric": "Real starting FTP and best 5-min power; resets zones and interval targets",
+      "metric": "Real starting FTP from a ramp test (75% of best 1-min power); resets zones and interval targets",
       "status": "active"
     },
     {
@@ -269,53 +269,34 @@
       "date": "2026-10-13",
       "type": "benchmark_test",
       "title": "FTP test #1: baseline",
-      "duration_min": 75,
+      "duration_min": 40,
       "zone": "Z4",
-      "purpose": "Get your real starting numbers. The best 5-min power sets the 30/15 targets and FTP resets your zones.",
+      "purpose": "Ramp test: your real starting FTP. The watts go up 20 W every minute until you cannot hold them. FTP = 75% of your best 1-minute power. That number resets your zones and the 30/15 targets.",
       "steps": [
+        { "min": 12, "zone": "Z2", "target": "Easy warm-up, 150-180 W" },
+        { "min": 1, "zone": "Z2", "target": "Ramp: about 160 W" },
+        { "min": 1, "zone": "Z2", "target": "Ramp: about 180 W" },
+        { "min": 1, "zone": "Z2", "target": "Ramp: about 200 W" },
+        { "min": 1, "zone": "Z3", "target": "Ramp: about 220 W" },
+        { "min": 1, "zone": "Z3", "target": "Ramp: about 240 W" },
+        { "min": 1, "zone": "Z4", "target": "Ramp: about 260 W" },
+        { "min": 1, "zone": "Z4", "target": "Ramp: about 280 W" },
+        { "min": 1, "zone": "Z4", "target": "Ramp: about 300 W" },
+        { "min": 1, "zone": "Z4", "target": "Ramp: about 320 W" },
+        { "min": 1, "zone": "Z4", "target": "Ramp: about 340 W" },
+        { "min": 1, "zone": "Z4", "target": "Ramp: about 360 W" },
+        { "min": 1, "zone": "Z4", "target": "Ramp: about 380 W" },
+        { "min": 1, "zone": "Z4", "target": "Ramp: about 400 W" },
+        { "min": 1, "zone": "Z4", "target": "Ramp: about 420 W" },
+        { "min": 1, "zone": "Z4", "target": "Ramp: about 440 W" },
+        { "min": 1, "zone": "Z4", "target": "Ramp: about 460 W" },
         {
-          "min": 15,
-          "zone": "Z2",
-          "target": "Easy warm-up, 150-190 W"
-        },
-        {
-          "repeat": 3,
-          "rest_between_min": 1,
-          "steps": [
-            {
-              "min": 1,
-              "zone": "Z4",
-              "target": "Build to about 300 W"
-            }
-          ]
-        },
-        {
-          "min": 5,
-          "zone": "Z1",
-          "target": "Easy spin"
-        },
-        {
-          "min": 5,
-          "zone": "Z4",
-          "target": "5-minute max: start controlled, hold an even pace, empty in the last 30 seconds. Write down the average power"
-        },
-        {
-          "min": 10,
-          "zone": "Z1",
-          "target": "Easy spin, recover fully"
-        },
-        {
-          "min": 20,
-          "zone": "Z4",
-          "target": "20-minute max, even pace. Average power x 0.95 = your FTP. Write it down"
-        },
-        {
-          "min": 15,
+          "min": 12,
           "zone": "Z1",
           "target": "Cool-down, easy spinning"
         }
       ],
-      "cue": "Same Kickr setup as your last two tests, so the number compares. Slept badly or ill? Move it to Thursday 15 Oct. Even pacing wins: a fast first minute ruins the rest.",
+      "cue": "ERG mode on the Kickr sets the watts for you. Stay seated and keep your cadence high (90+). The test ends when your cadence drops and you cannot hold the watts: skip to the cool-down, or end the workout and spin easy for 10 minutes. Most riders stop somewhere between minute 10 and 14. Slept badly or ill? Move it to Thursday 15 Oct.",
       "fuel": {
         "before": "Eat breakfast about 2 hours before (see meals). Then 30-45 min before the start: 1 banana or a gel with water Don't ride on an empty stomach.",
         "during_carbs_g_per_h": 40,
