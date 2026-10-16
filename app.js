@@ -7,7 +7,7 @@
 'use strict';
 
 (function () {
-  const APP_VERSION = '1.26.1';
+  const APP_VERSION = '1.27.0';
 
   // Keys used to store things on the phone (localStorage)
   const LS = {
@@ -1335,11 +1335,13 @@
     if (pos(a.icu_joules)) add('as-kj', ICON.flame, a.icu_joules / 1000, { unit: 'kJ', lbl: 'Energy', sub: pos(a.calories) ? `${Math.round(a.calories)} kcal` : '' });
     else if (pos(a.calories)) add('as-kj', ICON.flame, a.calories, { unit: 'kcal', lbl: 'Energy' });
     const bests = arr(a.icu_achievements).map(obj).map((x) => {
-      if (x.type === 'FTP_UP') return `FTP up to ${Math.round(x.watts)} W`;
+      // x.watts is the effort behind it (e.g. 5 min at 320 W), not the new eFTP
+      if (x.type === 'FTP_UP') return isNum(a.icu_rolling_ftp) ? `eFTP up to ${Math.round(a.icu_rolling_ftp)} W` : 'eFTP up';
       if (isNum(x.watts) && isNum(x.secs)) return `Best ${x.secs >= 60 ? Math.round(x.secs / 60) + ' min' : x.secs + ' s'} power: ${Math.round(x.watts)} W`;
       return txt(x.message) || txt(x.type).replace(/_/g, ' ').toLowerCase();
     }).filter(Boolean);
     if (bests.length) add('as-best', ICON.trophy, bests.length, { lbl: bests.length === 1 ? 'New best' : 'New bests', best: bests });
+    const testP = ftpTestOf(a).catch(() => null); // loads while the stats play
 
     const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     const el = document.createElement('div');
@@ -1404,7 +1406,7 @@
       clearTimeout(timer);
       document.removeEventListener('keydown', onKey);
       el.classList.add('out');
-      setTimeout(() => { el.remove(); nextActCel(); }, 260);
+      setTimeout(() => { el.remove(); testP.then((t) => (t || bests.length ? recordsCelebrate(t, bests) : nextActCel())); }, 260);
     }
     const onKey = (e) => { if (e.key === 'Escape') close(); };
     document.addEventListener('keydown', onKey);
@@ -1415,6 +1417,83 @@
       if (!el.classList.contains('done')) show(cur + 1);
     });
     requestAnimationFrame(() => { el.classList.add('in'); show(0); });
+  }
+
+  // Highest average over n seconds of a 1-per-second stream (0 when the ride is shorter)
+  function bestAvg(w, n) {
+    let s = 0, b = 0;
+    for (let i = 0; i < w.length; i++) {
+      s += +w[i] || 0;
+      if (i >= n) s -= +w[i - n] || 0;
+      if (i >= n - 1) b = Math.max(b, s / n);
+    }
+    return b;
+  }
+  // FTP from a test ride: a ramp test = 75% of the best minute, otherwise a 20-min test = 95% of the best 20 minutes
+  async function ftpTestOf(a) {
+    const ds = txt(a.start_date_local).slice(0, 10);
+    if (sportOfActivity(a.type) !== 'Ride' || !isFtpTest({ name: txt(a.name), sport: 'Ride', ds })) return null;
+    const ramp = /ramp/i.test(txt(a.name)) || workoutsOn(ds).some((x) => arr(x.w.steps).some((s) => /ramp/i.test(txt(obj(s).target))));
+    const st = arr(await icuGet(`/activity/${encodeURIComponent(txt(a.id))}/streams?types=watts`, null, true)).map(obj);
+    const best = bestAvg(arr(obj(st.find((s) => s.type === 'watts')).data), ramp ? 60 : 1200);
+    return best > 0 ? { ftp: Math.round(best * (ramp ? 0.75 : 0.95)), best: Math.round(best), ramp } : null;
+  }
+  // Saves the FTP in Intervals.icu (Ride settings): its zones follow, and the app reads it back as your FTP
+  async function setIcuFtp(w) {
+    let id = obj(hist.data).sportId;
+    if (!id) id = obj(arr(await icuGet('/sport-settings')).map(obj).find((x) => arr(x.types).includes('Ride'))).id;
+    if (!id) throw new Error('No cycling settings found in Intervals.icu');
+    await icuGet(`/sport-settings/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ ftp: w }) });
+    if (hist.data) { hist.data.ftp = w; lsSet(LS_HIST, hist.data); }
+  }
+
+  // After the stats of a ride: one screen for a new FTP (test ride) and new personal bests
+  function recordsCelebrate(test, bests) {
+    const was = ftp();
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const el = document.createElement('div');
+    el.className = 'cel acel rcel done';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-label', test ? `New FTP: ${test.ftp} W` : 'New personal best');
+    const how = test && (test.ramp ? `75% of your best minute (${test.best} W)` : `95% of your best 20 minutes (${test.best} W)`);
+    el.innerHTML = `${reduce ? '' : `<div class="confetti" aria-hidden="true">${Array.from({ length: 14 }, (_, i) => `<span style="--i:${i}"></span>`).join('')}</div>`}
+      <button type="button" class="acel-x" aria-label="Close">×</button>
+      <div class="cel-title rc-title">${test ? 'New FTP!' : bests.length === 1 ? 'New personal best!' : 'New personal bests!'}</div>
+      ${test ? `<div class="cel-stat acel-stat on rc-ftp"><span class="cel-ic">${ICON.bolt}</span>
+        <div class="cel-num"><b>${esc(String(test.ftp))}</b><span>W FTP</span></div>
+        <div class="cel-lbl">From your ${test.ramp ? 'ramp' : '20-minute'} test: ${esc(how)}${!was ? '' : was === test.ftp ? '<small>This is already your FTP.</small>' : `<small>Your FTP now: ${esc(num(was, 0))} W (${esc(signed(test.ftp - was))} W)</small>`}</div></div>` : ''}
+      ${bests.length ? `<div class="cel-stat acel-stat on rc-pb"><span class="cel-ic">${ICON.trophy}</span>
+        <div class="cel-lbl">${bests.length === 1 ? 'New best' : 'New bests'}</div><ul class="acel-best">${bests.map((b) => `<li>${esc(b)}</li>`).join('')}</ul></div>` : ''}
+      <div class="acel-btns">${test && test.ftp !== was ? `<button type="button" class="btn primary" data-rc="set">Use ${esc(String(test.ftp))} W as my FTP</button>` : ''}
+        <button type="button" class="btn" data-rc="close">Close</button></div>
+      <div class="rc-msg" role="status"></div>`;
+    document.body.appendChild(el);
+    function close() {
+      document.removeEventListener('keydown', onKey);
+      el.classList.add('out');
+      setTimeout(() => { el.remove(); nextActCel(); }, 260);
+    }
+    const onKey = (e) => { if (e.key === 'Escape') close(); };
+    document.addEventListener('keydown', onKey);
+    el.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const btn = e.target.closest('[data-rc], .acel-x');
+      if (!btn) return;
+      if (btn.dataset.rc !== 'set') return close();
+      const msg = el.querySelector('.rc-msg');
+      btn.disabled = true;
+      msg.textContent = 'Saving…';
+      try {
+        await setIcuFtp(test.ftp);
+        msg.textContent = `Saved: your FTP is ${test.ftp} W in the app and on Intervals.icu.`;
+        btn.remove();
+        softRender();
+      } catch (err) {
+        msg.textContent = `Not saved: ${err.message}. Try again, or set it in Intervals.icu → Settings.`;
+        btn.disabled = false;
+      }
+    });
+    requestAnimationFrame(() => el.classList.add('in'));
   }
 
   // What happened on a day: steps done, XP and streak, then what went well and what could go better.
@@ -1543,7 +1622,11 @@
 
   const POWER_SPORTS = ['easy', 'recovery', 'tempo', 'vo2_intervals', 'long_ride', 'long_ride_intervals', 'benchmark_test'];
   const isRideType = (t) => POWER_SPORTS.includes(txt(t)) || /ride/.test(txt(t));
-  const ftp = () => (isNum(obj(P().athlete).ftp_w) ? obj(P().athlete).ftp_w : 0);
+  // The FTP set in Intervals.icu (Ride) when connected, so the app, Intervals.icu and its zones agree; otherwise the plan's
+  const ftp = () => {
+    const h = obj(hist.data), a = obj(P().athlete);
+    return icuCfg() && isNum(h.ftp) ? h.ftp : isNum(a.ftp_w) ? a.ftp_w : 0;
+  };
 
   // Watts for a step text + zone. Same rules as push-workouts.js, so the app and the Bolt agree.
   function stepWatts(text, zoneId) {
@@ -1688,13 +1771,15 @@
   function forgetIcuWeeks() { icu.cache = {}; lsSet(LS.icuWeeks, null); }
   const icuCfg = () => { const c = obj(lsGet(LS_ICU, null)); return c.key ? c : null; };
 
-  async function icuGet(url) {
+  // url is under /athlete/{id}; root = true for API paths outside it (/activity/{id}/streams). init: method + body for a save
+  async function icuGet(url, init, root) {
     const c = icuCfg();
     if (!c) throw new Error('not connected');
     const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 20000); // bad signal: give up after 20 s
-    const res = await fetch(`https://intervals.icu/api/v1/athlete/${encodeURIComponent(c.athlete || '0')}${url}`, {
-      headers: { Authorization: 'Basic ' + btoa('API_KEY:' + c.key) }, signal: ctl.signal,
-    }).catch((e) => { throw new Error(e.name === 'AbortError' ? 'Intervals.icu is slow to answer' : 'Could not reach Intervals.icu'); })
+    const base = root ? 'https://intervals.icu/api/v1' : `https://intervals.icu/api/v1/athlete/${encodeURIComponent(c.athlete || '0')}`;
+    const res = await fetch(base + url, Object.assign({}, init, {
+      headers: Object.assign({ Authorization: 'Basic ' + btoa('API_KEY:' + c.key) }, init && init.body ? { 'Content-Type': 'application/json' } : {}), signal: ctl.signal,
+    })).catch((e) => { throw new Error(e.name === 'AbortError' ? 'Intervals.icu is slow to answer' : 'Could not reach Intervals.icu'); })
       .finally(() => clearTimeout(t));
     if (res.status === 401 || res.status === 403) throw new Error('Intervals.icu refused the API key');
     if (!res.ok) throw new Error('Intervals.icu answered ' + res.status);
@@ -2385,7 +2470,7 @@
 
   const LS_HIST = 'trainer.history';
   const HIST_FIELDS = 'id,start_date_local,type,name,moving_time,distance,total_elevation_gain,icu_training_load,average_heartrate,icu_average_watts,icu_rolling_ftp,icu_pm_ftp,icu_ftp,icu_zone_times,icu_hr_zone_times';
-  const HIST_V = 4; // bump when the saved history needs new fields
+  const HIST_V = 5; // bump when the saved history needs new fields
   const hist = { data: lsGet(LS_HIST, null), loading: false, error: '' };
 
   // Every activity of the last 10 years and the daily fitness numbers, from Intervals.icu.
@@ -2416,6 +2501,7 @@
             pz: arr(a.icu_zone_times).length ? PZ_IDS.map((id) => obj(arr(a.icu_zone_times).map(obj).find((z) => z.id === id)).secs || 0) : null,
             hz: arr(a.icu_hr_zone_times).length ? arr(a.icu_hr_zone_times).map((v) => (isNum(v) ? v : 0)) : null,
           })),
+          ftp: isNum(sp.ftp) ? sp.ftp : null, sportId: sp.id || null,
           zones: { pNames: arr(sp.power_zone_names), pLim: arr(sp.power_zones), hNames: arr(sp.hr_zone_names), hLim: arr(sp.hr_zones), ssMin: sp.sweet_spot_min, ssMax: sp.sweet_spot_max },
           well: arr(well).map(obj).filter((w) => normDate(txt(w.id)) && isNum(w.ctl)).map((w) => [txt(w.id), r1(w.ctl), r1(w.atl), r1(w.hrv), r1(w.restingHR), isNum(w.sleepSecs) ? w.sleepSecs : null, r1(w.sleepScore), r1(w.readiness)])
             .sort((a, b) => (a[0] < b[0] ? -1 : 1)),
@@ -4002,12 +4088,13 @@
     </div></div>`;
 
     const a = obj(p.athlete);
-    const facts = [['FTP', a.ftp_w, 'W'], ['CP', a.cp_w, 'W'], ['Best 5 min', a.best_5min_w, 'W'], ['Max HR', a.max_hr, 'bpm'], ['Weight', a.weight_kg, 'kg']]
+    const facts = [['FTP', ftp() || null, 'W'], ['CP', a.cp_w, 'W'], ['Best 5 min', a.best_5min_w, 'W'], ['Max HR', a.max_hr, 'bpm'], ['Weight', a.weight_kg, 'kg']]
       .filter(([, v]) => isNum(v));
     if (txt(a.name) || facts.length) {
       html += `<div class="section"><h3>Athlete</h3><div class="card"><dl class="kv">
         ${txt(a.name) ? `<dt>Name</dt><dd>${esc(txt(a.name))}</dd>` : ''}
-        ${facts.map(([k, v, u]) => `<dt>${k}</dt><dd>${esc(num(v))} ${u}</dd>`).join('')}
+        ${facts.map(([k, v, u]) => `<dt>${k}</dt><dd>${k === 'FTP'
+          ? `<a href="#me/ftp">${esc(num(v))} ${u}${icuCfg() && isNum(obj(hist.data).ftp) ? ' · Intervals.icu' : ''} ›</a>` : `${esc(num(v))} ${u}`}</dd>`).join('')}
       </dl></div></div>`;
     }
     html += safe(() => {

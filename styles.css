@@ -1658,3 +1658,11 @@ button.lg-day:active { transform: scale(0.94); }
 /* "You as an athlete" tiles: every label on one line, so all tiles are the same size */
 .ath-tile span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ath-tile b.warn-v { color: #f59e0b; }
+
+/* New FTP / personal best screen (after a ride's stats) */
+.rcel { justify-content: center; }
+.rcel .rc-title { font-size: 32px; background: linear-gradient(180deg, #ffd27a, var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.rcel .acel-stat { width: min(420px, 100%); margin-top: 18px; }
+.rc-ftp .cel-num b { font-size: 52px; color: #fde68a; }
+.rc-pb .cel-ic { background: rgba(250, 204, 21, 0.14); color: #facc15; }
+.rc-msg { min-height: 1.4em; margin-top: 12px; font-size: 13px; font-weight: 650; color: var(--muted); text-align: center; }

@@ -1,9 +1,9 @@
 {
   "version": 1,
-  "updated": "2026-10-09",
+  "updated": "2026-10-16",
   "athlete": {
     "name": "Emile",
-    "ftp_w": 275,
+    "ftp_w": 269,
     "cp_w": null,
     "best_5min_w": null,
     "max_hr": null,
@@ -25,7 +25,7 @@
       "name": "Endurance",
       "power_w": [
         150,
-        205
+        200
       ],
       "hr_bpm": null,
       "feel": "Bulk of your riding. Conversation pace, RPE 3-4. Long-ride target 150-190 W. After 2 h the ceiling drops about 10%, so go by feel."
@@ -34,21 +34,21 @@
       "id": "Z3",
       "name": "Tempo",
       "power_w": [
-        210,
-        245
+        205,
+        240
       ],
       "hr_bpm": null,
-      "feel": "Sustained, controlled breathing, RPE 5-6 (about 80-90% of 275 W)."
+      "feel": "Sustained, controlled breathing, RPE 5-6 (about 76-89% of your FTP of 269 W)."
     },
     {
       "id": "Z4",
       "name": "Threshold and above",
       "power_w": [
-        250,
+        245,
         900
       ],
       "hr_bpm": null,
-      "feel": "From about 250 W up. Threshold and VO2max efforts, coached by cue rather than fixed watts."
+      "feel": "From about 245 W up (91% of FTP and more). Threshold and VO2max efforts."
     }
   ],
   "goals": [
@@ -273,23 +273,91 @@
       "zone": "Z4",
       "purpose": "Ramp test: your real starting FTP. The watts go up 20 W every minute until you cannot hold them. FTP = 75% of your best 1-minute power. That number resets your zones and the 30/15 targets.",
       "steps": [
-        { "min": 12, "zone": "Z2", "target": "Easy warm-up, 150-180 W" },
-        { "min": 1, "zone": "Z2", "target": "Ramp: about 160 W" },
-        { "min": 1, "zone": "Z2", "target": "Ramp: about 180 W" },
-        { "min": 1, "zone": "Z2", "target": "Ramp: about 200 W" },
-        { "min": 1, "zone": "Z3", "target": "Ramp: about 220 W" },
-        { "min": 1, "zone": "Z3", "target": "Ramp: about 240 W" },
-        { "min": 1, "zone": "Z4", "target": "Ramp: about 260 W" },
-        { "min": 1, "zone": "Z4", "target": "Ramp: about 280 W" },
-        { "min": 1, "zone": "Z4", "target": "Ramp: about 300 W" },
-        { "min": 1, "zone": "Z4", "target": "Ramp: about 320 W" },
-        { "min": 1, "zone": "Z4", "target": "Ramp: about 340 W" },
-        { "min": 1, "zone": "Z4", "target": "Ramp: about 360 W" },
-        { "min": 1, "zone": "Z4", "target": "Ramp: about 380 W" },
-        { "min": 1, "zone": "Z4", "target": "Ramp: about 400 W" },
-        { "min": 1, "zone": "Z4", "target": "Ramp: about 420 W" },
-        { "min": 1, "zone": "Z4", "target": "Ramp: about 440 W" },
-        { "min": 1, "zone": "Z4", "target": "Ramp: about 460 W" },
+        {
+          "min": 12,
+          "zone": "Z2",
+          "target": "Easy warm-up, 150-180 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z2",
+          "target": "Ramp: about 160 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z2",
+          "target": "Ramp: about 180 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z2",
+          "target": "Ramp: about 200 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z3",
+          "target": "Ramp: about 220 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z3",
+          "target": "Ramp: about 240 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 260 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 280 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 300 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 320 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 340 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 360 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 380 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 400 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 420 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 440 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 460 W"
+        },
         {
           "min": 12,
           "zone": "Z1",
@@ -416,56 +484,33 @@
       ]
     },
     {
-      "date": "2026-10-15",
+      "date": "2026-10-16",
       "type": "strength",
-      "title": "Kettlebell, 20 min (technique)",
+      "title": "Kettlebell, 20 min",
       "duration_min": 20,
       "zone": "Z1-Z2",
-      "purpose": "Technique first, and measure where you start. The single-leg number tells me how to load the next sessions. Strength helps running economy and late-ride power; it does not raise VO2max.",
+      "purpose": "Strength for durability: helps running economy and late-ride power. Pick any kettlebell video on YouTube of about 20 minutes and follow along.",
       "steps": [
         {
-          "min": 4,
-          "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles, cat-cow"
-        },
-        {
-          "min": 6,
-          "target": "Two-hand swing with the 16 kg bell: 4 sets of 10, rest 45 s. The hips do the work, arms just hang on"
-        },
-        {
-          "min": 6,
-          "target": "Single-leg test: rear-foot split squat, rear foot on a chair, holding the 16 kg bell at your chest. 3 seconds down. Do 1 set per leg and stop when you have about 2 clean reps left. Write down the reps per leg"
-        },
-        {
-          "min": 3,
-          "target": "Slow calf raise, one leg at a time on a step edge: 3 s up, 3 s down, 2 sets of 10 per leg, bodyweight"
-        },
-        {
-          "min": 1,
-          "target": "Plank 2 x 30 s"
+          "min": 20,
+          "target": "Follow a kettlebell video on YouTube, about 20 min"
         }
       ],
-      "cue": "Swings are a hip hinge, not a squat; back flat. Tell me both single-leg numbers in your next check-in. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
+      "cue": "Any video is fine, as long as you can keep good form. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
       "fuel": {
         "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
         "during_carbs_g_per_h": 0,
         "after": "25-40 g protein within 2 hours, ready-made banana milk, milk or yoghurt works."
       },
-      "time": "11:15",
+      "time": "09:00",
       "slots": [
         {
           "label": "First choice",
-          "text": "Right after the ride, before you shower."
+          "text": "Friday morning, after breakfast."
         },
         {
           "label": "Fallback",
-          "text": "Tonight, about 20:00."
-        }
-      ],
-      "checks": [
-        {
-          "id": "2026-10-15-kb-quality",
-          "when": "after",
-          "ask": "Did you stop every set with 1-3 clean reps left?"
+          "text": "Saturday. Otherwise skip it, no make-up."
         }
       ]
     },
@@ -640,8 +685,8 @@
               "repeat": 13,
               "on_s": 30,
               "off_s": 15,
-              "on_target": "your best 5-min power from the 13 Oct test (about 300-330 W until it is measured)",
-              "off_target": "half of the on-power, easy spinning"
+              "on_target": "310-320 W (from your 13 Oct ramp test). Start set 1 at 310 W",
+              "off_target": "about 155 W, easy spinning"
             }
           ]
         },
@@ -699,33 +744,17 @@
     {
       "date": "2026-10-20",
       "type": "strength",
-      "title": "Kettlebell, 27 min (build)",
+      "title": "Kettlebell, 27 min",
       "duration_min": 27,
       "zone": "Z1-Z2",
-      "purpose": "Build strength with the 16 kg bell using one-leg work, tempo and pauses instead of more weight. One leg at a time makes a light bell feel heavy and trains the same muscles you use on the bike and in running.",
+      "purpose": "Strength for durability: helps running economy and late-ride power. Pick any kettlebell video on YouTube of about 27 minutes and follow along.",
       "steps": [
         {
-          "min": 5,
-          "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles, cat-cow"
-        },
-        {
-          "min": 6,
-          "target": "Two-hand swing 16 kg: 4 sets of 10, rest 45 s"
-        },
-        {
-          "min": 8,
-          "target": "Rear-foot split squat holding the bell at your chest: 3 sets per leg, 3 s lowering. Use your test reps from 15 Oct minus 2 per set"
-        },
-        {
-          "min": 5,
-          "target": "Single-leg Romanian deadlift with the 16 kg bell: 3 sets of 8 per leg, slow"
-        },
-        {
-          "min": 3,
-          "target": "Slow calf raise, one leg, holding the bell in the same-side hand: 3 sets of 12 per leg (3 s up, 3 s down). Finish with plank 2 x 30 s"
+          "min": 27,
+          "target": "Follow a kettlebell video on YouTube, about 27 min"
         }
       ],
-      "cue": "Stop every set with 1-3 clean reps left. When all sets feel clean with 3 reps left, add 1-2 reps next time before anything else. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
+      "cue": "Any video is fine, as long as you can keep good form. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
       "fuel": {
         "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
         "during_carbs_g_per_h": 0,
@@ -741,13 +770,6 @@
           "label": "Fallback",
           "text": "Tonight, about 20:00."
         }
-      ],
-      "checks": [
-        {
-          "id": "2026-10-20-kb-quality",
-          "when": "after",
-          "ask": "Did you stop every set with 1-3 clean reps left?"
-        }
       ]
     },
     {
@@ -756,9 +778,9 @@
       "title": "Rest day",
       "duration_min": 0,
       "zone": "Off",
-      "purpose": "Rest before the school trip.",
+      "purpose": "Wednesday is always a rest day.",
       "steps": [],
-      "cue": "Nothing to do. Pack and sleep well.",
+      "cue": "Nothing to do. Sleep well: tomorrow is a 2-hour morning ride.",
       "fuel": {
         "before": "Normal meals.",
         "during_carbs_g_per_h": 0,
@@ -767,33 +789,148 @@
     },
     {
       "date": "2026-10-22",
-      "type": "rest",
-      "title": "School trip, no training",
-      "duration_min": 0,
-      "zone": "Off",
-      "purpose": "School trip: this is a free day. No make-up session, the fixed days stay the same.",
-      "steps": [],
-      "cue": "Walk as much as you like. No extra training to catch up.",
+      "type": "easy",
+      "title": "Z2 base ride, 2 h",
+      "duration_min": 120,
+      "zone": "Z2",
+      "purpose": "Back to a normal week. Thursday is the long-ride day: 90 min last week, 2 h now, 2.5 h next week.",
+      "steps": [
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Ease in, under 150 W, RPE 2, chat pace"
+        },
+        {
+          "min": 100,
+          "zone": "Z2",
+          "target": "150-190 W, RPE 3-4, steady, cadence 85-95"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Cool-down, easy spinning"
+        }
+      ],
+      "cue": "Boring is right. If power creeps above 190 W, ease off. Legs heavy or the calf above 4? Stop at 90 min, that is fine. Rate your left calf 0-10 afterwards.",
       "fuel": {
-        "before": "Normal meals.",
+        "before": "Eat breakfast about 2 hours before (see meals). Then 30-45 min before the start: 1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach. Don't ride on an empty stomach.",
+        "during_carbs_g_per_h": 40,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs (see meals). Ready-made banana milk or a glass of milk is a good first drink."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr, finished before class (class starts 13:45)."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight after class, about 19:00, shortened to 75 min. Eat a snack at school first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-22-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-ride fuel? (1 banana + 1 slice of bread with Nutella, or a gel with water. Don't ride on an empty stomach)"
+        },
+        {
+          "id": "2026-10-22-fuel-during",
+          "when": "after",
+          "ask": "Did you take the planned fuel during the session? (1 bottle (500 ml) of isotonic drink per hour (about 30 g carbs), plus a banana in the second hour)"
+        },
+        {
+          "id": "2026-10-22-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "type": "strength",
+      "title": "Kettlebell, 20 min",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "Strength for durability: helps running economy and late-ride power. Pick any kettlebell video on YouTube of about 20 minutes and follow along.",
+      "steps": [
+        {
+          "min": 20,
+          "target": "Follow a kettlebell video on YouTube, about 20 min"
+        }
+      ],
+      "cue": "Any video is fine, as long as you can keep good form. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
+      "fuel": {
+        "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
         "during_carbs_g_per_h": 0,
-        "after": "Protein at every meal, plenty of vegetables."
-      }
+        "after": "25-40 g protein within 2 hours, ready-made banana milk, milk or yoghurt works."
+      },
+      "time": "20:00",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Thursday evening after class, about 20:00."
+        },
+        {
+          "label": "Fallback",
+          "text": "Skip it, no make-up."
+        }
+      ]
     },
     {
       "date": "2026-10-23",
-      "type": "rest",
-      "title": "School trip, no training",
-      "duration_min": 0,
-      "zone": "Off",
-      "purpose": "School trip. No swim this Friday, no make-up.",
-      "steps": [],
-      "cue": "Eat regular meals and sleep when you can.",
+      "type": "swim",
+      "title": "Swim, 30 min (technique)",
+      "duration_min": 30,
+      "zone": "Z1-Z2",
+      "purpose": "Second swim: technique and comfort, not speed.",
+      "steps": [
+        {
+          "min": 6,
+          "target": "Warm-up: 200 m easy, any stroke you like"
+        },
+        {
+          "min": 8,
+          "target": "Drills: 4 x 50 m, 15 s rest. Kick on your side, then catch-up crawl"
+        },
+        {
+          "min": 12,
+          "target": "Main: 4 x 100 m crawl, 30 s rest. Breathe every 3 strokes, count your strokes"
+        },
+        {
+          "min": 4,
+          "target": "Cool-down: 100 m easy"
+        }
+      ],
+      "cue": "Never go hard. If you get tired, rest 30 more seconds. The coach you may get later will build on this.",
       "fuel": {
-        "before": "Normal meals.",
+        "before": "Banana + bread with Nutella (or a bar) 60-90 min before the pool.",
         "during_carbs_g_per_h": 0,
-        "after": "Protein at every meal, plenty of vegetables."
-      }
+        "after": "Dinner at home with protein and carbs within 2 hours."
+      },
+      "time": "19:00",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Friday evening at the pool in Bornem. Only the order matters: snack first, dinner after."
+        },
+        {
+          "label": "Fallback",
+          "text": "Skip it. No make-up."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-10-23-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-swim snack 60-90 min before? (banana + bread with Nutella, or a bar)"
+        }
+      ]
     },
     {
       "date": "2026-10-24",
@@ -915,7 +1052,7 @@
             {
               "min": 4,
               "zone": "Z4",
-              "target": "First 2 min hard, then settle at what you can hold. Watts will come from the 13 Oct test (about 290-310 W until measured). RPE 8-9"
+              "target": "First 2 min about 320 W, then settle at 290-300 W. RPE 8-9"
             }
           ]
         },
@@ -968,33 +1105,17 @@
     {
       "date": "2026-10-27",
       "type": "strength",
-      "title": "Kettlebell, 27 min (build)",
+      "title": "Kettlebell, 27 min",
       "duration_min": 27,
       "zone": "Z1-Z2",
-      "purpose": "Progress the one-leg strength with one more set and a pause. Strength work is placed after the ride, so the hard bike work stays fresh.",
+      "purpose": "Strength for durability: helps running economy and late-ride power. Pick any kettlebell video on YouTube of about 27 minutes and follow along.",
       "steps": [
         {
-          "min": 5,
-          "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles, cat-cow"
-        },
-        {
-          "min": 6,
-          "target": "Two-hand swing 16 kg: 5 sets of 10, rest 45 s"
-        },
-        {
-          "min": 8,
-          "target": "Rear-foot split squat with the bell: 4 sets per leg, 3 s lowering, 1 s pause at the bottom. Reps as on 20 Oct, plus 1-2 if all sets were clean"
-        },
-        {
-          "min": 5,
-          "target": "Single-leg Romanian deadlift 16 kg: 3 sets of 8-10 per leg, slow"
-        },
-        {
-          "min": 3,
-          "target": "Slow calf raise, one leg, holding the bell: 3 sets of 12 per leg (3 s up, 3 s down, 1 s pause at the top). Finish with plank 2 x 40 s"
+          "min": 27,
+          "target": "Follow a kettlebell video on YouTube, about 27 min"
         }
       ],
-      "cue": "Stop every set with 1-3 clean reps left. Technique over numbers. A heavy leg day before a hard ride is the one thing to avoid; today it comes after the intervals. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
+      "cue": "Any video is fine, as long as you can keep good form. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
       "fuel": {
         "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
         "during_carbs_g_per_h": 0,
@@ -1009,13 +1130,6 @@
         {
           "label": "Fallback",
           "text": "Tonight, about 20:00."
-        }
-      ],
-      "checks": [
-        {
-          "id": "2026-10-27-kb-quality",
-          "when": "after",
-          "ask": "Did you stop every set with 1-3 clean reps left?"
         }
       ]
     },
@@ -1117,29 +1231,17 @@
     {
       "date": "2026-10-29",
       "type": "strength",
-      "title": "Kettlebell, 20 min (light)",
+      "title": "Kettlebell, 20 min",
       "duration_min": 20,
       "zone": "Z1-Z2",
-      "purpose": "Keep the habit and the strength on a light or recovery week without adding fatigue before the next key session.",
+      "purpose": "Strength for durability: helps running economy and late-ride power. Pick any kettlebell video on YouTube of about 20 minutes and follow along.",
       "steps": [
         {
-          "min": 5,
-          "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles"
-        },
-        {
-          "min": 5,
-          "target": "Two-hand swing 16 kg: 3 sets of 10, rest 45 s"
-        },
-        {
-          "min": 6,
-          "target": "Rear-foot split squat with the bell: 2 sets per leg, easy, 3 s lowering"
-        },
-        {
-          "min": 4,
-          "target": "Slow calf raise, one leg: 2 sets of 12 per leg. Then plank 2 x 30 s"
+          "min": 20,
+          "target": "Follow a kettlebell video on YouTube, about 20 min"
         }
       ],
-      "cue": "Easy day for the body. If your legs are heavy, do the warm-up, calf raises and plank only. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
+      "cue": "Any video is fine, as long as you can keep good form. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
       "fuel": {
         "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
         "during_carbs_g_per_h": 0,
@@ -1154,13 +1256,6 @@
         {
           "label": "Fallback",
           "text": "Skip it. No make-up."
-        }
-      ],
-      "checks": [
-        {
-          "id": "2026-10-29-kb-quality",
-          "when": "after",
-          "ask": "Did you stop every set with 1-3 clean reps left?"
         }
       ]
     },
@@ -1365,29 +1460,17 @@
     {
       "date": "2026-11-03",
       "type": "strength",
-      "title": "Kettlebell, 20 min (light)",
+      "title": "Kettlebell, 20 min",
       "duration_min": 20,
       "zone": "Z1-Z2",
-      "purpose": "Keep the habit and the strength on a light or recovery week without adding fatigue before the next key session.",
+      "purpose": "Strength for durability: helps running economy and late-ride power. Pick any kettlebell video on YouTube of about 20 minutes and follow along.",
       "steps": [
         {
-          "min": 5,
-          "target": "Warm-up: hip-hinge drill, glute bridge 10, arm circles"
-        },
-        {
-          "min": 5,
-          "target": "Two-hand swing 16 kg: 3 sets of 10, rest 45 s"
-        },
-        {
-          "min": 6,
-          "target": "Rear-foot split squat with the bell: 2 sets per leg, easy, 3 s lowering"
-        },
-        {
-          "min": 4,
-          "target": "Slow calf raise, one leg: 2 sets of 12 per leg. Then plank 2 x 30 s"
+          "min": 20,
+          "target": "Follow a kettlebell video on YouTube, about 20 min"
         }
       ],
-      "cue": "Easy day for the body. If your legs are heavy, do the warm-up, calf raises and plank only. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
+      "cue": "Any video is fine, as long as you can keep good form. Calf rule: rate 0-10; above 4 or a changed gait = stop the calf work.",
       "fuel": {
         "before": "A small carb snack 1-2 hours before (banana or a slice of bread).",
         "during_carbs_g_per_h": 0,
@@ -1402,13 +1485,6 @@
         {
           "label": "Fallback",
           "text": "Tonight, about 20:00."
-        }
-      ],
-      "checks": [
-        {
-          "id": "2026-11-03-kb-quality",
-          "when": "after",
-          "ask": "Did you stop every set with 1-3 clean reps left?"
         }
       ]
     },
@@ -1431,53 +1507,102 @@
       "date": "2026-11-05",
       "type": "benchmark_test",
       "title": "FTP test #2",
-      "duration_min": 75,
+      "duration_min": 40,
       "zone": "Z4",
-      "purpose": "See what a month of base work did to your FTP and 5-min power.",
+      "purpose": "Ramp test, the same as on 13 Oct, so the two results compare. FTP = 75% of your best 1-minute power. Your zones and interval watts follow from it.",
       "steps": [
         {
-          "min": 15,
+          "min": 12,
           "zone": "Z2",
-          "target": "Easy warm-up, 150-190 W"
+          "target": "Easy warm-up, 150-180 W"
         },
         {
-          "repeat": 3,
-          "rest_between_min": 1,
-          "steps": [
-            {
-              "min": 1,
-              "zone": "Z4",
-              "target": "Build to about 300 W"
-            }
-          ]
+          "min": 1,
+          "zone": "Z2",
+          "target": "Ramp: about 160 W"
         },
         {
-          "min": 5,
-          "zone": "Z1",
-          "target": "Easy spin"
+          "min": 1,
+          "zone": "Z2",
+          "target": "Ramp: about 180 W"
         },
         {
-          "min": 5,
+          "min": 1,
+          "zone": "Z2",
+          "target": "Ramp: about 200 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z3",
+          "target": "Ramp: about 220 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z3",
+          "target": "Ramp: about 240 W"
+        },
+        {
+          "min": 1,
           "zone": "Z4",
-          "target": "5-minute max: start controlled, hold an even pace, empty in the last 30 seconds. Write down the average power"
+          "target": "Ramp: about 260 W"
         },
         {
-          "min": 10,
-          "zone": "Z1",
-          "target": "Easy spin, recover fully"
-        },
-        {
-          "min": 20,
+          "min": 1,
           "zone": "Z4",
-          "target": "20-minute max, even pace. Average power x 0.95 = your FTP. Write it down"
+          "target": "Ramp: about 280 W"
         },
         {
-          "min": 15,
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 300 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 320 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 340 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 360 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 380 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 400 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 420 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 440 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 460 W"
+        },
+        {
+          "min": 12,
           "zone": "Z1",
           "target": "Cool-down, easy spinning"
         }
       ],
-      "cue": "Same protocol and setup as 13 October: Kickr, same time of day, same breakfast. Slept badly or ill? Move it by a day.",
+      "cue": "Same setup as 13 Oct: Kickr in ERG mode, same time of day, same breakfast. Stay seated, cadence 90+. The test ends when your cadence drops and you cannot hold the watts: go to the cool-down. Slept badly or ill? Move it by a day (never to Wednesday).",
       "fuel": {
         "before": "Eat breakfast about 2 hours before (see meals). Then 30-45 min before the start: 1 banana or a gel with water Don't ride on an empty stomach.",
         "during_carbs_g_per_h": 40,
@@ -2053,31 +2178,67 @@
       },
       {
         "date": "2026-10-22",
-        "day_type": "rest",
+        "day_type": "easy",
         "items": [
           {
-            "id": "2026-10-22-away",
-            "time": "12:00",
-            "meal": "Away from home",
-            "text": "eat three real meals with protein; bring bananas, biscuits and bread with Nutella as emergency fuel"
+            "id": "2026-10-22-breakfast",
+            "time": "07:15",
+            "meal": "Breakfast",
+            "text": "250 g yoghurt with 60 g chocolate cruesli and 1 banana, 2 slices of bread with cheese"
+          },
+          {
+            "id": "2026-10-22-recovery",
+            "time": "11:40",
+            "meal": "Recovery snack",
+            "text": "1 glass of milk or ready-made banana milk and 1 sandwich with cold cuts"
+          },
+          {
+            "id": "2026-10-22-lunch",
+            "time": "12:30",
+            "meal": "Lunch",
+            "text": "100 g (dry) pasta with tuna, tomato sauce and broccoli"
+          },
+          {
+            "id": "2026-10-22-snack",
+            "time": "15:45",
+            "meal": "Snack (take it to school)",
+            "text": "1 sandwich with Nutella and a glass of milk"
+          },
+          {
+            "id": "2026-10-22-dinner",
+            "time": "19:00",
+            "meal": "Dinner",
+            "text": "400 g potatoes, 150 g chicken and vegetables"
           }
         ]
       },
       {
         "date": "2026-10-23",
-        "day_type": "rest",
+        "day_type": "easy",
         "items": [
           {
-            "id": "2026-10-23-home",
-            "time": "12:00",
-            "meal": "Meals at home (family cooks)",
-            "text": "protein at every meal (a palm-sized portion of chicken, meat, fish or eggs), a normal portion of pasta, potatoes or rice, and a big portion of vegetables"
+            "id": "2026-10-23-breakfast",
+            "time": "08:00",
+            "meal": "Breakfast",
+            "text": "3 slices of bread with 2 fried eggs and cheese, 1 glass of milk"
           },
           {
-            "id": "2026-10-23-snacks",
-            "time": "16:00",
-            "meal": "Snacks",
-            "text": "yoghurt, an apple or banana, bread with Nutella"
+            "id": "2026-10-23-lunch",
+            "time": "13:15",
+            "meal": "Lunch (on the way home)",
+            "text": "2 sandwiches with chicken or cold cuts and a banana"
+          },
+          {
+            "id": "2026-10-23-snack",
+            "time": "16:30",
+            "meal": "Snack",
+            "text": "yoghurt or a glass of milk"
+          },
+          {
+            "id": "2026-10-23-dinner",
+            "time": "20:30",
+            "meal": "Dinner (after the swim, at home)",
+            "text": "a palm-sized portion of protein and a big carb portion, plus vegetables"
           }
         ]
       },
