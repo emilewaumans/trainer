@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-16",
+  "updated": "2026-11-25",
   "athlete": {
     "name": "Emile",
     "ftp_w": 269,
@@ -69,8 +69,8 @@
     {
       "id": "g3",
       "title": "FTP test #2",
-      "date": "2026-11-05",
-      "metric": "Compare FTP and 5-min power with the 13 Oct baseline",
+      "date": "2026-12-08",
+      "metric": "New starting point: resets zones and interval watts",
       "status": "active"
     },
     {
@@ -89,18 +89,18 @@
     },
     {
       "id": "g6",
-      "title": "Bike ultra (date to be confirmed)",
+      "title": "Backyard ultra (date to be confirmed)",
       "date": "2027-09-18",
       "metric": "Goal: win. Placeholder date: the real date will replace it",
       "status": "active"
     }
   ],
   "block": {
-    "name": "Base 1",
-    "start": "2026-10-12",
-    "weeks": 4,
-    "focus": "restart and routine, baseline FTP, running and swim technique, kettlebell habit",
-    "light_week": 4
+    "name": "Restart + Base",
+    "start": "2026-11-23",
+    "weeks": 6,
+    "focus": "get the routine back, then endurance and first intervals",
+    "light_week": 6
   },
   "workouts": [
     {
@@ -1261,6 +1261,21 @@
     },
     {
       "date": "2026-10-30",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "Off",
+      "purpose": "Rest: the swim moved to Saturday.",
+      "steps": [],
+      "cue": "Nothing to do.",
+      "fuel": {
+        "before": "Normal meals.",
+        "during_carbs_g_per_h": 0,
+        "after": "Protein at every meal, plenty of vegetables."
+      }
+    },
+    {
+      "date": "2026-10-31",
       "type": "swim",
       "title": "Swim, 35 min (technique)",
       "duration_min": 35,
@@ -1294,7 +1309,7 @@
       "slots": [
         {
           "label": "First choice",
-          "text": "Friday evening at the pool in Bornem. Only the order matters: snack first, dinner after."
+          "text": "Saturday at the pool in Bornem. Only the order matters: snack first, dinner after."
         },
         {
           "label": "Fallback",
@@ -1303,31 +1318,16 @@
       ],
       "checks": [
         {
-          "id": "2026-10-30-fuel-before",
+          "id": "2026-10-31-fuel-before",
           "when": "before",
           "ask": "Did you eat your pre-swim snack 60-90 min before? (banana + bread with Nutella, or a bar)"
         },
         {
-          "id": "2026-10-30-times",
+          "id": "2026-10-31-times",
           "when": "after",
           "ask": "Did you write down your 200 m and 400 m times? (send them to me)"
         }
       ]
-    },
-    {
-      "date": "2026-10-31",
-      "type": "rest",
-      "title": "Rest day",
-      "duration_min": 0,
-      "zone": "Off",
-      "purpose": "Rest before the Sunday run.",
-      "steps": [],
-      "cue": "Nothing to do.",
-      "fuel": {
-        "before": "Normal meals.",
-        "during_carbs_g_per_h": 0,
-        "after": "Protein at every meal, plenty of vegetables."
-      }
     },
     {
       "date": "2026-11-01",
@@ -1751,6 +1751,1914 @@
       "checks": [
         {
           "id": "2026-11-08-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-11-23",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-11-24",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-11-25",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-11-26",
+      "type": "easy",
+      "title": "Restart ride, 60 min easy",
+      "duration_min": 60,
+      "zone": "Z2",
+      "purpose": "Get the routine back.",
+      "steps": [
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Ease in, under 150 W"
+        },
+        {
+          "min": 40,
+          "zone": "Z2",
+          "target": "150-190 W, RPE 3-4, you can talk, cadence 85-95"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Cool-down, easy spinning"
+        }
+      ],
+      "cue": "Stay at 150-190 W even when you feel great. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Eat a carb meal about 2 hours before, or at least a banana or two slices of bread. Never ride empty.",
+        "during_carbs_g_per_h": 0,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr."
+        },
+        {
+          "label": "Fallback",
+          "text": "Same day about 19:00, on the Kickr. Eat a snack first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-11-26-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-session fuel?"
+        },
+        {
+          "id": "2026-11-26-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-11-26",
+      "type": "strength",
+      "title": "Kettlebell, 20 min",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "Strength for durability. Pick any kettlebell video of about 20 minutes and follow along.",
+      "steps": [
+        {
+          "min": 20,
+          "target": "Follow a kettlebell video, about 20 min"
+        }
+      ],
+      "cue": "Good form first. Stop each set with 1-3 clean reps left.",
+      "fuel": {
+        "before": "A small carb snack 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "25-40 g protein within 2 hours."
+      },
+      "time": "11:15",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Right after the ride."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight, about 20:00. Otherwise skip it."
+        }
+      ],
+      "checks": []
+    },
+    {
+      "date": "2026-11-27",
+      "type": "swim",
+      "title": "Swim, 20 min easy",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "One swim a week to keep and slowly build skill.",
+      "steps": [
+        {
+          "min": 5,
+          "target": "Warm-up: easy swimming"
+        },
+        {
+          "min": 6,
+          "target": "Drills: 4 x 50 m, 15 s rest (kick on your side, catch-up, count strokes)"
+        },
+        {
+          "min": 5,
+          "target": "Main: 100 m repeats, steady and even, 20 s rest"
+        },
+        {
+          "min": 4,
+          "target": "Cool-down: easy"
+        }
+      ],
+      "cue": "Long, relaxed strokes. Log it with your watch.",
+      "fuel": {
+        "before": "A snack 60-90 min before.",
+        "during_carbs_g_per_h": 0,
+        "after": "Dinner with protein and carbs."
+      },
+      "time": "19:00",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Friday evening at the pool."
+        },
+        {
+          "label": "Fallback",
+          "text": "Skip it. No make-up."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-11-27-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-session fuel?"
+        }
+      ]
+    },
+    {
+      "date": "2026-11-28",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-11-29",
+      "type": "run",
+      "title": "Easy run, 20 min",
+      "duration_min": 30,
+      "zone": "Z2",
+      "purpose": "Rebuild running slowly: calves and tendons adapt slower than fitness.",
+      "steps": [
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Brisk walk to warm up"
+        },
+        {
+          "min": 20,
+          "zone": "Z2",
+          "target": "Easy run, RPE 3-4, talk in full sentences. Walk breaks allowed"
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Walk and stretch calves and hips"
+        }
+      ],
+      "cue": "Easy enough to repeat tomorrow. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Breakfast 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "A meal with protein and carbs."
+      },
+      "time": "10:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Sunday about 10:30, in daylight."
+        },
+        {
+          "label": "Fallback",
+          "text": "About 15:00, in daylight, or walk 30 min."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-11-29-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-11-30",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-12-01",
+      "type": "easy",
+      "title": "Z2 ride, 60 min",
+      "duration_min": 60,
+      "zone": "Z2",
+      "purpose": "Easy aerobic work, no intensity yet.",
+      "steps": [
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Ease in, under 150 W"
+        },
+        {
+          "min": 40,
+          "zone": "Z2",
+          "target": "150-190 W, RPE 3-4, you can talk, cadence 85-95"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Cool-down, easy spinning"
+        }
+      ],
+      "cue": "Stay at 150-190 W even when you feel great. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Eat a carb meal about 2 hours before, or at least a banana or two slices of bread. Never ride empty.",
+        "during_carbs_g_per_h": 0,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr."
+        },
+        {
+          "label": "Fallback",
+          "text": "Same day about 19:00, on the Kickr. Eat a snack first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-01-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-session fuel?"
+        },
+        {
+          "id": "2026-12-01-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-12-01",
+      "type": "strength",
+      "title": "Kettlebell, 20 min",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "Strength for durability. Pick any kettlebell video of about 20 minutes and follow along.",
+      "steps": [
+        {
+          "min": 20,
+          "target": "Follow a kettlebell video, about 20 min"
+        }
+      ],
+      "cue": "Good form first. Stop each set with 1-3 clean reps left.",
+      "fuel": {
+        "before": "A small carb snack 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "25-40 g protein within 2 hours."
+      },
+      "time": "11:15",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Right after the ride."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight, about 20:00. Otherwise skip it."
+        }
+      ],
+      "checks": []
+    },
+    {
+      "date": "2026-12-02",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-12-03",
+      "type": "easy",
+      "title": "Z2 ride, 75 min",
+      "duration_min": 75,
+      "zone": "Z2",
+      "purpose": "Longer easy ride.",
+      "steps": [
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Ease in, under 150 W"
+        },
+        {
+          "min": 55,
+          "zone": "Z2",
+          "target": "150-190 W, RPE 3-4, you can talk, cadence 85-95"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Cool-down, easy spinning"
+        }
+      ],
+      "cue": "Stay at 150-190 W even when you feel great. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Eat a carb meal about 2 hours before, or at least a banana or two slices of bread. Never ride empty.",
+        "during_carbs_g_per_h": 0,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr."
+        },
+        {
+          "label": "Fallback",
+          "text": "Same day about 19:00, on the Kickr. Eat a snack first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-03-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-session fuel?"
+        },
+        {
+          "id": "2026-12-03-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-12-03",
+      "type": "strength",
+      "title": "Kettlebell, 20 min",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "Strength for durability. Pick any kettlebell video of about 20 minutes and follow along.",
+      "steps": [
+        {
+          "min": 20,
+          "target": "Follow a kettlebell video, about 20 min"
+        }
+      ],
+      "cue": "Good form first. Stop each set with 1-3 clean reps left.",
+      "fuel": {
+        "before": "A small carb snack 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "25-40 g protein within 2 hours."
+      },
+      "time": "11:15",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Right after the ride."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight, about 20:00. Otherwise skip it."
+        }
+      ],
+      "checks": []
+    },
+    {
+      "date": "2026-12-04",
+      "type": "swim",
+      "title": "Swim, 25 min technique",
+      "duration_min": 25,
+      "zone": "Z1-Z2",
+      "purpose": "One swim a week to keep and slowly build skill.",
+      "steps": [
+        {
+          "min": 5,
+          "target": "Warm-up: easy swimming"
+        },
+        {
+          "min": 6,
+          "target": "Drills: 4 x 50 m, 15 s rest (kick on your side, catch-up, count strokes)"
+        },
+        {
+          "min": 10,
+          "target": "Main: 100 m repeats, steady and even, 20 s rest"
+        },
+        {
+          "min": 4,
+          "target": "Cool-down: easy"
+        }
+      ],
+      "cue": "Long, relaxed strokes. Log it with your watch.",
+      "fuel": {
+        "before": "A snack 60-90 min before.",
+        "during_carbs_g_per_h": 0,
+        "after": "Dinner with protein and carbs."
+      },
+      "time": "19:00",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Friday evening at the pool."
+        },
+        {
+          "label": "Fallback",
+          "text": "Skip it. No make-up."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-04-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-session fuel?"
+        }
+      ]
+    },
+    {
+      "date": "2026-12-05",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-12-06",
+      "type": "run",
+      "title": "Easy run, 25 min",
+      "duration_min": 35,
+      "zone": "Z2",
+      "purpose": "Rebuild running slowly: calves and tendons adapt slower than fitness.",
+      "steps": [
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Brisk walk to warm up"
+        },
+        {
+          "min": 25,
+          "zone": "Z2",
+          "target": "Easy run, RPE 3-4, talk in full sentences. Walk breaks allowed"
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Walk and stretch calves and hips"
+        }
+      ],
+      "cue": "Easy enough to repeat tomorrow. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Breakfast 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "A meal with protein and carbs."
+      },
+      "time": "10:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Sunday about 10:30, in daylight."
+        },
+        {
+          "label": "Fallback",
+          "text": "About 15:00, in daylight, or walk 30 min."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-06-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-12-07",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-12-08",
+      "type": "benchmark_test",
+      "title": "FTP test #2",
+      "duration_min": 40,
+      "zone": "Z4",
+      "purpose": "Ramp test, the same as on 13 Oct, so the two results compare. FTP = 75% of your best 1-minute power. Your zones and interval watts follow from it.",
+      "steps": [
+        {
+          "min": 12,
+          "zone": "Z2",
+          "target": "Easy warm-up, 150-180 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z2",
+          "target": "Ramp: about 160 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z2",
+          "target": "Ramp: about 180 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z2",
+          "target": "Ramp: about 200 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z3",
+          "target": "Ramp: about 220 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z3",
+          "target": "Ramp: about 240 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 260 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 280 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 300 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 320 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 340 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 360 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 380 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 400 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 420 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 440 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 460 W"
+        },
+        {
+          "min": 12,
+          "zone": "Z1",
+          "target": "Cool-down, easy spinning"
+        }
+      ],
+      "cue": "Same setup as 13 Oct: Kickr in ERG mode, cadence 90+. Stop when you cannot hold the watts, then cool down. Slept badly or feel ill? Move it to Thursday and ride easy instead. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Eat a carb meal about 2 hours before, or at least a banana or two slices of bread. Never ride empty.",
+        "during_carbs_g_per_h": 40,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr."
+        },
+        {
+          "label": "Fallback",
+          "text": "Same day about 19:00, on the Kickr. Eat a snack first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-08-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-session fuel?"
+        },
+        {
+          "id": "2026-12-08-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-12-08",
+      "type": "strength",
+      "title": "Kettlebell, 20 min",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "Strength for durability. Pick any kettlebell video of about 20 minutes and follow along.",
+      "steps": [
+        {
+          "min": 20,
+          "target": "Follow a kettlebell video, about 20 min"
+        }
+      ],
+      "cue": "Good form first. Stop each set with 1-3 clean reps left.",
+      "fuel": {
+        "before": "A small carb snack 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "25-40 g protein within 2 hours."
+      },
+      "time": "11:15",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Right after the ride."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight, about 20:00. Otherwise skip it."
+        }
+      ],
+      "checks": []
+    },
+    {
+      "date": "2026-12-09",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-12-10",
+      "type": "easy",
+      "title": "Z2 ride, 90 min",
+      "duration_min": 90,
+      "zone": "Z2",
+      "purpose": "Build endurance.",
+      "steps": [
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Ease in, under 150 W"
+        },
+        {
+          "min": 70,
+          "zone": "Z2",
+          "target": "150-190 W, RPE 3-4, you can talk, cadence 85-95"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Cool-down, easy spinning"
+        }
+      ],
+      "cue": "Stay at 150-190 W even when you feel great. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Eat a carb meal about 2 hours before, or at least a banana or two slices of bread. Never ride empty.",
+        "during_carbs_g_per_h": 50,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr."
+        },
+        {
+          "label": "Fallback",
+          "text": "Same day about 19:00, on the Kickr. Eat a snack first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-10-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-session fuel?"
+        },
+        {
+          "id": "2026-12-10-fuel-during",
+          "when": "after",
+          "ask": "Did you take the planned fuel during the session?"
+        },
+        {
+          "id": "2026-12-10-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-12-10",
+      "type": "strength",
+      "title": "Kettlebell, 20 min",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "Strength for durability. Pick any kettlebell video of about 20 minutes and follow along.",
+      "steps": [
+        {
+          "min": 20,
+          "target": "Follow a kettlebell video, about 20 min"
+        }
+      ],
+      "cue": "Good form first. Stop each set with 1-3 clean reps left.",
+      "fuel": {
+        "before": "A small carb snack 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "25-40 g protein within 2 hours."
+      },
+      "time": "11:15",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Right after the ride."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight, about 20:00. Otherwise skip it."
+        }
+      ],
+      "checks": []
+    },
+    {
+      "date": "2026-12-11",
+      "type": "swim",
+      "title": "Swim, 30 min technique",
+      "duration_min": 30,
+      "zone": "Z1-Z2",
+      "purpose": "One swim a week to keep and slowly build skill.",
+      "steps": [
+        {
+          "min": 5,
+          "target": "Warm-up: easy swimming"
+        },
+        {
+          "min": 6,
+          "target": "Drills: 4 x 50 m, 15 s rest (kick on your side, catch-up, count strokes)"
+        },
+        {
+          "min": 15,
+          "target": "Main: 100 m repeats, steady and even, 20 s rest"
+        },
+        {
+          "min": 4,
+          "target": "Cool-down: easy"
+        }
+      ],
+      "cue": "Long, relaxed strokes. Log it with your watch.",
+      "fuel": {
+        "before": "A snack 60-90 min before.",
+        "during_carbs_g_per_h": 0,
+        "after": "Dinner with protein and carbs."
+      },
+      "time": "19:00",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Friday evening at the pool."
+        },
+        {
+          "label": "Fallback",
+          "text": "Skip it. No make-up."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-11-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-session fuel?"
+        }
+      ]
+    },
+    {
+      "date": "2026-12-12",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-12-13",
+      "type": "run",
+      "title": "Easy run, 30 min",
+      "duration_min": 40,
+      "zone": "Z2",
+      "purpose": "Rebuild running slowly: calves and tendons adapt slower than fitness.",
+      "steps": [
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Brisk walk to warm up"
+        },
+        {
+          "min": 30,
+          "zone": "Z2",
+          "target": "Easy run, RPE 3-4, talk in full sentences. Walk breaks allowed"
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Walk and stretch calves and hips"
+        }
+      ],
+      "cue": "Easy enough to repeat tomorrow. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Breakfast 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "A meal with protein and carbs."
+      },
+      "time": "10:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Sunday about 10:30, in daylight."
+        },
+        {
+          "label": "Fallback",
+          "text": "About 15:00, in daylight, or walk 30 min."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-13-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-12-14",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-12-15",
+      "type": "vo2_intervals",
+      "title": "30/15s, 2 sets",
+      "duration_min": 68,
+      "zone": "Z4",
+      "purpose": "Time near VO2max.",
+      "steps": [
+        {
+          "min": 20,
+          "zone": "Z2",
+          "target": "Warm-up, build gradually from 150 to 200 W"
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Easy spin"
+        },
+        {
+          "repeat": 2,
+          "rest_between_min": 3,
+          "steps": [
+            {
+              "repeat": 13,
+              "on_s": 30,
+              "off_s": 15,
+              "on_target": "300-320 W (reset from your 8 Dec test)",
+              "off_target": "about 150 W, easy spinning"
+            }
+          ]
+        },
+        {
+          "min": 10,
+          "zone": "Z2",
+          "target": "Easy, 150-180 W"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Cool-down"
+        }
+      ],
+      "cue": "Rep 1 on target, middle on feel, finish strong. More than 10% under target: end the set. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Eat a carb meal about 2 hours before, or at least a banana or two slices of bread. Never ride empty.",
+        "during_carbs_g_per_h": 40,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr."
+        },
+        {
+          "label": "Fallback",
+          "text": "Same day about 19:00, on the Kickr. Eat a snack first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-15-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-session fuel?"
+        },
+        {
+          "id": "2026-12-15-fuel-during",
+          "when": "after",
+          "ask": "Did you take the planned fuel during the session?"
+        },
+        {
+          "id": "2026-12-15-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-12-15",
+      "type": "strength",
+      "title": "Kettlebell, 20 min",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "Strength for durability. Pick any kettlebell video of about 20 minutes and follow along.",
+      "steps": [
+        {
+          "min": 20,
+          "target": "Follow a kettlebell video, about 20 min"
+        }
+      ],
+      "cue": "Good form first. Stop each set with 1-3 clean reps left.",
+      "fuel": {
+        "before": "A small carb snack 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "25-40 g protein within 2 hours."
+      },
+      "time": "11:15",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Right after the ride."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight, about 20:00. Otherwise skip it."
+        }
+      ],
+      "checks": []
+    },
+    {
+      "date": "2026-12-16",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-12-17",
+      "type": "easy",
+      "title": "Z2 ride, 1 h 45",
+      "duration_min": 105,
+      "zone": "Z2",
+      "purpose": "Build endurance.",
+      "steps": [
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Ease in, under 150 W"
+        },
+        {
+          "min": 85,
+          "zone": "Z2",
+          "target": "150-190 W, RPE 3-4, you can talk, cadence 85-95"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Cool-down, easy spinning"
+        }
+      ],
+      "cue": "Stay at 150-190 W even when you feel great. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Eat a carb meal about 2 hours before, or at least a banana or two slices of bread. Never ride empty.",
+        "during_carbs_g_per_h": 50,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr."
+        },
+        {
+          "label": "Fallback",
+          "text": "Same day about 19:00, on the Kickr. Eat a snack first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-17-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-session fuel?"
+        },
+        {
+          "id": "2026-12-17-fuel-during",
+          "when": "after",
+          "ask": "Did you take the planned fuel during the session?"
+        },
+        {
+          "id": "2026-12-17-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-12-17",
+      "type": "strength",
+      "title": "Kettlebell, 20 min",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "Strength for durability. Pick any kettlebell video of about 20 minutes and follow along.",
+      "steps": [
+        {
+          "min": 20,
+          "target": "Follow a kettlebell video, about 20 min"
+        }
+      ],
+      "cue": "Good form first. Stop each set with 1-3 clean reps left.",
+      "fuel": {
+        "before": "A small carb snack 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "25-40 g protein within 2 hours."
+      },
+      "time": "11:15",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Right after the ride."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight, about 20:00. Otherwise skip it."
+        }
+      ],
+      "checks": []
+    },
+    {
+      "date": "2026-12-18",
+      "type": "swim",
+      "title": "Swim, 30 min (pace test)",
+      "duration_min": 30,
+      "zone": "Z1-Z2",
+      "purpose": "One swim a week to keep and slowly build skill.",
+      "steps": [
+        {
+          "min": 8,
+          "target": "Warm-up and 2 x 50 m drills"
+        },
+        {
+          "min": 5,
+          "target": "200 m as fast as you can hold evenly. Note the time"
+        },
+        {
+          "min": 5,
+          "target": "Very easy"
+        },
+        {
+          "min": 9,
+          "target": "400 m as fast as you can hold evenly. Note the time"
+        },
+        {
+          "min": 3,
+          "target": "Cool-down"
+        }
+      ],
+      "cue": "Send me both times.",
+      "fuel": {
+        "before": "A snack 60-90 min before.",
+        "during_carbs_g_per_h": 0,
+        "after": "Dinner with protein and carbs."
+      },
+      "time": "19:00",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Friday evening at the pool."
+        },
+        {
+          "label": "Fallback",
+          "text": "Skip it. No make-up."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-18-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-session fuel?"
+        }
+      ]
+    },
+    {
+      "date": "2026-12-19",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-12-20",
+      "type": "run",
+      "title": "Easy run, 30 min",
+      "duration_min": 40,
+      "zone": "Z2",
+      "purpose": "Rebuild running slowly: calves and tendons adapt slower than fitness.",
+      "steps": [
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Brisk walk to warm up"
+        },
+        {
+          "min": 30,
+          "zone": "Z2",
+          "target": "Easy run, RPE 3-4, talk in full sentences. Walk breaks allowed"
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Walk and stretch calves and hips"
+        }
+      ],
+      "cue": "Easy enough to repeat tomorrow. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Breakfast 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "A meal with protein and carbs."
+      },
+      "time": "10:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Sunday about 10:30, in daylight."
+        },
+        {
+          "label": "Fallback",
+          "text": "About 15:00, in daylight, or walk 30 min."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-20-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-12-21",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-12-22",
+      "type": "vo2_intervals",
+      "title": "30/15s, 3 sets",
+      "duration_min": 80,
+      "zone": "Z4",
+      "purpose": "Time near VO2max.",
+      "steps": [
+        {
+          "min": 20,
+          "zone": "Z2",
+          "target": "Warm-up, build gradually from 150 to 200 W"
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Easy spin"
+        },
+        {
+          "repeat": 3,
+          "rest_between_min": 3,
+          "steps": [
+            {
+              "repeat": 13,
+              "on_s": 30,
+              "off_s": 15,
+              "on_target": "300-320 W (reset from your 8 Dec test)",
+              "off_target": "about 150 W, easy spinning"
+            }
+          ]
+        },
+        {
+          "min": 10,
+          "zone": "Z2",
+          "target": "Easy, 150-180 W"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Cool-down"
+        }
+      ],
+      "cue": "Rep 1 on target, middle on feel, finish strong. More than 10% under target: end the set. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Eat a carb meal about 2 hours before, or at least a banana or two slices of bread. Never ride empty.",
+        "during_carbs_g_per_h": 40,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr."
+        },
+        {
+          "label": "Fallback",
+          "text": "Same day about 19:00, on the Kickr. Eat a snack first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-22-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-session fuel?"
+        },
+        {
+          "id": "2026-12-22-fuel-during",
+          "when": "after",
+          "ask": "Did you take the planned fuel during the session?"
+        },
+        {
+          "id": "2026-12-22-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-12-22",
+      "type": "strength",
+      "title": "Kettlebell, 20 min",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "Strength for durability. Pick any kettlebell video of about 20 minutes and follow along.",
+      "steps": [
+        {
+          "min": 20,
+          "target": "Follow a kettlebell video, about 20 min"
+        }
+      ],
+      "cue": "Good form first. Stop each set with 1-3 clean reps left.",
+      "fuel": {
+        "before": "A small carb snack 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "25-40 g protein within 2 hours."
+      },
+      "time": "11:15",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Right after the ride."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight, about 20:00. Otherwise skip it."
+        }
+      ],
+      "checks": []
+    },
+    {
+      "date": "2026-12-23",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-12-24",
+      "type": "long_ride_intervals",
+      "title": "Long ride 2 h with late tempo",
+      "duration_min": 120,
+      "zone": "Z2 + Z3",
+      "purpose": "Durability: tempo on tired legs.",
+      "steps": [
+        {
+          "min": 15,
+          "zone": "Z2",
+          "target": "Easy start, 150-170 W"
+        },
+        {
+          "min": 57,
+          "zone": "Z2",
+          "target": "150-190 W, RPE 3-4"
+        },
+        {
+          "repeat": 2,
+          "rest_between_min": 8,
+          "steps": [
+            {
+              "min": 15,
+              "zone": "Z3",
+              "target": "210-230 W, RPE 6. Not there today? Stay in Z2"
+            }
+          ]
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Cool-down"
+        }
+      ],
+      "cue": "Eat from minute 20, every 20 minutes. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Eat a carb meal about 2 hours before, or at least a banana or two slices of bread. Never ride empty.",
+        "during_carbs_g_per_h": 60,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr."
+        },
+        {
+          "label": "Fallback",
+          "text": "Same day about 19:00, on the Kickr. Eat a snack first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-24-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-session fuel?"
+        },
+        {
+          "id": "2026-12-24-fuel-during",
+          "when": "after",
+          "ask": "Did you take the planned fuel during the session?"
+        },
+        {
+          "id": "2026-12-24-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-12-24",
+      "type": "strength",
+      "title": "Kettlebell, 20 min",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "Strength for durability. Pick any kettlebell video of about 20 minutes and follow along.",
+      "steps": [
+        {
+          "min": 20,
+          "target": "Follow a kettlebell video, about 20 min"
+        }
+      ],
+      "cue": "Good form first. Stop each set with 1-3 clean reps left.",
+      "fuel": {
+        "before": "A small carb snack 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "25-40 g protein within 2 hours."
+      },
+      "time": "11:45",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Right after the ride."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight, about 20:00. Otherwise skip it."
+        }
+      ],
+      "checks": []
+    },
+    {
+      "date": "2026-12-25",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-12-26",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-12-27",
+      "type": "run",
+      "title": "Easy run, 35 min",
+      "duration_min": 45,
+      "zone": "Z2",
+      "purpose": "Rebuild running slowly: calves and tendons adapt slower than fitness.",
+      "steps": [
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Brisk walk to warm up"
+        },
+        {
+          "min": 35,
+          "zone": "Z2",
+          "target": "Easy run, RPE 3-4, talk in full sentences. Walk breaks allowed"
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Walk and stretch calves and hips"
+        }
+      ],
+      "cue": "Easy enough to repeat tomorrow. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Breakfast 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "A meal with protein and carbs."
+      },
+      "time": "10:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Sunday about 10:30, in daylight."
+        },
+        {
+          "label": "Fallback",
+          "text": "About 15:00, in daylight, or walk 30 min."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-27-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-12-28",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-12-29",
+      "type": "benchmark_test",
+      "title": "FTP test #3",
+      "duration_min": 40,
+      "zone": "Z4",
+      "purpose": "Ramp test, the same as on 13 Oct, so the two results compare. FTP = 75% of your best 1-minute power. Your zones and interval watts follow from it.",
+      "steps": [
+        {
+          "min": 12,
+          "zone": "Z2",
+          "target": "Easy warm-up, 150-180 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z2",
+          "target": "Ramp: about 160 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z2",
+          "target": "Ramp: about 180 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z2",
+          "target": "Ramp: about 200 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z3",
+          "target": "Ramp: about 220 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z3",
+          "target": "Ramp: about 240 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 260 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 280 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 300 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 320 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 340 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 360 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 380 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 400 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 420 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 440 W"
+        },
+        {
+          "min": 1,
+          "zone": "Z4",
+          "target": "Ramp: about 460 W"
+        },
+        {
+          "min": 12,
+          "zone": "Z1",
+          "target": "Cool-down, easy spinning"
+        }
+      ],
+      "cue": "Same setup as 13 Oct: Kickr in ERG mode, cadence 90+. Stop when you cannot hold the watts, then cool down. Slept badly or feel ill? Move it to Thursday and ride easy instead. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Eat a carb meal about 2 hours before, or at least a banana or two slices of bread. Never ride empty.",
+        "during_carbs_g_per_h": 40,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr."
+        },
+        {
+          "label": "Fallback",
+          "text": "Same day about 19:00, on the Kickr. Eat a snack first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-29-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-session fuel?"
+        },
+        {
+          "id": "2026-12-29-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-12-30",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2026-12-31",
+      "type": "easy",
+      "title": "Easy Z2 ride, 60 min",
+      "duration_min": 60,
+      "zone": "Z2",
+      "purpose": "Recovery week: keep it easy.",
+      "steps": [
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Ease in, under 150 W"
+        },
+        {
+          "min": 40,
+          "zone": "Z2",
+          "target": "150-190 W, RPE 3-4, you can talk, cadence 85-95"
+        },
+        {
+          "min": 10,
+          "zone": "Z1",
+          "target": "Cool-down, easy spinning"
+        }
+      ],
+      "cue": "Stay at 150-190 W even when you feel great. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Eat a carb meal about 2 hours before, or at least a banana or two slices of bread. Never ride empty.",
+        "during_carbs_g_per_h": 0,
+        "after": "Within 2 hours: a proper meal with 25-40 g protein plus carbs."
+      },
+      "time": "09:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Morning, about 09:30, on the Kickr."
+        },
+        {
+          "label": "Fallback",
+          "text": "Same day about 19:00, on the Kickr. Eat a snack first."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2026-12-31-fuel-before",
+          "when": "before",
+          "ask": "Did you eat your pre-session fuel?"
+        },
+        {
+          "id": "2026-12-31-calf",
+          "when": "after",
+          "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
+          "answers": [
+            "Fine (0-2)",
+            "A bit (3-4)",
+            "Too much (5+)"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-12-31",
+      "type": "strength",
+      "title": "Kettlebell, 20 min",
+      "duration_min": 20,
+      "zone": "Z1-Z2",
+      "purpose": "Strength for durability. Pick any kettlebell video of about 20 minutes and follow along.",
+      "steps": [
+        {
+          "min": 20,
+          "target": "Follow a kettlebell video, about 20 min"
+        }
+      ],
+      "cue": "Good form first. Stop each set with 1-3 clean reps left.",
+      "fuel": {
+        "before": "A small carb snack 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "25-40 g protein within 2 hours."
+      },
+      "time": "11:15",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Right after the ride."
+        },
+        {
+          "label": "Fallback",
+          "text": "Tonight, about 20:00. Otherwise skip it."
+        }
+      ],
+      "checks": []
+    },
+    {
+      "date": "2027-01-01",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2027-01-02",
+      "type": "rest",
+      "title": "Rest day",
+      "duration_min": 0,
+      "zone": "",
+      "purpose": "Recovery is where you get fitter.",
+      "steps": []
+    },
+    {
+      "date": "2027-01-03",
+      "type": "run",
+      "title": "Easy run, 25 min",
+      "duration_min": 35,
+      "zone": "Z2",
+      "purpose": "Rebuild running slowly: calves and tendons adapt slower than fitness.",
+      "steps": [
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Brisk walk to warm up"
+        },
+        {
+          "min": 25,
+          "zone": "Z2",
+          "target": "Easy run, RPE 3-4, talk in full sentences. Walk breaks allowed"
+        },
+        {
+          "min": 5,
+          "zone": "Z1",
+          "target": "Walk and stretch calves and hips"
+        }
+      ],
+      "cue": "Easy enough to repeat tomorrow. Rate your left calf 0-10 before and after: above 4, or a changed stroke or gait, means stop.",
+      "fuel": {
+        "before": "Breakfast 1-2 hours before.",
+        "during_carbs_g_per_h": 0,
+        "after": "A meal with protein and carbs."
+      },
+      "time": "10:30",
+      "slots": [
+        {
+          "label": "First choice",
+          "text": "Sunday about 10:30, in daylight."
+        },
+        {
+          "label": "Fallback",
+          "text": "About 15:00, in daylight, or walk 30 min."
+        }
+      ],
+      "checks": [
+        {
+          "id": "2027-01-03-calf",
           "when": "after",
           "ask": "How did your left calf feel? (above 4 or a changed stroke = stop and ease off)",
           "answers": [
@@ -2721,5 +4629,5 @@
       "High-protein yoghurt (skyr, quark or Greek), 1.5 kg (optional, only if your yoghurt is the sweetened kind)"
     ]
   },
-  "notes": "Plan from Thursday 8 Oct to Sunday 8 Nov. Your fixed training days are Tuesday, Thursday and Sunday, and Friday joins on 16 Oct (swim). Wednesday, Saturday and Monday are rest days. FTP test #1 is Tuesday 13 Oct (Thursday 15 Oct if you slept badly). Rate your left calf 0-10 after every ride: above 4, or a changed pedal stroke, means stop. On nights before 7-8 am sessions aim to be in bed by 23:30. Sunday travel back is by train. Calorie numbers are starting estimates for 75 kg and include what you eat on the bike. Send me the FTP test numbers so I can set your zones and interval watts. Class times (same every week): Mon 13:00-17:15, Tue 13:45-18:00, Wed 10:45-12:45 and 13:45-15:45, Thu 13:45-17:45, Fri 10:50-12:45. No class before 10:30, so mornings are free. Travel dorm-school is 30 min, showering and changing 1 hour. Workout times in this file are for ordering inside the app only, never for Wahoo. Evidence update 9 Oct 2026: strength uses one-leg work, slow reps and 1-3 reps left; swim gets a pace test on 30 Oct and a main set at your CSS on 6 Nov; the 29 Oct long ride logs kJ and tempo-block watts. The 3 weeks on + 1 week recovery pattern stays as the default, but the recovery week can be moved forward when sleep, mood or session quality drop. Aim for at least 7 h sleep (individual need varies). Fuel rides at 60 g carbs/h for up to 3 h; try more only in training and only if your stomach copes. Sunday dinner is at home with the family."
+  "notes": "Restart block, 26 Nov to 3 Jan. Tuesday: bike quality and kettlebell. Thursday: endurance ride and kettlebell. Friday: swim. Sunday: easy run. Monday, Wednesday and Saturday are rest. No hard work until the FTP test on 8 Dec. Missed a session? Do not make it up. Feel ill, or slept very badly? Rest or ride easy."
 }
